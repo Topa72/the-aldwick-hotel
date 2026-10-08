@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 215 16% 9%; /* deep slate #13181f */
+    --foreground: 38 20% 88%; /* warm pearl */
+    --primary: 38 20% 88%;
+    --primary-foreground: 215 16% 9%;
+    --accent: 38 46% 56%; /* warm gold #c9a55a */
+    --accent-foreground: 215 16% 9%;
+    --surface: 215 14% 13%;
+    --surface-raised: 215 12% 17%;
+    --muted-foreground: 38 8% 56%;
+    --border: 215 10% 22%;
+    --radius: 0px;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-background font-sans font-light text-foreground antialiased;
+    font-feature-settings: "kern", "liga";
+  }
+
+  ::selection {
+    background: hsl(var(--accent) / 0.35);
+    color: hsl(var(--foreground));
+  }
+
+  :focus-visible {
+    outline: 1px solid hsl(var(--accent));
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}
+
+@layer components {
+  /* Inter 500 uppercase 10px, letter-spacing 0.14em */
+  .label {
+    @apply font-sans text-[10px] font-medium uppercase tracking-label;
+  }
+
+  /* Cormorant Garamond 700 italic — editorial headline */
+  .display {
+    @apply font-serif font-bold italic;
+  }
+
+  .section-title {
+    @apply display text-[clamp(44px,6vw,84px)] leading-[0.95] text-foreground;
+  }
+}
