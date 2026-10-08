@@ -19,7 +19,7 @@ export function Navbar() {
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-40 border-b transition-colors duration-300 [backdrop-filter:blur(14px)] [-webkit-backdrop-filter:blur(14px)]",
+        "fixed inset-x-0 top-0 z-40 border-b pt-[env(safe-area-inset-top,0px)] transition-colors duration-300 [backdrop-filter:blur(14px)] [-webkit-backdrop-filter:blur(14px)]",
         scrolled ? "border-border/70 bg-background/85" : "border-transparent bg-background/40",
       )}
     >
