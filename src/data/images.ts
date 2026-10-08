@@ -1,27 +1,27 @@
 /**
- * Photography placeholders (Unsplash). Swap these for the hotel's own
- * photography — every image on the site is referenced from here.
+ * Photographies provisoires (Unsplash). Remplacez-les par les photos du
+ * domaine : toutes les images du site sont référencées ici.
  */
 const unsplash = (id: string, w = 1600) =>
   `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=80`
 
 export const images = {
-  // Boutique hotel exterior at dusk, warm windows glowing, stone building
-  hero: unsplash("1542314831-068cd1dbfeeb", 2400),
-  // Restaurant plated dish, candlelit table
-  dining: unsplash("1414235077428-338989a2e8c0", 1400),
+  // Coteaux de vignes au crépuscule
+  hero: unsplash("1506377247377-2a5b3b417ebb", 2400),
+  // Chai, cuves et barriques
+  cellar: unsplash("1474722883778-792e7990302f", 1400),
   gallery: {
-    // Bedroom, four-poster bed, stone walls, warm lamp light
-    bedroom: unsplash("1631049307264-da0ec9d70304", 1200),
-    // Bathroom with roll-top bath, countryside window
-    bathroom: unsplash("1552321554-5fefe8c9ef14", 1200),
-    // Restaurant, candles, stone fireplace
-    restaurant: unsplash("1517248135467-4c7edcad34c4", 1200),
-    // Lounge, armchairs, bookshelves, firelight
-    lounge: unsplash("1513694203232-719a280e022f", 1200),
-    // Grounds at sunrise, mist, rolling fields
-    grounds: unsplash("1501785888041-af3ef285b470", 1200),
-    // Terrace, morning coffee, countryside view
-    terrace: unsplash("1495474472287-4d71bcdd2085", 1200),
+    // Rangs de vigne sur les coteaux
+    vines: unsplash("1528823872057-9c018a7a7553", 1200),
+    // Grappes de raisin
+    grapes: unsplash("1560148218-1a83060f7b32", 1200),
+    // Verres de vin blanc
+    tasting: unsplash("1510812431401-41d2bd2722f3", 1200),
+    // Cave, barriques
+    barrels: unsplash("1504279577054-acfeccf8fc52", 1200),
+    // Paysage du Sancerrois
+    landscape: unsplash("1516594915697-87eb3b1c14ea", 1200),
+    // Bouteilles
+    bottles: unsplash("1566754436893-98224ee05f2d", 1200),
   },
 } as const

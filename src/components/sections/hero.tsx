@@ -16,10 +16,10 @@ const rise = (delay: number) => ({
 
 export function Hero() {
   return (
-    <section id="top" className="relative flex min-h-[100svh] w-full overflow-hidden" aria-label="Welcome">
+    <section id="top" className="relative flex min-h-[100svh] w-full overflow-hidden" aria-label="Accueil">
       <SmartImage
         src={images.hero}
-        alt="The Aldwick at dusk — a stone house with warm, glowing windows above a manicured garden"
+        alt="Les coteaux de vigne du domaine au crépuscule"
         className="absolute inset-0 h-full w-full object-cover object-center"
         fetchPriority="high"
       />
@@ -34,38 +34,38 @@ export function Hero() {
 
       <div className="relative z-10 mt-auto flex w-full flex-col items-center px-5 pb-[8vh] pt-32 text-center">
         <motion.p {...rise(0)} className="label text-accent">
-          Boutique Hotel · Cotswolds
+          Sancerre · Crézancy-en-Sancerre
         </motion.p>
 
         <motion.h1
           {...rise(0.15)}
           className="display mt-6 text-[clamp(62px,9vw,135px)] leading-[0.88] text-foreground"
         >
-          A Place
+          Vignerons
           <br />
-          <span className="text-accent">Unlike Any Other.</span>
+          <span className="text-accent">depuis 1683.</span>
         </motion.h1>
 
         <motion.p
           {...rise(0.3)}
           className="mt-8 max-w-[520px] text-base font-light leading-relaxed text-foreground/75 md:text-[17px]"
         >
-          12 individually designed rooms, a restaurant serving seasonal Cotswolds produce, and grounds that change
-          with every season
+          Treize générations de la famille Dauny sur les coteaux de Champtin, et un vignoble conduit en agriculture
+          biologique depuis 1964
         </motion.p>
 
         <motion.div {...rise(0.45)} className="mt-10 flex flex-col gap-3 sm:flex-row sm:gap-4">
           <Button asChild variant="gold" size="lg">
-            <a href="#book">
-              Book a stay <ArrowRight />
+            <a href="#vins">
+              Découvrir nos vins <ArrowRight />
             </a>
           </Button>
           <Button asChild variant="ghost" size="lg">
-            <a href="#rooms">See the rooms</a>
+            <a href="#ou-trouver">Où trouver nos vins</a>
           </Button>
         </motion.div>
 
-        <ul className="mt-12 flex flex-wrap justify-center gap-2" aria-label="At a glance">
+        <ul className="mt-12 flex flex-wrap justify-center gap-2" aria-label="En bref">
           {heroChips.map((chip, i) => (
             <motion.li
               key={chip}

@@ -51,7 +51,7 @@ export function Gallery() {
   return (
     <section className="bg-surface py-24 md:py-36" aria-labelledby="gallery-title">
       <div className="container">
-        <SectionHeading id="gallery-title" eyebrow="Gallery" title="The Aldwick in Detail" />
+        <SectionHeading id="gallery-title" eyebrow="En images" title="Le domaine en détail" />
       </div>
 
       <div className="mx-auto mt-16 flex max-w-[1600px] flex-col gap-[3px] md:mt-20 md:grid md:grid-cols-2 md:px-[3px]">
