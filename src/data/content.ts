@@ -35,35 +35,42 @@ export const history = [
   },
 ] as const
 
-export const wines = [
+export type WineStyle = "blanc" | "rouge" | "rose"
+
+export const wines: { name: string; style: WineStyle; appellation: string; description: string }[] = [
   {
     name: "Les Caillottes",
+    style: "blanc",
     appellation: "Sancerre Blanc",
     description:
       "Le cœur de la gamme. Son nom vient des sols calcaires du Sancerrois. 100 % sauvignon blanc, vignes de 20 ans en moyenne, vinifié en cuve inox.",
   },
   {
     name: "Clos du Roy",
+    style: "blanc",
     appellation: "Sancerre Blanc",
     description:
       "Un vin de parcelle, né de sols calcaires en plein sud. Il gagne à vieillir quelques années en cave.",
   },
   {
     name: "Terres Blanches",
+    style: "blanc",
     appellation: "Sancerre Blanc",
     description: "Un sauvignon blanc issu des sols argilo-calcaires que l'on appelle ici « terres blanches ».",
   },
   {
     name: "Pynoz",
+    style: "rose",
     appellation: "Sancerre Rouge & Rosé",
     description: "Le pinot noir du domaine, décliné en rouge et en rosé.",
   },
   {
     name: "Romble",
+    style: "rouge",
     appellation: "Sancerre Rouge & Blanc",
     description: "Une cuvée proposée en rouge et en blanc.",
   },
-] as const
+]
 
 export const servingNote = "Nos blancs se servent entre 10 et 12 °C."
 
