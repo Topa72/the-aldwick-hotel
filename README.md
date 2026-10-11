@@ -26,11 +26,12 @@ src/
 
 ## À vérifier avant la mise en ligne
 
-Le contenu a été rassemblé à partir de sources publiques (office de tourisme, revendeurs, salons), car vignobledauny.fr n'était pas accessible pendant la construction.
+Le contenu reprend le site officiel vignobledauny.fr (histoire, vigne et bio, fiches techniques, médailles, revendeurs), lu par recherche web car le site n'était pas accessible directement. Les pages officielles datent d'environ 2020 ; les horaires de visite et les revendeurs étrangers viennent d'autres sources publiques (office de tourisme, cavistes).
 
-- **Revendeurs** (`stockists` dans `src/data/content.ts`) : liste partielle, à compléter avec la liste officielle « Où trouver nos vins ».
+- **Revendeurs** (`stockists` dans `src/data/content.ts`) : les enseignes bio viennent de la page officielle ; les revendeurs étrangers, de leurs propres sites.
 - **Horaires** : les sources divergent (ouverture à 8h ou 9h). À confirmer.
-- **Surface** : 16 ou 17 hectares selon les sources.
+- **Médailles** : palmarès du site officiel, arrêté en 2020. À compléter avec les médailles plus récentes.
+- **Répartition des ventes** : la page française indique 30 / 45 / 25 %, la page anglaise 35 / 30 / 35 %. La version française est utilisée.
 - **Cuvées** : gamme reprise du site officiel (2 rouges, 4 blancs, 1 rosé). Les descriptions de Romble blanc et de Pynoz rosé restent courtes, faute de fiches techniques.
 - **Bouteilles 3D** : forme bourguignonne et étiquettes dessinées, pas les vraies étiquettes du domaine.
 - **Photos** : images Unsplash provisoires, à remplacer par celles du domaine dans `src/data/images.ts`.

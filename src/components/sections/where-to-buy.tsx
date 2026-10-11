@@ -2,7 +2,7 @@ import { motion } from "motion/react"
 import { ArrowUpRight } from "lucide-react"
 
 import { SectionHeading } from "@/components/section-heading"
-import { estate, exportCountries, stockists } from "@/data/content"
+import { estate, exportCountries, salesSplit, stockists } from "@/data/content"
 import { fadeUp, inView, stagger } from "@/lib/motion"
 import { cn } from "@/lib/utils"
 
@@ -77,6 +77,22 @@ export function WhereToBuy() {
             )
           })}
         </motion.div>
+
+        <motion.dl
+          variants={stagger(0.1)}
+          {...inView}
+          className="mt-16 grid gap-px border border-border bg-border sm:grid-cols-3"
+          aria-label="Répartition de nos ventes"
+        >
+          {salesSplit.map((row) => (
+            <motion.div key={row.label} variants={fadeUp} className="flex flex-col gap-2 bg-background p-8">
+              <dt className="label order-2 text-muted-foreground">{row.label}</dt>
+              <dd className="order-1 font-serif text-6xl font-semibold italic leading-none text-accent tabular-nums">
+                {row.share}&nbsp;%
+              </dd>
+            </motion.div>
+          ))}
+        </motion.dl>
 
         <motion.div variants={fadeUp} {...inView} className="mt-16">
           <h3 className="label text-muted-foreground">Nos vins voyagent aussi en</h3>

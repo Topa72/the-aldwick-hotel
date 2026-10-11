@@ -1,5 +1,6 @@
 import { MotionConfig } from "motion/react"
 
+import { Awards } from "@/components/sections/awards"
 import { BookCta } from "@/components/sections/book-cta"
 import { Cellar } from "@/components/sections/cellar"
 import { Footer } from "@/components/sections/footer"
@@ -21,6 +22,7 @@ export default function App() {
         <Wines />
         <Cellar />
         <Gallery />
+        <Awards />
         <WhereToBuy />
         <Visit />
         <BookCta />

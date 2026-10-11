@@ -23,13 +23,16 @@ export function Cellar() {
             </motion.p>
 
             <motion.p variants={fadeUp} className="mt-10 text-[15px] font-light leading-relaxed text-muted-foreground">
-              Le vignoble est conduit en agriculture biologique depuis 1964 et reste certifié AB. Sur les coteaux
-              calcaires et argilo-calcaires de Champtin, le sauvignon blanc et le pinot noir poussent sans produits
-              de synthèse.
+              Converti en 1964, le vignoble vise la fertilité des sols sur le long terme. Fumier composté,
+              lombricompost, déchets végétaux et algues calcaires nourrissent l'humus et la vie microbienne du sol.
+              Labours et binages, tout au long de l'année, remplacent les désherbants et ameublissent la terre pour
+              un meilleur enracinement.
             </motion.p>
             <motion.p variants={fadeUp} className="mt-5 text-[15px] font-light leading-relaxed text-muted-foreground">
-              Au chai, la famille intervient le moins possible : fermentation par les levures indigènes, en cuves
-              inox à température contrôlée, pour laisser parler chaque parcelle.
+              Purins d'ortie et de prêle et jus d'algues renforcent les défenses de la vigne. Le cuivre (bouillie
+              bordelaise) et le soufre n'interviennent qu'en cas de forte pression de mildiou ou d'oïdium. Au chai,
+              le domaine suit toujours un cahier des charges élaboré au début des années 1970 : pressurage
+              pneumatique, fermentation en cuves inox thermorégulées, collage à la bentonite seulement.
             </motion.p>
 
             <motion.ul variants={fadeUp} className="mt-10 flex flex-wrap gap-2">

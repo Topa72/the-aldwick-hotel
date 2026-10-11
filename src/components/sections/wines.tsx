@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "motion/react"
 import { ArrowLeft, ArrowRight } from "lucide-react"
 
 import { SectionHeading } from "@/components/section-heading"
-import { estate, wineGroups, wines, type WineStyle } from "@/data/content"
+import { awardsContest, estate, wineGroups, wines, type WineStyle } from "@/data/content"
 import { ease, fadeUp, inView } from "@/lib/motion"
 import { cn } from "@/lib/utils"
 
@@ -107,7 +107,7 @@ export function Wines() {
           </div>
 
           <div className="lg:col-span-5">
-            <div className="min-h-[300px] sm:min-h-[260px]" aria-live="polite">
+            <div className="min-h-[560px] sm:min-h-[520px]" aria-live="polite">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={`${wine.style}-${wine.name}`}
@@ -123,6 +123,36 @@ export function Wines() {
                   <p className="mt-6 max-w-md text-[15px] font-light leading-relaxed text-muted-foreground">
                     {wine.description}
                   </p>
+
+                  {wine.awards.length > 0 && (
+                    <ul className="mt-6 flex flex-wrap gap-2" aria-label={`Médailles, ${awardsContest}`}>
+                      {wine.awards.map((a) => (
+                        <li
+                          key={`${a.medal}-${a.vintage}`}
+                          className={cn(
+                            "label inline-flex items-center gap-2 border px-2.5 py-1.5",
+                            a.medal === "Or" ? "border-accent/60 text-accent" : "border-foreground/30 text-foreground/80",
+                          )}
+                        >
+                          <span
+                            aria-hidden
+                            className={cn("h-2 w-2 rounded-full", a.medal === "Or" ? "bg-accent" : "bg-foreground/60")}
+                          />
+                          {a.medal} · {a.vintage}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+
+                  <dl className="mt-8 grid grid-cols-[auto_1fr] gap-x-6 gap-y-2.5 border-t border-border pt-6 text-sm">
+                    {wine.sheet.map((row) => (
+                      <div key={row.label} className="contents">
+                        <dt className="label pt-0.5 text-muted-foreground">{row.label}</dt>
+                        <dd className="min-w-0 font-light text-foreground/90">{row.value}</dd>
+                      </div>
+                    ))}
+                  </dl>
+
                   <a
                     href="#ou-trouver"
                     className="label mt-8 inline-flex items-center gap-2 text-accent transition-colors hover:text-foreground"
@@ -159,7 +189,6 @@ export function Wines() {
               ))}
             </ul>
 
-            {group.servingNote && <p className="label mt-8 text-muted-foreground">{group.servingNote}</p>}
           </div>
         </motion.div>
       </div>

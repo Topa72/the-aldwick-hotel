@@ -15,29 +15,56 @@ export const navLinks = [
   { label: "Visites", href: "#visites" },
 ] as const
 
-export const heroChips = ["Sancerre AOC", "Bio depuis 1964", "Sauvignon blanc", "Pinot noir", "Champtin"] as const
+export const heroChips = ["Sancerre AOC", "Bio depuis 1964", "17 hectares", "7 cuvées", "Champtin"] as const
 
 export const history = [
   {
     year: "1683",
     title: "Les coteaux de Champtin",
-    text: "La famille Dauny cultive la vigne sur les coteaux de Champtin, à Crézancy-en-Sancerre.",
+    text: "La famille Dauny cultive déjà la vigne sur les coteaux de Bué et de Crézancy, et sur ceux, réputés, de Champtin.",
   },
   {
     year: "1964",
     title: "Le choix du bio",
-    text: "Lucien Dauny convertit l'ensemble du vignoble à l'agriculture biologique.",
+    text: "Lucien Dauny mène une ferme de polyculture : vignes, céréales, chèvres et vaches. À la suite de problèmes de santé, il se tourne vers les méthodes naturelles et convertit toute l'exploitation à l'agriculture biologique. L'équilibre ne revient que vers 1970.",
+  },
+  {
+    year: "1975",
+    title: "Christian et Nicole",
+    text: "Lucien transmet l'exploitation à son fils Christian et à son épouse Nicole, jeunes mariés. Les parcelles de céréales et les prairies classées en AOC sont peu à peu plantées en vigne.",
+  },
+  {
+    year: "1985",
+    title: "Le Vignoble Dauny",
+    text: "L'exploitation se consacre entièrement à la viticulture et prend le nom de Vignoble Dauny.",
+  },
+  {
+    year: "1999 · 2007",
+    title: "Benoît et Thibaut",
+    text: "Leurs fils Benoît, né en 1977, et Thibaut, né en 1981, rejoignent l'entreprise familiale.",
   },
   {
     year: "Aujourd'hui",
-    title: "Douzième et treizième générations",
-    text: "Christian et Nicole Dauny, avec leurs fils Benoît et Thibaut, conduisent le domaine : environ 17 hectares de sauvignon blanc et de pinot noir.",
+    title: "Treize générations",
+    text: "Nicole, Christian, Benoît et Thibaut, associés, et trois salariés permanents conduisent 17 hectares : 13 de sauvignon pour les blancs, 4 de pinot noir pour les rouges et le rosé.",
   },
 ] as const
 
 export type WineStyle = "blanc" | "rouge" | "rose"
 
-export type Wine = { name: string; style: WineStyle; appellation: string; description: string }
+export type Medal = { medal: "Or" | "Argent"; vintage: number; contest: number }
+
+export type Wine = {
+  name: string
+  style: WineStyle
+  appellation: string
+  description: string
+  /** Technical sheet rows, in display order. */
+  sheet: { label: string; value: string }[]
+  awards: Medal[]
+}
+
+const whiteMaking = "Vendange mécanique, pressurage pneumatique, fermentation en cuves inox de 18 à 25 °C"
 
 export const wines: Wine[] = [
   {
@@ -45,53 +72,142 @@ export const wines: Wine[] = [
     style: "rouge",
     appellation: "Sancerre Rouge",
     description:
-      "100 % pinot noir, vignes de 20 ans en moyenne. Un rouge léger au bouquet agréable, à boire dans les 4 à 7 ans.",
+      "Un rouge léger et sec au bouquet agréable, avec un potentiel de garde moyen. Il accompagne très bien les viandes blanches, les gibiers à plume et les fromages.",
+    sheet: [
+      { label: "Cépage", value: "Pinot noir 100 %" },
+      { label: "Sol", value: "Calcaire" },
+      { label: "Vignes", value: "20 ans en moyenne" },
+      { label: "Vinification", value: "Cuves inox, de 18 à 25 °C, sans collage" },
+      { label: "Garde", value: "4 à 7 ans" },
+      { label: "Service", value: "12 à 15 °C" },
+      { label: "Accords", value: "Viandes blanches, gibiers à plume, fromages" },
+    ],
+    awards: [
+      { medal: "Or", vintage: 2015, contest: 2017 },
+      { medal: "Argent", vintage: 2013, contest: 2015 },
+      { medal: "Or", vintage: 2012, contest: 2014 },
+      { medal: "Or", vintage: 2011, contest: 2013 },
+    ],
   },
   {
     name: "Romble",
     style: "rouge",
     appellation: "Sancerre Rouge",
-    description: "Le pinot noir des vieilles vignes, 45 ans en moyenne, élevé en fûts de chêne. Des tanins fins et soyeux.",
+    description:
+      "Le pinot noir des vieilles vignes, élevé en barriques de chêne. Un vin de garde aux tanins fins et souples.",
+    sheet: [
+      { label: "Cépage", value: "Pinot noir 100 %" },
+      { label: "Sol", value: "Calcaire" },
+      { label: "Vignes", value: "45 ans en moyenne" },
+      { label: "Vinification", value: "Barriques de chêne, de 18 à 28 °C" },
+      { label: "Garde", value: "10 ans" },
+      { label: "Service", value: "14 à 17 °C" },
+      { label: "Accords", value: "Viandes blanches et rouges, gibiers, fromages" },
+    ],
+    awards: [{ medal: "Or", vintage: 2015, contest: 2017 }],
   },
   {
     name: "Les Caillottes",
     style: "blanc",
     appellation: "Sancerre Blanc",
     description:
-      "Le cœur de la gamme. Son nom vient des sols calcaires du Sancerrois. 100 % sauvignon blanc, vignes de 20 ans en moyenne, vinifié en cuve inox.",
+      "Né des sols calcaires du Sancerrois, un vin léger à boire jeune. Parfait avec les poissons froids, les huîtres, les fruits de mer et le crottin de Chavignol.",
+    sheet: [
+      { label: "Cépage", value: "Sauvignon 100 %" },
+      { label: "Sol", value: "Calcaire" },
+      { label: "Vignes", value: "20 ans en moyenne" },
+      { label: "Vinification", value: whiteMaking },
+      { label: "Garde", value: "3 à 5 ans" },
+      { label: "Service", value: "10 à 12 °C" },
+      { label: "Accords", value: "Poissons froids, huîtres, fruits de mer, crottin de Chavignol" },
+    ],
+    awards: [
+      { medal: "Argent", vintage: 2019, contest: 2020 },
+      { medal: "Argent", vintage: 2018, contest: 2019 },
+      { medal: "Or", vintage: 2015, contest: 2016 },
+      { medal: "Argent", vintage: 2012, contest: 2014 },
+    ],
+  },
+  {
+    name: "Terres Blanches",
+    style: "blanc",
+    appellation: "Sancerre Blanc",
+    description:
+      "Un sauvignon aromatique, issu des sols argilo-calcaires. Il se marie avec les crustacés, les poissons chauds, les viandes grillées et les fromages.",
+    sheet: [
+      { label: "Cépage", value: "Sauvignon 100 %" },
+      { label: "Sol", value: "Argilo-calcaire" },
+      { label: "Vignes", value: "28 ans en moyenne" },
+      { label: "Vinification", value: whiteMaking },
+      { label: "Garde", value: "4 à 7 ans" },
+      { label: "Service", value: "10 à 12 °C" },
+      { label: "Accords", value: "Crustacés, poissons chauds, viandes grillées, fromages" },
+    ],
+    awards: [{ medal: "Or", vintage: 2019, contest: 2020 }],
   },
   {
     name: "Clos du Roy",
     style: "blanc",
     appellation: "Sancerre Blanc",
     description:
-      "Un vin de parcelle, né de sols calcaires en plein sud et vinifié en cuve inox. Il gagne à vieillir quelques années en cave.",
-  },
-  {
-    name: "Terres Blanches",
-    style: "blanc",
-    appellation: "Sancerre Blanc",
-    description: "Un sauvignon blanc issu des sols argilo-calcaires que l'on appelle ici « terres blanches ».",
+      "Les vieilles vignes d'un clos calcaire, élevées en cuves inox. Un vin qui gagne à vieillir, avec les produits de la mer, le foie gras et les fromages.",
+    sheet: [
+      { label: "Cépage", value: "Sauvignon 100 %" },
+      { label: "Sol", value: "Calcaire" },
+      { label: "Vignes", value: "45 ans en moyenne" },
+      { label: "Vinification", value: `${whiteMaking}, élevage en cuves inox` },
+      { label: "Garde", value: "5 à 8 ans" },
+      { label: "Service", value: "10 à 12 °C" },
+      { label: "Accords", value: "Produits de la mer, foie gras, fromages" },
+    ],
+    awards: [{ medal: "Argent", vintage: 2018, contest: 2019 }],
   },
   {
     name: "Romble",
     style: "blanc",
     appellation: "Sancerre Blanc",
-    description: "Un sauvignon blanc élevé en fûts de chêne.",
+    description:
+      "L'assemblage des terroirs calcaires et argilo-calcaires, élevé dix mois en barriques de chêne sur lies fines. De l'apéritif aux viandes blanches.",
+    sheet: [
+      { label: "Cépage", value: "Sauvignon 100 %" },
+      { label: "Sol", value: "Calcaire et argilo-calcaire" },
+      { label: "Vignes", value: "40 ans en moyenne" },
+      { label: "Vinification", value: "Élevage de 10 mois en barriques de chêne sur lies fines" },
+      { label: "Garde", value: "Jusqu'à 10 ans" },
+      { label: "Service", value: "10 à 12 °C" },
+      { label: "Accords", value: "Apéritif, poissons chauds, viandes blanches, fromages" },
+    ],
+    awards: [
+      { medal: "Or", vintage: 2014, contest: 2016 },
+      { medal: "Or", vintage: 2013, contest: 2015 },
+    ],
   },
   {
     name: "Pynoz",
     style: "rose",
     appellation: "Sancerre Rosé",
-    description: "Le pinot noir du domaine, vinifié en rosé.",
+    description:
+      "Séduisant par son originalité et son bouquet fin et élégant, un rosé désaltérant, plutôt vin d'été. Pour les entrées, la charcuterie, les grillades et la cuisine exotique.",
+    sheet: [
+      { label: "Cépage", value: "Pinot noir 100 %" },
+      { label: "Sol", value: "Calcaire" },
+      { label: "Vignes", value: "16 ans en moyenne" },
+      { label: "Vinification", value: "Cuves inox, de 18 à 25 °C" },
+      { label: "Garde", value: "3 à 5 ans" },
+      { label: "Service", value: "8 à 10 °C" },
+      { label: "Accords", value: "Entrées, charcuterie, grillades, cuisine exotique" },
+    ],
+    awards: [],
   },
 ]
 
+export const awardsContest = "Concours des Vignerons Indépendants"
+
 /** Order in which the colours are shown: reds, then whites, then rosé. */
-export const wineGroups: { style: WineStyle; label: string; servingNote?: string }[] = [
+export const wineGroups: { style: WineStyle; label: string }[] = [
   { style: "rouge", label: "Rouges" },
-  { style: "blanc", label: "Blancs", servingNote: "Nos blancs se servent entre 10 et 12 °C." },
-  { style: "rose", label: "Rosé", servingNote: "Notre rosé se sert entre 8 et 10 °C." },
+  { style: "blanc", label: "Blancs" },
+  { style: "rose", label: "Rosé" },
 ]
 
 export type GalleryItem = {
@@ -110,7 +226,7 @@ export const gallery: GalleryItem[] = [
   { src: images.gallery.bottles, label: "Nos cuvées", alt: "Bouteilles de vin", ratio: "landscape" },
 ]
 
-export const cellarChips = ["Levures indigènes", "Cuves inox thermorégulées", "Certifié Agriculture Biologique"] as const
+export const cellarChips = ["Bio depuis 1964", "Pressurage pneumatique", "Cuves inox thermorégulées", "Collage à la bentonite"] as const
 
 export type Stockist = { name: string; detail?: string; href?: string }
 export type StockistGroup = { region: string; stockists: Stockist[] }
@@ -120,6 +236,10 @@ export const stockists: StockistGroup[] = [
     region: "France",
     stockists: [
       { name: "Au domaine", detail: "Vente directe à Champtin, du lundi au samedi" },
+      { name: "Biocoop", detail: "Magasins bio" },
+      { name: "Naturalia", detail: "Magasins bio" },
+      { name: "Natureo", detail: "Magasins bio" },
+      { name: "Nouveaux Robinson", detail: "Magasins bio" },
       { name: "Vignapart", detail: "En ligne, expédié depuis le domaine", href: "https://www.vignapart.com/en/364-vignoble-dauny" },
       { name: "Vins des As", detail: "Caviste en ligne", href: "https://vins-des-as.com/" },
     ],
@@ -148,19 +268,21 @@ export const stockists: StockistGroup[] = [
 
 export const exportCountries = [
   "Allemagne",
-  "Belgique",
   "Canada",
-  "Costa Rica",
   "Danemark",
   "États-Unis",
-  "France",
-  "Irlande",
   "Italie",
   "Luxembourg",
   "Pays-Bas",
-  "Roumanie",
   "Royaume-Uni",
+  "Suède",
   "Suisse",
+] as const
+
+export const salesSplit = [
+  { share: 30, label: "Vente directe aux particuliers" },
+  { share: 45, label: "Export" },
+  { share: 25, label: "Cavistes et magasins bio" },
 ] as const
 
 export const openingHours = [
