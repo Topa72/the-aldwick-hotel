@@ -37,7 +37,22 @@ export const history = [
 
 export type WineStyle = "blanc" | "rouge" | "rose"
 
-export const wines: { name: string; style: WineStyle; appellation: string; description: string }[] = [
+export type Wine = { name: string; style: WineStyle; appellation: string; description: string }
+
+export const wines: Wine[] = [
+  {
+    name: "Pynoz",
+    style: "rouge",
+    appellation: "Sancerre Rouge",
+    description:
+      "100 % pinot noir, vignes de 20 ans en moyenne. Un rouge léger au bouquet agréable, à boire dans les 4 à 7 ans.",
+  },
+  {
+    name: "Romble",
+    style: "rouge",
+    appellation: "Sancerre Rouge",
+    description: "Le pinot noir des vieilles vignes, 45 ans en moyenne, élevé en fûts de chêne. Des tanins fins et soyeux.",
+  },
   {
     name: "Les Caillottes",
     style: "blanc",
@@ -50,7 +65,7 @@ export const wines: { name: string; style: WineStyle; appellation: string; descr
     style: "blanc",
     appellation: "Sancerre Blanc",
     description:
-      "Un vin de parcelle, né de sols calcaires en plein sud. Il gagne à vieillir quelques années en cave.",
+      "Un vin de parcelle, né de sols calcaires en plein sud et vinifié en cuve inox. Il gagne à vieillir quelques années en cave.",
   },
   {
     name: "Terres Blanches",
@@ -59,20 +74,25 @@ export const wines: { name: string; style: WineStyle; appellation: string; descr
     description: "Un sauvignon blanc issu des sols argilo-calcaires que l'on appelle ici « terres blanches ».",
   },
   {
-    name: "Pynoz",
-    style: "rose",
-    appellation: "Sancerre Rouge & Rosé",
-    description: "Le pinot noir du domaine, décliné en rouge et en rosé.",
+    name: "Romble",
+    style: "blanc",
+    appellation: "Sancerre Blanc",
+    description: "Un sauvignon blanc élevé en fûts de chêne.",
   },
   {
-    name: "Romble",
-    style: "rouge",
-    appellation: "Sancerre Rouge & Blanc",
-    description: "Une cuvée proposée en rouge et en blanc.",
+    name: "Pynoz",
+    style: "rose",
+    appellation: "Sancerre Rosé",
+    description: "Le pinot noir du domaine, vinifié en rosé.",
   },
 ]
 
-export const servingNote = "Nos blancs se servent entre 10 et 12 °C."
+/** Order in which the colours are shown: reds, then whites, then rosé. */
+export const wineGroups: { style: WineStyle; label: string; servingNote?: string }[] = [
+  { style: "rouge", label: "Rouges" },
+  { style: "blanc", label: "Blancs", servingNote: "Nos blancs se servent entre 10 et 12 °C." },
+  { style: "rose", label: "Rosé", servingNote: "Notre rosé se sert entre 8 et 10 °C." },
+]
 
 export type GalleryItem = {
   src: string

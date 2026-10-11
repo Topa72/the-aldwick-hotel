@@ -220,7 +220,8 @@ export default function Bottles3D({ bottles, estateName, selected, onSelect }: P
     const container = containerRef.current!
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
     const n = bottles.length
-    const step = TAU / n
+    // Space at least 4 slots around the ring so a small set never hides a bottle behind another.
+    const step = TAU / Math.max(n, 4)
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
@@ -260,8 +261,9 @@ export default function Bottles3D({ bottles, estateName, selected, onSelect }: P
     })
 
     // Ring angle: bottle i faces the camera when angle === -i * step.
-    let current = -selectedRef.current * step
-    let target = current
+    // A new set of bottles spins in by half a turn.
+    let target = -selectedRef.current * step
+    let current = reduceMotion ? target : target + Math.PI
     ring.rotation.y = current
 
     const goTo = (i: number) => {
@@ -334,7 +336,18 @@ export default function Bottles3D({ bottles, estateName, selected, onSelect }: P
       dragging = false
       el.style.cursor = "grab"
       if (moved > 6) {
-        const i = (((Math.round(-target / step) % n) + n) % n) as number
+        // Snap to the bottle closest to the front.
+        let i = 0
+        let best = Infinity
+        for (let k = 0; k < n; k++) {
+          let d = (-k * step - target) % TAU
+          if (d > Math.PI) d -= TAU
+          if (d < -Math.PI) d += TAU
+          if (Math.abs(d) < best) {
+            best = Math.abs(d)
+            i = k
+          }
+        }
         goTo(i)
         onSelectRef.current(i)
         return
@@ -401,6 +414,7 @@ export default function Bottles3D({ bottles, estateName, selected, onSelect }: P
       envTex.dispose()
       pmrem.dispose()
       renderer.dispose()
+      renderer.forceContextLoss()
       container.removeChild(el)
       apiRef.current = null
     }

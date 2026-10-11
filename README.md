@@ -31,5 +31,6 @@ Le contenu a été rassemblé à partir de sources publiques (office de tourisme
 - **Revendeurs** (`stockists` dans `src/data/content.ts`) : liste partielle, à compléter avec la liste officielle « Où trouver nos vins ».
 - **Horaires** : les sources divergent (ouverture à 8h ou 9h). À confirmer.
 - **Surface** : 16 ou 17 hectares selon les sources.
-- **Cuvées Pynoz et Romble** : descriptions minimales, faute de fiches techniques.
+- **Cuvées** : gamme reprise du site officiel (2 rouges, 4 blancs, 1 rosé). Les descriptions de Romble blanc et de Pynoz rosé restent courtes, faute de fiches techniques.
+- **Bouteilles 3D** : forme bourguignonne et étiquettes dessinées, pas les vraies étiquettes du domaine.
 - **Photos** : images Unsplash provisoires, à remplacer par celles du domaine dans `src/data/images.ts`.
