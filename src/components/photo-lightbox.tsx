@@ -18,7 +18,7 @@ export function PhotoLightbox({ src, alt, className }: { src: string; alt: strin
           src={src}
           alt={alt}
           loading="lazy"
-          className="w-full transition-transform duration-300 group-hover:scale-105"
+          className="aspect-[2/3] w-full object-contain transition-transform duration-300 group-hover:scale-105"
         />
         <span className="absolute bottom-1.5 right-1.5 flex h-7 w-7 items-center justify-center bg-background/80 text-foreground transition-colors group-hover:bg-accent group-hover:text-accent-foreground">
           <ZoomIn className="h-3.5 w-3.5" strokeWidth={1.5} />
@@ -33,7 +33,7 @@ export function PhotoLightbox({ src, alt, className }: { src: string; alt: strin
           <DialogPrimitive.Title className="sr-only">{alt}</DialogPrimitive.Title>
           <DialogPrimitive.Description className="sr-only">Photo agrandie</DialogPrimitive.Description>
           <figure className="pointer-events-none relative flex w-full flex-col items-center">
-            <img src={src} alt={alt} className="h-auto w-[min(100%,calc((100dvh-7rem)*2/3))] bg-white shadow-2xl" />
+            <img src={src} alt={alt} className="h-[calc(100dvh-7rem)] w-full object-contain" />
             <figcaption className="label mt-4 text-center text-muted-foreground">{alt}</figcaption>
           </figure>
           <DialogPrimitive.Close

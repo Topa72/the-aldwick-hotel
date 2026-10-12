@@ -356,7 +356,7 @@ export default function Bottles3D({ bottles, estateName, selected, onSelect }: P
       renderer.setSize(w, h)
       camera.aspect = w / h
       // Pull back on narrow screens so the front bottle always fits.
-      const dist = camera.aspect < 0.8 ? 7.4 : 6.4
+      const dist = camera.aspect < 0.8 ? 7.4 : 5.9
       camera.position.set(0, 1.75, RING_RADIUS + dist)
       camera.lookAt(lookAt)
       camera.updateProjectionMatrix()

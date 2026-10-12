@@ -157,7 +157,7 @@ export const wines: Wine[] = [
       "Ce Sancerre blanc provient de vignes cultivées sur terres calcaires. C'est un vin léger qui se consomme jeune et qui accompagne poissons froids, huîtres, crustacés ainsi que le Crottin de Chavignol.",
     photo: asset("bottles/caillottes.jpg"),
     look: {
-      label: { src: asset("labels/caillottes.jpg"), y: 0.6, height: 0.69, arc: 2.29 },
+      label: { src: asset("labels/caillottes.jpg"), y: 0.6, height: 0.69, arc: 2.11 },
       colors: { glass: 0x7d8a3a, glassOpacity: 0.5, wine: 0xa2962a, capsule: 0x16181b },
     },
     sheet: [
@@ -190,7 +190,7 @@ export const wines: Wine[] = [
       "Ce Sancerre blanc provient de vignes cultivées sur des terres argilo-calcaires appelées terres blanches. C'est un vin aromatique qui accompagne crustacés, fruits de mer, poissons chauds et fromages.",
     photo: asset("bottles/terres-blanches.jpg"),
     look: {
-      label: { src: asset("labels/terres-blanches.jpg"), y: 0.6, height: 0.7, arc: 2.09 },
+      label: { src: asset("labels/terres-blanches.jpg"), y: 0.6, height: 0.68, arc: 2.07 },
       colors: { glass: 0x3c4520, glassOpacity: 0.7, wine: 0x6e6a22, capsule: 0x16181b },
     },
     sheet: [
@@ -218,7 +218,7 @@ export const wines: Wine[] = [
       "Ce Sancerre blanc est issu de terrains calcaires bénéficiant d'une exposition parfaite plein Sud. Ce vin rond et plein de finesse a une belle tenue au vieillissement. Il accompagne très bien poissons et fruits de mer, et sait également se faire apprécier avec un foie gras après 2 ou 3 ans de garde.",
     photo: asset("bottles/clos-du-roy.jpg"),
     look: {
-      label: { src: asset("labels/clos-du-roy.jpg"), y: 0.61, height: 0.69, arc: 2.15 },
+      label: { src: asset("labels/clos-du-roy.jpg"), y: 0.61, height: 0.69, arc: 2.22 },
       colors: { glass: 0x2a2614, glassOpacity: 0.78, wine: 0x4a3d16, capsule: 0x16181b },
     },
     sheet: [
@@ -246,7 +246,7 @@ export const wines: Wine[] = [
       "Ce Sancerre blanc élevé sur lies fines en fûts de chêne est issu d'une sélection de nos différents terroirs. Ce vin de garde accompagnera parfaitement vos apéritifs, poissons chauds et fruits de mer.",
     photo: asset("bottles/romble-blanc.jpg"),
     look: {
-      label: { src: asset("labels/romble-blanc.png"), shape: "diamond", y: 0.68, height: 0.86, arc: 2.42 },
+      label: { src: asset("labels/romble-blanc.png"), shape: "diamond", y: 0.68, height: 0.8, arc: 2.32 },
       colors: { glass: 0x33281a, glassOpacity: 0.75, wine: 0x5a4518, capsule: 0x16181b },
       widthScale: 1.06,
     },
