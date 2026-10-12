@@ -1,4 +1,4 @@
-import { estate } from "@/data/content"
+import { estate, legal } from "@/data/content"
 
 export function Footer() {
   return (
@@ -21,6 +21,21 @@ export function Footer() {
         <p className="text-xs font-light text-muted-foreground">
           L'abus d'alcool est dangereux pour la santé. À consommer avec modération.
         </p>
+        <details className="group max-w-2xl text-left text-xs font-light leading-relaxed text-muted-foreground">
+          <summary className="label cursor-pointer list-none text-center text-foreground/70 transition-colors hover:text-accent">
+            Mentions légales
+          </summary>
+          <dl className="mt-5 grid gap-x-6 gap-y-2 sm:grid-cols-[auto_1fr]">
+            <dt className="label text-foreground/60">Éditeur</dt>
+            <dd>{legal.publisher}</dd>
+            <dt className="label text-foreground/60">Publication</dt>
+            <dd>{legal.director}</dd>
+            <dt className="label text-foreground/60">Hébergement</dt>
+            <dd>{legal.host}</dd>
+            <dt className="label text-foreground/60">Données</dt>
+            <dd>{legal.privacy}</dd>
+          </dl>
+        </details>
       </div>
     </footer>
   )

@@ -1,5 +1,5 @@
 {
-  "name": "the-aldwick-hotel",
+  "name": "vignoble-dauny",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource/cormorant-garamond": "^5.3.0",
+    "@fontsource/inter": "^5.3.0",
     "@radix-ui/react-dialog": "^1.2.0",
     "@radix-ui/react-slot": "^1.4.0",
     "class-variance-authority": "^0.7.1",

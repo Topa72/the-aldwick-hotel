@@ -8,6 +8,15 @@ export const estate = {
   website: "https://www.vignobledauny.fr/",
 } as const
 
+/** Mentions légales (LCEN) — update the host if the site moves. */
+export const legal = {
+  publisher: "Vignoble Dauny (EARL), Champtin, 8 rue Corbossier, 18300 Crézancy-en-Sancerre · 02 48 79 05 75",
+  director: "Vignoble Dauny",
+  host: "itiConseil, Nevers",
+  privacy:
+    "Ce site ne dépose aucun cookie, ne contient pas de formulaire et ne collecte aucune donnée personnelle. Les polices sont hébergées avec le site.",
+} as const
+
 export const navLinks = [
   { label: "Le Domaine", href: "#domaine" },
   { label: "Nos Vins", href: "#vins" },
