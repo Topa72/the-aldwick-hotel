@@ -1,6 +1,10 @@
 import { useEffect, useRef } from "react"
 import * as THREE from "three"
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js"
+import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js"
+import { mergeVertices } from "three/examples/jsm/utils/BufferGeometryUtils.js"
+
+import bottleObj from "@/assets/models/bouteille-sancerre.obj?raw"
 
 import type { BottleLook, WineStyle } from "@/data/content"
 
@@ -30,34 +34,51 @@ const palette: Record<WineStyle, { glass: number; glassOpacity: number; wine: nu
   rouge: { glass: 0x2c4228, glassOpacity: 0.72, wine: 0x4a0d18, capsule: 0x5a1a26, label: "Rouge" },
 }
 
-/** Burgundy-style bottle profile (radius, height), used by LatheGeometry. */
-function bottleProfile(scale = 1, top = 3) {
-  const pts: THREE.Vector2[] = [
-    new THREE.Vector2(0, 0.02),
-    new THREE.Vector2(0.33 * scale, 0),
-    new THREE.Vector2(0.39 * scale, 0.03),
-    new THREE.Vector2(0.4 * scale, 0.1),
-    new THREE.Vector2(0.4 * scale, 1.55),
-  ]
-  // Long, soft Burgundy shoulder easing into the neck.
-  for (let i = 1; i <= 24; i++) {
-    const t = i / 24
-    const y = 1.55 + t * 1.05
-    const r = 0.13 + 0.27 * (0.5 + 0.5 * Math.cos(Math.PI * t))
-    if (y > top) break
-    pts.push(new THREE.Vector2(r * scale, y))
+// The Sancerre bottle model is in millimetres with Z up: 460 mm tall, 40 mm body radius.
+const MODEL_HEIGHT_MM = 460
+const BOTTLE_HEIGHT = 3
+const MODEL_SCALE = BOTTLE_HEIGHT / MODEL_HEIGHT_MM
+// Widens the model without changing its height: 1 keeps the model as drawn, 1.47 matches the studio photos of the 75 cl bottles.
+const WIDTH_FACTOR = 1.47
+const BODY_RADIUS = 40 * MODEL_SCALE * WIDTH_FACTOR
+// Label sizes were measured on the studio photos, on a bottle 3 units tall with a 0.4 radius.
+const PHOTO_RADIUS = 0.4
+// The wine fills the bottle up to the neck.
+const FILL_HEIGHT = 0.78 * BOTTLE_HEIGHT
+
+let bottleGeometry: THREE.BufferGeometry | null = null
+
+/** The bottle shell from the model, Y up, scaled to BOTTLE_HEIGHT, with smooth normals. */
+function modelGeometry() {
+  if (bottleGeometry) return bottleGeometry
+  const obj = new OBJLoader().parse(bottleObj)
+  const shell = obj.children.find((c) => c.name === "Bouteille") as THREE.Mesh
+  let g = shell.geometry.clone()
+  g.deleteAttribute("normal")
+  g.deleteAttribute("uv")
+  g = mergeVertices(g, 1e-4)
+  g.scale(MODEL_SCALE * WIDTH_FACTOR, MODEL_SCALE * WIDTH_FACTOR, MODEL_SCALE)
+  // Z up → Y up; the model's front (−Y) now faces +Z, towards the camera.
+  g.rotateX(-Math.PI / 2)
+  g.computeVertexNormals()
+  bottleGeometry = g
+  return g
+}
+
+/** Per-vertex colour: wine below the fill line, tinted glass above it. */
+function tintedBottle(wine: number, glass: number, glassOpacity: number) {
+  const g = modelGeometry().clone()
+  const pos = g.getAttribute("position")
+  const colors = new Float32Array(pos.count * 4)
+  const w = new THREE.Color(wine)
+  const gl = new THREE.Color(glass)
+  for (let i = 0; i < pos.count; i++) {
+    const full = pos.getY(i) < FILL_HEIGHT
+    const c = full ? w : gl
+    colors.set([c.r, c.g, c.b, full ? 0.96 : glassOpacity], i * 4)
   }
-  if (top > 2.6) {
-    pts.push(new THREE.Vector2(0.13 * scale, Math.min(2.92, top)))
-    if (top >= 3) {
-      pts.push(new THREE.Vector2(0.148 * scale, 2.94), new THREE.Vector2(0.148 * scale, 3), new THREE.Vector2(0, 3))
-    } else {
-      pts.push(new THREE.Vector2(0, top))
-    }
-  } else {
-    pts.push(new THREE.Vector2(0, top))
-  }
-  return pts
+  g.setAttribute("color", new THREE.BufferAttribute(colors, 4))
+  return g
 }
 
 function fitText(ctx: CanvasRenderingContext2D, text: string, font: (size: number) => string, start: number, maxWidth: number) {
@@ -161,32 +182,25 @@ function buildBottle(spec: BottleSpec, estateName: string, index: number, shadow
   const bottle = new THREE.Group()
 
   const glass = new THREE.Mesh(
-    new THREE.LatheGeometry(bottleProfile(1), 96),
+    tintedBottle(p.wine, p.glass, p.glassOpacity),
     new THREE.MeshPhysicalMaterial({
-      color: p.glass,
-      roughness: 0.06,
+      vertexColors: true,
+      roughness: 0.08,
       metalness: 0,
       clearcoat: 1,
       clearcoatRoughness: 0.05,
       transparent: true,
-      opacity: p.glassOpacity,
-      envMapIntensity: 1.4,
-      depthWrite: false,
+      envMapIntensity: 1.2,
     }),
   )
-  glass.renderOrder = 2
-
-  const wine = new THREE.Mesh(
-    new THREE.LatheGeometry(bottleProfile(0.93, 2.3), 64),
-    new THREE.MeshPhysicalMaterial({ color: p.wine, roughness: 0.4, metalness: 0, envMapIntensity: 0.35 }),
-  )
-  wine.position.y = 0.03
-  wine.renderOrder = 1
+  glass.renderOrder = 1
 
   const real = look?.label
   const arc = real?.arc ?? 2.2
+  // Same angular width as on the photos; height scaled with the radius so the label keeps its proportions.
+  const labelHeight = (real?.height ?? 0.8) * (BODY_RADIUS / PHOTO_RADIUS)
   const label = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.406, 0.406, real?.height ?? 0.8, 64, 1, true, -arc / 2, arc),
+    new THREE.CylinderGeometry(BODY_RADIUS + 0.004, BODY_RADIUS + 0.004, labelHeight, 64, 1, true, -arc / 2, arc),
     new THREE.MeshStandardMaterial({
       map: real ? null : labelTexture(spec, estateName),
       roughness: 0.85,
@@ -195,7 +209,7 @@ function buildBottle(spec: BottleSpec, estateName: string, index: number, shadow
       alphaTest: real?.shape === "diamond" ? 0.5 : 0,
     }),
   )
-  label.position.y = real?.y ?? 0.78
+  label.position.y = real?.y ?? 0.7
   label.renderOrder = 3
   if (real) {
     // Show the photographed label once it has loaded; fall back to a drawn one.
@@ -227,19 +241,22 @@ function buildBottle(spec: BottleSpec, estateName: string, index: number, shadow
     metalness: look?.colors?.capsule !== undefined ? 0.3 : 0.85,
     roughness: look?.colors?.capsule !== undefined ? 0.5 : 0.32,
   })
-  const capsule = new THREE.Mesh(new THREE.CylinderGeometry(0.152, 0.138, 0.5, 48), capsuleMat)
-  capsule.position.y = 2.76
-  const capTop = new THREE.Mesh(new THREE.CylinderGeometry(0.155, 0.152, 0.02, 48), capsuleMat)
-  capTop.position.y = 3.02
+  const capsuleHeight = 0.45
+  const lip = 18 * MODEL_SCALE * WIDTH_FACTOR
+  const capsule = new THREE.Mesh(new THREE.CylinderGeometry(lip + 0.006, 16 * MODEL_SCALE * WIDTH_FACTOR + 0.006, capsuleHeight, 48), capsuleMat)
+  capsule.position.y = BOTTLE_HEIGHT - capsuleHeight / 2 + 0.005
+  const capTop = new THREE.Mesh(new THREE.CylinderGeometry(lip + 0.006, lip + 0.006, 0.015, 48), capsuleMat)
+  capTop.position.y = BOTTLE_HEIGHT + 0.0125
 
   const shadow = new THREE.Mesh(
-    new THREE.PlaneGeometry(1.5, 1.5),
+    new THREE.PlaneGeometry(1.1, 1.1),
     new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false }),
   )
   shadow.rotation.x = -Math.PI / 2
   shadow.position.y = 0.001
 
-  bottle.add(shadow, wine, glass, label, capsule, capTop)
+  bottle.add(shadow, glass, label, capsule, capTop)
+  bottle.userData.label = label
   bottle.traverse((o) => (o.userData.index = index))
   if (look?.widthScale) bottle.scale.set(look.widthScale, 1, look.widthScale)
   return bottle
@@ -325,7 +342,7 @@ export default function Bottles3D({ bottles, estateName, selected, onSelect }: P
     fontsReady.then(() => {
       if (disposed) return
       items.forEach((b, i) => {
-        const label = b.children[3] as THREE.Mesh<THREE.BufferGeometry, THREE.MeshStandardMaterial>
+        const label = b.userData.label as THREE.Mesh<THREE.BufferGeometry, THREE.MeshStandardMaterial>
         if (label.userData.realLabel) return
         label.material.map?.dispose()
         label.material.map = labelTexture(bottles[i], estateName)
