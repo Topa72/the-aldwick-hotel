@@ -90,7 +90,7 @@ export const wines: Wine[] = [
     ],
   },
   {
-    name: "Romble",
+    name: "Cuvée Romble",
     style: "rouge",
     appellation: "Sancerre Rouge",
     description:
@@ -163,7 +163,7 @@ export const wines: Wine[] = [
     awards: [{ medal: "Argent", vintage: 2018, contest: 2019 }],
   },
   {
-    name: "Romble",
+    name: "Cuvée Romble",
     style: "blanc",
     appellation: "Sancerre Blanc",
     description:
