@@ -2,12 +2,14 @@ import { useEffect, useRef } from "react"
 import * as THREE from "three"
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js"
 
-import type { WineStyle } from "@/data/content"
+import type { BottleLook, WineStyle } from "@/data/content"
 
 export type BottleSpec = {
   name: string
   appellation: string
   style: WineStyle
+  /** The real bottle's label and colours, when we have them. */
+  look?: BottleLook
 }
 
 type Props = {
@@ -154,7 +156,8 @@ function shadowTexture() {
 }
 
 function buildBottle(spec: BottleSpec, estateName: string, index: number, shadowTex: THREE.Texture) {
-  const p = palette[spec.style]
+  const look = spec.look
+  const p = { ...palette[spec.style], ...look?.colors }
   const bottle = new THREE.Group()
 
   const glass = new THREE.Mesh(
@@ -180,14 +183,50 @@ function buildBottle(spec: BottleSpec, estateName: string, index: number, shadow
   wine.position.y = 0.03
   wine.renderOrder = 1
 
+  const real = look?.label
+  const arc = real?.arc ?? 2.2
   const label = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.406, 0.406, 0.8, 64, 1, true, -1.1, 2.2),
-    new THREE.MeshStandardMaterial({ map: labelTexture(spec, estateName), roughness: 0.85, metalness: 0 }),
+    new THREE.CylinderGeometry(0.406, 0.406, real?.height ?? 0.8, 64, 1, true, -arc / 2, arc),
+    new THREE.MeshStandardMaterial({
+      map: real ? null : labelTexture(spec, estateName),
+      roughness: 0.85,
+      metalness: 0,
+      transparent: real?.shape === "diamond",
+      alphaTest: real?.shape === "diamond" ? 0.5 : 0,
+    }),
   )
-  label.position.y = 0.78
+  label.position.y = real?.y ?? 0.78
   label.renderOrder = 3
+  if (real) {
+    // Show the photographed label once it has loaded; fall back to a drawn one.
+    label.userData.realLabel = true
+    label.visible = false
+    new THREE.TextureLoader().load(
+      real.src,
+      (tex) => {
+        tex.colorSpace = THREE.SRGBColorSpace
+        tex.anisotropy = 8
+        label.material.map = tex
+        label.material.needsUpdate = true
+        label.visible = true
+      },
+      undefined,
+      () => {
+        label.material.map = labelTexture(spec, estateName)
+        label.material.transparent = false
+        label.material.alphaTest = 0
+        label.material.needsUpdate = true
+        label.visible = true
+      },
+    )
+  }
 
-  const capsuleMat = new THREE.MeshStandardMaterial({ color: p.capsule, metalness: 0.85, roughness: 0.32 })
+  // Real bottles here carry a matte dark capsule; drawn ones a metallic foil.
+  const capsuleMat = new THREE.MeshStandardMaterial({
+    color: p.capsule,
+    metalness: look?.colors?.capsule !== undefined ? 0.3 : 0.85,
+    roughness: look?.colors?.capsule !== undefined ? 0.5 : 0.32,
+  })
   const capsule = new THREE.Mesh(new THREE.CylinderGeometry(0.152, 0.138, 0.5, 48), capsuleMat)
   capsule.position.y = 2.76
   const capTop = new THREE.Mesh(new THREE.CylinderGeometry(0.155, 0.152, 0.02, 48), capsuleMat)
@@ -202,6 +241,7 @@ function buildBottle(spec: BottleSpec, estateName: string, index: number, shadow
 
   bottle.add(shadow, wine, glass, label, capsule, capTop)
   bottle.traverse((o) => (o.userData.index = index))
+  if (look?.widthScale) bottle.scale.set(look.widthScale, 1, look.widthScale)
   return bottle
 }
 
@@ -286,6 +326,7 @@ export default function Bottles3D({ bottles, estateName, selected, onSelect }: P
       if (disposed) return
       items.forEach((b, i) => {
         const label = b.children[3] as THREE.Mesh<THREE.BufferGeometry, THREE.MeshStandardMaterial>
+        if (label.userData.realLabel) return
         label.material.map?.dispose()
         label.material.map = labelTexture(bottles[i], estateName)
         label.material.needsUpdate = true

@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "motion/react"
 import { ArrowLeft, ArrowRight } from "lucide-react"
 
 import { SectionHeading } from "@/components/section-heading"
-import { awardsContest, estate, wineGroups, wines, type WineStyle } from "@/data/content"
+import { awardsContest, estate, packagingNote, wineGroups, wines, type WineStyle } from "@/data/content"
 import { ease, fadeUp, inView } from "@/lib/motion"
 import { cn } from "@/lib/utils"
 
@@ -64,11 +64,11 @@ export function Wines() {
         <motion.div
           id="vins-panel"
           role="tabpanel"
-          className="mt-10 grid items-center gap-10 lg:grid-cols-12 lg:gap-16"
+          className="mt-10 grid items-start gap-10 lg:grid-cols-12 lg:gap-16"
           variants={fadeUp}
           {...inView}
         >
-          <div className="lg:col-span-7">
+          <div className="lg:sticky lg:top-24 lg:col-span-7">
             <div
               role="img"
               aria-label={`Bouteille de ${wine.name}, ${wine.appellation}`}
@@ -107,7 +107,7 @@ export function Wines() {
           </div>
 
           <div className="lg:col-span-5">
-            <div className="min-h-[560px] sm:min-h-[520px]" aria-live="polite">
+            <div className="min-h-[760px] sm:min-h-[640px]" aria-live="polite">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={`${wine.style}-${wine.name}`}
@@ -144,14 +144,24 @@ export function Wines() {
                     </ul>
                   )}
 
-                  <dl className="mt-8 grid grid-cols-[auto_1fr] gap-x-6 gap-y-2.5 border-t border-border pt-6 text-sm">
-                    {wine.sheet.map((row) => (
-                      <div key={row.label} className="contents">
-                        <dt className="label pt-0.5 text-muted-foreground">{row.label}</dt>
-                        <dd className="min-w-0 font-light text-foreground/90">{row.value}</dd>
-                      </div>
-                    ))}
-                  </dl>
+                  <div className="mt-8 flex gap-6 border-t border-border pt-6">
+                    {wine.photo && (
+                      <img
+                        src={wine.photo}
+                        alt={`Bouteille de ${wine.appellation} ${wine.name}`}
+                        loading="lazy"
+                        className="hidden w-24 shrink-0 self-start bg-white sm:block"
+                      />
+                    )}
+                    <dl className="grid min-w-0 flex-1 grid-cols-[auto_1fr] gap-x-6 gap-y-2.5 text-sm">
+                      {wine.sheet.map((row) => (
+                        <div key={row.label} className="contents">
+                          <dt className="label pt-0.5 text-muted-foreground">{row.label}</dt>
+                          <dd className="min-w-0 font-light text-foreground/90">{row.value}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  </div>
 
                   <a
                     href="#ou-trouver"
@@ -188,7 +198,7 @@ export function Wines() {
                 </li>
               ))}
             </ul>
-
+            <p className="mt-6 text-xs font-light leading-relaxed text-muted-foreground">{packagingNote}</p>
           </div>
         </motion.div>
       </div>

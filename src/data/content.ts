@@ -54,17 +54,27 @@ export type WineStyle = "blanc" | "rouge" | "rose"
 
 export type Medal = { medal: "Or" | "Argent"; vintage: number; contest: number }
 
+/** How the real bottle looks: its photographed label and glass colours. */
+export type BottleLook = {
+  label?: { src: string; shape?: "rect" | "diamond"; y: number; height: number; arc: number }
+  colors?: { glass?: number; glassOpacity?: number; wine?: number; capsule?: number }
+  widthScale?: number
+}
+
+const asset = (path: string) => `${import.meta.env.BASE_URL}${path}`
+
 export type Wine = {
   name: string
   style: WineStyle
   appellation: string
   description: string
+  /** Studio photo of the bottle. */
+  photo?: string
+  look?: BottleLook
   /** Technical sheet rows, in display order. */
   sheet: { label: string; value: string }[]
   awards: Medal[]
 }
-
-const whiteMaking = "Vendange mécanique, pressurage pneumatique, fermentation en cuves inox de 18 à 25 °C"
 
 export const wines: Wine[] = [
   {
@@ -111,15 +121,26 @@ export const wines: Wine[] = [
     style: "blanc",
     appellation: "Sancerre Blanc",
     description:
-      "Né des sols calcaires du Sancerrois, un vin léger à boire jeune. Parfait avec les poissons froids, les huîtres, les fruits de mer et le crottin de Chavignol.",
+      "Ce Sancerre blanc provient de vignes cultivées sur terres calcaires. C'est un vin léger qui se consomme jeune et qui accompagne poissons froids, huîtres, crustacés ainsi que le Crottin de Chavignol.",
+    photo: asset("bottles/caillottes.jpg"),
+    look: {
+      label: { src: asset("labels/caillottes.jpg"), y: 0.6, height: 0.69, arc: 2.29 },
+      colors: { glass: 0x7d8a3a, glassOpacity: 0.5, wine: 0xa2962a, capsule: 0x16181b },
+    },
     sheet: [
       { label: "Cépage", value: "Sauvignon 100 %" },
+      { label: "Catégorie", value: "Blanc sec" },
       { label: "Sol", value: "Calcaire" },
       { label: "Vignes", value: "20 ans en moyenne" },
-      { label: "Vinification", value: whiteMaking },
+      { label: "Vendange", value: "Mécanique" },
+      { label: "Vinification", value: "Cuves inox, fermentation de 18 à 25 °C, pressoir pneumatique" },
+      { label: "Collage", value: "Bentonite uniquement" },
+      { label: "Filtration", value: "Kieselguhr" },
+      { label: "Bouchon", value: "Liège naturel" },
+      { label: "Bouteille", value: "Verre teinte feuille morte" },
       { label: "Garde", value: "3 à 5 ans" },
-      { label: "Service", value: "10 à 12 °C" },
-      { label: "Accords", value: "Poissons froids, huîtres, fruits de mer, crottin de Chavignol" },
+      { label: "Service", value: "10 à 12 °C environ" },
+      { label: "Accords", value: "Poissons froids, huîtres, fruits de mer, crustacés, fromages" },
     ],
     awards: [
       { medal: "Argent", vintage: 2019, contest: 2020 },
@@ -133,15 +154,26 @@ export const wines: Wine[] = [
     style: "blanc",
     appellation: "Sancerre Blanc",
     description:
-      "Un sauvignon aromatique, issu des sols argilo-calcaires. Il se marie avec les crustacés, les poissons chauds, les viandes grillées et les fromages.",
+      "Ce Sancerre blanc provient de vignes cultivées sur des terres argilo-calcaires appelées terres blanches. C'est un vin aromatique qui accompagne crustacés, fruits de mer, poissons chauds et fromages.",
+    photo: asset("bottles/terres-blanches.jpg"),
+    look: {
+      label: { src: asset("labels/terres-blanches.jpg"), y: 0.6, height: 0.7, arc: 2.09 },
+      colors: { glass: 0x3c4520, glassOpacity: 0.7, wine: 0x6e6a22, capsule: 0x16181b },
+    },
     sheet: [
       { label: "Cépage", value: "Sauvignon 100 %" },
+      { label: "Catégorie", value: "Blanc sec" },
       { label: "Sol", value: "Argilo-calcaire" },
       { label: "Vignes", value: "28 ans en moyenne" },
-      { label: "Vinification", value: whiteMaking },
+      { label: "Vendange", value: "Mécanique" },
+      { label: "Vinification", value: "Cuves inox, fermentation de 18 à 25 °C, pressoir pneumatique" },
+      { label: "Collage", value: "Bentonite uniquement" },
+      { label: "Filtration", value: "Kieselguhr" },
+      { label: "Bouchon", value: "Liège naturel" },
+      { label: "Bouteille", value: "Verre teinte champagne" },
       { label: "Garde", value: "4 à 7 ans" },
-      { label: "Service", value: "10 à 12 °C" },
-      { label: "Accords", value: "Crustacés, poissons chauds, viandes grillées, fromages" },
+      { label: "Service", value: "10 à 12 °C environ" },
+      { label: "Accords", value: "Crustacés, poissons chauds, fruits de mer, viandes grillées, fromages" },
     ],
     awards: [{ medal: "Or", vintage: 2019, contest: 2020 }],
   },
@@ -150,14 +182,25 @@ export const wines: Wine[] = [
     style: "blanc",
     appellation: "Sancerre Blanc",
     description:
-      "Les vieilles vignes d'un clos calcaire, élevées en cuves inox. Un vin qui gagne à vieillir, avec les produits de la mer, le foie gras et les fromages.",
+      "Ce Sancerre blanc est issu de terrains calcaires bénéficiant d'une exposition parfaite plein Sud. Ce vin rond et plein de finesse a une belle tenue au vieillissement. Il accompagne très bien poissons et fruits de mer, et sait également se faire apprécier avec un foie gras après 2 ou 3 ans de garde.",
+    photo: asset("bottles/clos-du-roy.jpg"),
+    look: {
+      label: { src: asset("labels/clos-du-roy.jpg"), y: 0.61, height: 0.69, arc: 2.15 },
+      colors: { glass: 0x2a2614, glassOpacity: 0.78, wine: 0x4a3d16, capsule: 0x16181b },
+    },
     sheet: [
       { label: "Cépage", value: "Sauvignon 100 %" },
-      { label: "Sol", value: "Calcaire" },
+      { label: "Catégorie", value: "Blanc sec" },
+      { label: "Sol", value: "Calcaire, exposition plein Sud" },
       { label: "Vignes", value: "45 ans en moyenne" },
-      { label: "Vinification", value: `${whiteMaking}, élevage en cuves inox` },
+      { label: "Vendange", value: "Mécanique" },
+      { label: "Vinification", value: "Cuves inox, fermentation de 18 à 25 °C, pressoir pneumatique" },
+      { label: "Collage", value: "Bentonite uniquement" },
+      { label: "Filtration", value: "Kieselguhr" },
+      { label: "Bouchon", value: "Liège" },
+      { label: "Bouteille", value: "Verre teinte chêne" },
       { label: "Garde", value: "5 à 8 ans" },
-      { label: "Service", value: "10 à 12 °C" },
+      { label: "Service", value: "10 à 12 °C environ" },
       { label: "Accords", value: "Produits de la mer, foie gras, fromages" },
     ],
     awards: [{ medal: "Argent", vintage: 2018, contest: 2019 }],
@@ -167,15 +210,28 @@ export const wines: Wine[] = [
     style: "blanc",
     appellation: "Sancerre Blanc",
     description:
-      "L'assemblage des terroirs calcaires et argilo-calcaires, élevé dix mois en barriques de chêne sur lies fines. De l'apéritif aux viandes blanches.",
+      "Ce Sancerre blanc élevé sur lies fines en fûts de chêne est issu d'une sélection de nos différents terroirs. Ce vin de garde accompagnera parfaitement vos apéritifs, poissons chauds et fruits de mer.",
+    photo: asset("bottles/romble-blanc.jpg"),
+    look: {
+      label: { src: asset("labels/romble-blanc.png"), shape: "diamond", y: 0.68, height: 0.86, arc: 2.42 },
+      colors: { glass: 0x33281a, glassOpacity: 0.75, wine: 0x5a4518, capsule: 0x16181b },
+      widthScale: 1.06,
+    },
     sheet: [
       { label: "Cépage", value: "Sauvignon 100 %" },
-      { label: "Sol", value: "Calcaire et argilo-calcaire" },
+      { label: "Catégorie", value: "Blanc sec" },
+      { label: "Sol", value: "Assemblage de nos différents terroirs (calcaire et argilo-calcaire)" },
       { label: "Vignes", value: "40 ans en moyenne" },
-      { label: "Vinification", value: "Élevage de 10 mois en barriques de chêne sur lies fines" },
-      { label: "Garde", value: "Jusqu'à 10 ans" },
-      { label: "Service", value: "10 à 12 °C" },
-      { label: "Accords", value: "Apéritif, poissons chauds, viandes blanches, fromages" },
+      { label: "Vendange", value: "Mécanique" },
+      { label: "Vinification", value: "Barriques de chêne, fermentation de 18 à 25 °C, pressoir pneumatique" },
+      { label: "Élevage", value: "10 mois en barriques, sur lies fines" },
+      { label: "Collage", value: "Bentonite uniquement" },
+      { label: "Filtration", value: "Kieselguhr" },
+      { label: "Bouchon", value: "Liège" },
+      { label: "Bouteille", value: "Verre teinte antique" },
+      { label: "Garde", value: "10 ans" },
+      { label: "Service", value: "10 à 12 °C environ" },
+      { label: "Accords", value: "Apéritifs, poissons chauds, viandes blanches, fromages" },
     ],
     awards: [
       { medal: "Or", vintage: 2014, contest: 2016 },
@@ -202,6 +258,9 @@ export const wines: Wine[] = [
 ]
 
 export const awardsContest = "Concours des Vignerons Indépendants"
+
+export const packagingNote =
+  "Cartons de 6 bouteilles · 11 cartons par couche, 9 couches maximum, panachage possible avec nos autres vins."
 
 /** Order in which the colours are shown: reds, then whites, then rosé. */
 export const wineGroups: { style: WineStyle; label: string }[] = [
