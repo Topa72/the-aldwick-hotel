@@ -1,5 +1,3 @@
-import { images } from "./images"
-
 export const estate = {
   name: "Vignoble Dauny",
   address: ["Champtin, 8 rue Corbossier", "18300 Crézancy-en-Sancerre", "France"],
@@ -320,14 +318,8 @@ export type GalleryItem = {
   ratio: "portrait" | "landscape"
 }
 
-export const gallery: GalleryItem[] = [
-  { src: images.gallery.vines, label: "Les coteaux", alt: "Rangs de vigne sur un coteau", ratio: "portrait" },
-  { src: images.gallery.grapes, label: "Les vendanges", alt: "Grappes de raisin mûr sur la vigne", ratio: "landscape" },
-  { src: images.gallery.tasting, label: "La dégustation", alt: "Verres de vin blanc", ratio: "landscape" },
-  { src: images.gallery.barrels, label: "La cave", alt: "Barriques alignées dans la cave", ratio: "portrait" },
-  { src: images.gallery.landscape, label: "Le Sancerrois", alt: "Paysage de vignes et de collines", ratio: "portrait" },
-  { src: images.gallery.bottles, label: "Nos cuvées", alt: "Bouteilles de vin", ratio: "landscape" },
-]
+/** Photos of the estate for the gallery; the section stays hidden while this is empty. */
+export const gallery: GalleryItem[] = []
 
 export const cellarChips = ["Bio depuis 1964", "Pressurage pneumatique", "Cuves inox thermorégulées", "Collage à la bentonite"] as const
 

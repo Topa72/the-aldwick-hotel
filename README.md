@@ -26,7 +26,7 @@ src/
 
 ## Mise en ligne
 
-`npm run build` produit un site statique dans `dist/` : il suffit de déposer **le contenu** de ce dossier à la racine de l'hébergement (ou dans n'importe quel sous-dossier, les chemins sont relatifs). Aucun serveur, base de données ni PHP n'est nécessaire. Les polices sont hébergées avec le site ; `robots.txt` et `sitemap.xml` pointent vers https://www.vignobledauny.fr/.
+`npm run build` produit un site statique dans `dist/` : il suffit de déposer **le contenu** de ce dossier à la racine de l'hébergement (ou dans n'importe quel sous-dossier, les chemins sont relatifs). Aucun serveur, base de données ni PHP n'est nécessaire. Le site ne charge rien depuis un autre domaine (polices et images hébergées avec le site) ; `robots.txt` et `sitemap.xml` pointent vers https://www.vignobledauny.fr/.
 
 Les mentions légales (éditeur, hébergeur) sont dans `legal`, dans `src/data/content.ts` : à mettre à jour si l'hébergeur change.
 
@@ -40,4 +40,4 @@ Le contenu reprend le site officiel vignobledauny.fr (histoire, vigne et bio, fi
 - **Répartition des ventes** : la page française indique 30 / 45 / 25 %, la page anglaise 35 / 30 / 35 %. La version française est utilisée.
 - **Cuvées** : gamme et fiches techniques du site officiel (2 rouges, 4 blancs, 1 rosé). Fiches complètes reprises des fiches officielles pour les 7 cuvées.
 - **Bouteilles 3D** : les 7 cuvées portent leurs vraies étiquettes, teintes de verre et capsules, extraites des photos du site (`public/labels`, `public/bottles`).
-- **Photos** : accueil, chai et galerie utilisent encore des images Unsplash provisoires (chargées depuis images.unsplash.com). À remplacer par les photos du domaine dans `src/data/images.ts` avant la mise en ligne.
+- **Photos** : l'accueil montre la gamme des 7 bouteilles, détourée des photos du domaine (`public/bottles/gamme.webp`). La galerie reste masquée et la section bio n'a pas de photo tant qu'on n'a pas de photos du domaine : les ajouter dans `src/data/images.ts` et `gallery` (`src/data/content.ts`).

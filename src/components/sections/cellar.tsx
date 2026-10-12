@@ -6,11 +6,12 @@ import { Badge } from "@/components/ui/badge"
 import { cellarChips } from "@/data/content"
 import { images } from "@/data/images"
 import { ease, fadeUp, inView, stagger } from "@/lib/motion"
+import { cn } from "@/lib/utils"
 
 export function Cellar() {
   return (
     <section className="py-24 md:py-36" aria-labelledby="chai-title">
-      <div className="container grid items-center gap-16 lg:grid-cols-2 lg:gap-24">
+      <div className={cn("container grid items-center gap-16 lg:gap-24", images.cellar ? "lg:grid-cols-2" : "max-w-4xl")}>
         <div>
           <SectionHeading id="chai-title" eyebrow="Du cep au chai" title="Le bio, depuis toujours" />
 
@@ -22,13 +23,13 @@ export function Cellar() {
               Ni engrais chimiques, ni désherbants, ni insecticides, ni pesticides, ni fongicides de synthèse.
             </motion.p>
 
-            <motion.p variants={fadeUp} className="mt-10 text-[15px] font-light leading-relaxed text-muted-foreground">
+            <motion.p variants={fadeUp} className="mt-10 max-w-2xl text-[15px] font-light leading-relaxed text-muted-foreground">
               Converti en 1964, le vignoble vise la fertilité des sols sur le long terme. Fumier composté,
               lombricompost, déchets végétaux et algues calcaires nourrissent l'humus et la vie microbienne du sol.
               Labours et binages, tout au long de l'année, remplacent les désherbants et ameublissent la terre pour
               un meilleur enracinement.
             </motion.p>
-            <motion.p variants={fadeUp} className="mt-5 text-[15px] font-light leading-relaxed text-muted-foreground">
+            <motion.p variants={fadeUp} className="mt-5 max-w-2xl text-[15px] font-light leading-relaxed text-muted-foreground">
               Purins d'ortie et de prêle et jus d'algues renforcent les défenses de la vigne. Le cuivre (bouillie
               bordelaise) et le soufre n'interviennent qu'en cas de forte pression de mildiou ou d'oïdium. Au chai,
               le domaine suit toujours un cahier des charges élaboré au début des années 1970 : pressurage
@@ -45,6 +46,7 @@ export function Cellar() {
           </motion.div>
         </div>
 
+        {images.cellar && (
         <motion.div
           className="relative aspect-[4/5] overflow-hidden"
           initial={{ opacity: 0, scale: 0.97 }}
@@ -61,6 +63,7 @@ export function Cellar() {
           />
           <div aria-hidden className="absolute inset-0 ring-1 ring-inset ring-foreground/10" />
         </motion.div>
+        )}
       </div>
     </section>
   )

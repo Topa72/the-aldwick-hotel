@@ -1,7 +1,6 @@
 import { motion } from "motion/react"
 import { ArrowRight } from "lucide-react"
 
-import { SmartImage } from "@/components/smart-image"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { heroChips } from "@/data/content"
@@ -16,30 +15,40 @@ const rise = (delay: number) => ({
 
 export function Hero() {
   return (
-    <section id="top" className="relative flex min-h-[100svh] w-full overflow-hidden" aria-label="Accueil">
-      <SmartImage
-        src={images.hero}
-        alt="Les coteaux de vigne du domaine au crépuscule"
-        className="absolute inset-0 h-full w-full object-cover object-center"
-        fetchPriority="high"
-      />
+    <section
+      id="top"
+      className="relative flex min-h-[100svh] w-full flex-col items-center overflow-hidden px-5 pb-[8vh] pt-28 text-center"
+      aria-label="Accueil"
+    >
       <div
         aria-hidden
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(to bottom, rgba(19,24,31,0.7) 0%, rgba(19,24,31,0.1) 35%, rgba(19,24,31,0.1) 60%, rgba(19,24,31,0.92) 100%)",
+            "radial-gradient(ellipse 70% 55% at 50% 38%, rgba(201,165,90,0.16), transparent 70%), linear-gradient(to bottom, #13181f, #171c24 60%, #13181f)",
         }}
       />
 
-      <div className="relative z-10 mt-auto flex w-full flex-col items-center px-5 pb-[8vh] pt-32 text-center">
+      {images.range && (
+        <motion.img
+          src={images.range}
+          alt="Les sept cuvées du Vignoble Dauny : Pynoz et Cuvée Romble rouges, Les Caillottes, Terres Blanches, Clos du Roy et Cuvée Romble blancs, Pynoz rosé"
+          fetchPriority="high"
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.2, ease }}
+          className="relative z-10 mt-auto max-h-[40vh] w-full max-w-4xl object-contain drop-shadow-[0_30px_40px_rgba(0,0,0,0.55)]"
+        />
+      )}
+
+      <div className="relative z-10 mt-10 flex w-full flex-col items-center">
         <motion.p {...rise(0)} className="label text-accent">
           Sancerre · Crézancy-en-Sancerre
         </motion.p>
 
         <motion.h1
           {...rise(0.15)}
-          className="display mt-6 text-[clamp(62px,9vw,135px)] leading-[0.88] text-foreground"
+          className="display mt-6 text-[clamp(52px,7.5vw,112px)] leading-[0.88] text-foreground"
         >
           Vignerons
           <br />

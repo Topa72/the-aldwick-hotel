@@ -48,6 +48,7 @@ function Tile({ item, index, fill }: { item: GalleryItem; index: number; fill: b
 }
 
 export function Gallery() {
+  if (gallery.length === 0) return null
   return (
     <section className="bg-surface py-24 md:py-36" aria-labelledby="gallery-title">
       <div className="container">
