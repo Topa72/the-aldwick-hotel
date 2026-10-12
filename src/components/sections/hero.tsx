@@ -32,7 +32,7 @@ export function Hero() {
       {images.range && (
         <motion.img
           src={images.range}
-          alt="Les sept cuvées du Vignoble Dauny : Pynoz et Cuvée Romble rouges, Les Caillottes, Terres Blanches, Clos du Roy et Cuvée Romble blancs, Pynoz rosé"
+          alt={images.rangeAlt}
           fetchPriority="high"
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
