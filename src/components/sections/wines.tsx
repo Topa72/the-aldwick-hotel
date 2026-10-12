@@ -144,8 +144,16 @@ export function Wines() {
                     </ul>
                   )}
 
-                  <div className="mt-8 border-t border-border pt-6">
-                    <dl className="grid min-w-0 grid-cols-[auto_1fr] gap-x-6 gap-y-2.5 text-sm">
+                  <div className="mt-8 flex gap-6 border-t border-border pt-6">
+                    {wine.photo && (
+                      <img
+                        src={wine.photo}
+                        alt={`Bouteille de ${wine.appellation} ${wine.name}`}
+                        loading="lazy"
+                        className="hidden w-24 shrink-0 self-start bg-white sm:block"
+                      />
+                    )}
+                    <dl className="grid min-w-0 flex-1 grid-cols-[auto_1fr] gap-x-6 gap-y-2.5 text-sm">
                       {wine.sheet.map((row) => (
                         <div key={row.label} className="contents">
                           <dt className="label pt-0.5 text-muted-foreground">{row.label}</dt>
