@@ -8,13 +8,19 @@ export const estate = {
   mapQuery: "Vignoble Dauny, 8 Rue Corbossier, Champtin, 18300 Crézancy-en-Sancerre" as string | null,
 } as const
 
+/** Where the contact form's messages go (forwarded by formsubmit.co, see src/components/contact-form.tsx). */
+export const contact = {
+  email: "",
+  subject: "Message depuis le site du Vignoble Dauny",
+} as const
+
 /** Mentions légales (LCEN) — update the host if the site moves. */
 export const legal = {
   publisher: "Vignoble Dauny (EARL), Champtin, 8 rue Corbossier, 18300 Crézancy-en-Sancerre · 02 48 79 05 75",
   director: "Vignoble Dauny",
   host: "itiConseil, Nevers",
   privacy:
-    "Ce site ne dépose lui-même aucun cookie, ne contient pas de formulaire et ne collecte aucune donnée personnelle. Les polices sont hébergées avec le site. La carte de la section Visites est fournie par Google Maps, qui applique sa propre politique de confidentialité.",
+    "Ce site ne dépose lui-même aucun cookie. Les informations saisies dans le formulaire de contact (nom, prénom, téléphone, e-mail, message) servent uniquement à répondre à votre demande : elles sont transmises par e-mail au domaine via le service FormSubmit, ne sont pas conservées sur le site et ne sont jamais cédées. Vous pouvez demander leur suppression en nous écrivant. La carte de la section Visites est fournie par Google Maps, qui applique sa propre politique de confidentialité.",
 } as const
 
 export const navLinks = [

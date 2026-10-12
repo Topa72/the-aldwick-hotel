@@ -1,6 +1,7 @@
 import { motion } from "motion/react"
-import { Clock, MapPin, Navigation } from "lucide-react"
+import { Clock, Mail, MapPin, Navigation } from "lucide-react"
 
+import { ContactForm } from "@/components/contact-form"
 import { GoldRule } from "@/components/gold-rule"
 import { SectionHeading } from "@/components/section-heading"
 import { Button } from "@/components/ui/button"
@@ -37,40 +38,6 @@ export function Visit() {
               </a>
             </address>
           </motion.div>
-
-          {mapQuery && (
-            <motion.div variants={fadeUp} {...inView} className="mt-10">
-              <div className="relative aspect-[4/3] overflow-hidden border border-border bg-surface">
-                <iframe
-                  title={`Plan d'accès : ${estate.name}`}
-                  src={`https://maps.google.com/maps?q=${mapQuery}&z=14&hl=fr&output=embed`}
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  className="absolute inset-0 h-full w-full border-0"
-                />
-              </div>
-              <div className="mt-4 flex flex-wrap gap-3">
-                <Button asChild variant="gold" size="sm">
-                  <a
-                    href={`https://www.google.com/maps/dir/?api=1&destination=${mapQuery}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Navigation /> Itinéraire
-                  </a>
-                </Button>
-                <Button asChild variant="gold-outline" size="sm">
-                  <a
-                    href={`https://www.google.com/maps/search/?api=1&query=${mapQuery}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <MapPin /> Ouvrir dans Google Maps
-                  </a>
-                </Button>
-              </div>
-            </motion.div>
-          )}
         </div>
 
         <div className="flex flex-col gap-14 lg:col-span-7">
@@ -104,6 +71,58 @@ export function Visit() {
             ))}
           </motion.ul>
         </div>
+      </div>
+
+      <div className="container mt-20 grid gap-16 md:mt-28 lg:grid-cols-12">
+        {mapQuery && (
+          <motion.div variants={fadeUp} {...inView} className="flex flex-col lg:col-span-5">
+            <div className="relative aspect-[4/3] overflow-hidden border border-border bg-surface lg:aspect-auto lg:min-h-[360px] lg:flex-1">
+              <iframe
+                title={`Plan d'accès : ${estate.name}`}
+                src={`https://maps.google.com/maps?q=${mapQuery}&z=14&hl=fr&output=embed`}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                className="absolute inset-0 h-full w-full border-0"
+              />
+            </div>
+            <div className="mt-4 flex flex-wrap gap-3">
+              <Button asChild variant="gold" size="sm">
+                <a
+                  href={`https://www.google.com/maps/dir/?api=1&destination=${mapQuery}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Navigation /> Itinéraire
+                </a>
+              </Button>
+              <Button asChild variant="gold-outline" size="sm">
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${mapQuery}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <MapPin /> Ouvrir dans Google Maps
+                </a>
+              </Button>
+            </div>
+          </motion.div>
+        )}
+
+        <motion.div
+          id="contact"
+          variants={fadeUp}
+          {...inView}
+          className={mapQuery ? "lg:col-span-7" : "lg:col-span-8 lg:col-start-3"}
+        >
+          <div className="flex items-center gap-3">
+            <Mail className="h-5 w-5 text-accent" strokeWidth={1.25} aria-hidden />
+            <h3 className="display text-4xl text-foreground">Nous écrire</h3>
+          </div>
+          <GoldRule className="mt-4 w-12" delay={0.2} />
+          <div className="mt-8">
+            <ContactForm />
+          </div>
+        </motion.div>
       </div>
     </section>
   )
