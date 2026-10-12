@@ -33,5 +33,5 @@ Le contenu reprend le site officiel vignobledauny.fr (histoire, vigne et bio, fi
 - **Médailles** : palmarès du site officiel, arrêté en 2020. À compléter avec les médailles plus récentes.
 - **Répartition des ventes** : la page française indique 30 / 45 / 25 %, la page anglaise 35 / 30 / 35 %. La version française est utilisée.
 - **Cuvées** : gamme et fiches techniques du site officiel (2 rouges, 4 blancs, 1 rosé). Les fiches des blancs sont complètes ; celles des rouges et du rosé viennent de la recherche web.
-- **Bouteilles 3D** : les 4 blancs portent leurs vraies étiquettes et teintes de verre, extraites des photos du site (`public/labels`, `public/bottles`). Rouges et rosé : étiquettes dessinées en attendant leurs photos.
+- **Bouteilles** : les 4 blancs sont les vraies photos du site, détourées (`public/bottles/*-cutout.png`) et posées sur le plateau tournant. Si une photo ne charge pas, une bouteille 3D avec la vraie étiquette (`public/labels`) prend le relais. Rouges et rosé : bouteilles 3D dessinées en attendant leurs photos.
 - **Photos** : images Unsplash provisoires, à remplacer par celles du domaine dans `src/data/images.ts`.

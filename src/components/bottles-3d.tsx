@@ -155,6 +155,44 @@ function shadowTexture() {
   return new THREE.CanvasTexture(c)
 }
 
+/** Photographed bottle (background removed), always facing the camera. */
+function buildPhotoBottle(src: string, index: number, shadowTex: THREE.Texture, fallback: () => THREE.Group) {
+  const bottle = new THREE.Group()
+  const material = new THREE.SpriteMaterial({ transparent: true, alphaTest: 0.3, toneMapped: false })
+  const sprite = new THREE.Sprite(material)
+  sprite.center.set(0.5, 0)
+  sprite.visible = false
+  new THREE.TextureLoader().load(
+    src,
+    (tex) => {
+      tex.colorSpace = THREE.SRGBColorSpace
+      tex.anisotropy = 8
+      material.map = tex
+      material.needsUpdate = true
+      // Cut-outs are exported at 2× a 470 px-tall reference bottle (3 units high).
+      const h = (3 * tex.image.height) / 2 / 470
+      sprite.scale.set((h * tex.image.width) / tex.image.height, h, 1)
+      sprite.visible = true
+    },
+    undefined,
+    () => {
+      // If the photo cannot load, show the modelled bottle instead.
+      bottle.remove(sprite)
+      bottle.add(...fallback().children)
+    },
+  )
+  const shadow = new THREE.Mesh(
+    new THREE.PlaneGeometry(1.5, 1.5),
+    new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false }),
+  )
+  shadow.rotation.x = -Math.PI / 2
+  shadow.position.y = 0.001
+  bottle.add(shadow, sprite)
+  bottle.userData.photo = true
+  bottle.traverse((o) => (o.userData.index = index))
+  return bottle
+}
+
 function buildBottle(spec: BottleSpec, estateName: string, index: number, shadowTex: THREE.Texture) {
   const look = spec.look
   const p = { ...palette[spec.style], ...look?.colors }
@@ -292,7 +330,9 @@ export default function Bottles3D({ bottles, estateName, selected, onSelect }: P
     scene.add(ring)
     const shadowTex = shadowTexture()
     const items = bottles.map((spec, i) => {
-      const b = buildBottle(spec, estateName, i, shadowTex)
+      const b = spec.look?.cutout
+        ? buildPhotoBottle(spec.look.cutout, i, shadowTex, () => buildBottle(spec, estateName, i, shadowTex))
+        : buildBottle(spec, estateName, i, shadowTex)
       const a = i * step
       b.position.set(Math.sin(a) * RING_RADIUS, 0, Math.cos(a) * RING_RADIUS)
       b.rotation.y = a
@@ -326,7 +366,7 @@ export default function Bottles3D({ bottles, estateName, selected, onSelect }: P
       if (disposed) return
       items.forEach((b, i) => {
         const label = b.children[3] as THREE.Mesh<THREE.BufferGeometry, THREE.MeshStandardMaterial>
-        if (label.userData.realLabel) return
+        if (!label || b.userData.photo || label.userData.realLabel) return
         label.material.map?.dispose()
         label.material.map = labelTexture(bottles[i], estateName)
         label.material.needsUpdate = true
@@ -444,8 +484,9 @@ export default function Bottles3D({ bottles, estateName, selected, onSelect }: P
       el.removeEventListener("pointerup", onUp)
       el.removeEventListener("pointercancel", onUp)
       scene.traverse((o) => {
-        if (o instanceof THREE.Mesh) {
-          o.geometry.dispose()
+        if (o instanceof THREE.Mesh || o instanceof THREE.Sprite) {
+          // Sprites share one geometry across the app, so only meshes free theirs.
+          if (o instanceof THREE.Mesh) o.geometry.dispose()
           const m = o.material as THREE.MeshStandardMaterial
           m.map?.dispose()
           m.dispose()
