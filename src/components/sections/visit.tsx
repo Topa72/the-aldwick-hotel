@@ -1,10 +1,13 @@
 import { motion } from "motion/react"
-import { Clock, MapPin } from "lucide-react"
+import { Clock, MapPin, Navigation } from "lucide-react"
 
 import { GoldRule } from "@/components/gold-rule"
 import { SectionHeading } from "@/components/section-heading"
+import { Button } from "@/components/ui/button"
 import { estate, openingHours, visitInfo } from "@/data/content"
 import { fadeUp, inView, stagger } from "@/lib/motion"
+
+const mapQuery = estate.mapQuery && encodeURIComponent(estate.mapQuery)
 
 export function Visit() {
   return (
@@ -34,6 +37,40 @@ export function Visit() {
               </a>
             </address>
           </motion.div>
+
+          {mapQuery && (
+            <motion.div variants={fadeUp} {...inView} className="mt-10">
+              <div className="relative aspect-[4/3] overflow-hidden border border-border bg-surface">
+                <iframe
+                  title={`Plan d'accès : ${estate.name}`}
+                  src={`https://maps.google.com/maps?q=${mapQuery}&z=14&hl=fr&output=embed`}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  className="absolute inset-0 h-full w-full border-0"
+                />
+              </div>
+              <div className="mt-4 flex flex-wrap gap-3">
+                <Button asChild variant="gold" size="sm">
+                  <a
+                    href={`https://www.google.com/maps/dir/?api=1&destination=${mapQuery}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Navigation /> Itinéraire
+                  </a>
+                </Button>
+                <Button asChild variant="gold-outline" size="sm">
+                  <a
+                    href={`https://www.google.com/maps/search/?api=1&query=${mapQuery}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <MapPin /> Ouvrir dans Google Maps
+                  </a>
+                </Button>
+              </div>
+            </motion.div>
+          )}
         </div>
 
         <div className="flex flex-col gap-14 lg:col-span-7">

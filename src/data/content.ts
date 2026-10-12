@@ -4,6 +4,8 @@ export const estate = {
   phone: "02 48 79 05 75",
   phoneHref: "tel:+33248790575",
   website: "https://www.vignobledauny.fr/",
+  /** What Google Maps searches for, for the map and the directions link; null hides the map. */
+  mapQuery: "Vignoble Dauny, 8 Rue Corbossier, Champtin, 18300 Crézancy-en-Sancerre" as string | null,
 } as const
 
 /** Mentions légales (LCEN) — update the host if the site moves. */
@@ -12,7 +14,7 @@ export const legal = {
   director: "Vignoble Dauny",
   host: "itiConseil, Nevers",
   privacy:
-    "Ce site ne dépose aucun cookie, ne contient pas de formulaire et ne collecte aucune donnée personnelle. Les polices sont hébergées avec le site.",
+    "Ce site ne dépose lui-même aucun cookie, ne contient pas de formulaire et ne collecte aucune donnée personnelle. Les polices sont hébergées avec le site. La carte de la section Visites est fournie par Google Maps, qui applique sa propre politique de confidentialité.",
 } as const
 
 export const navLinks = [
@@ -95,7 +97,7 @@ export const wines: Wine[] = [
       "Ce Sancerre rouge issu du cépage Pinot Noir, de garde moyenne (4 à 7 ans), est un vin léger au bouquet agréable. Il se marie très bien avec les viandes blanches, les gibiers à plumes et les fromages.",
     photo: asset("bottles/pynoz-rouge.jpg"),
     look: {
-      label: { src: asset("labels/pynoz-rouge.jpg"), y: 0.6, height: 0.69, arc: 2.28 },
+      label: { src: asset("labels/pynoz-rouge.jpg"), y: 0.6, height: 0.68, arc: 2.11 },
       colors: { glass: 0x2a1210, glassOpacity: 0.82, wine: 0x3a0a0c, capsule: 0x1e1a19 },
     },
     sheet: [
@@ -128,7 +130,7 @@ export const wines: Wine[] = [
       "Ce Sancerre rouge élevé en fûts de chêne est issu de vieilles vignes. C'est un vin de garde avec des tanins fins et souples. Il accompagnera à merveille les viandes rouges et les fromages.",
     photo: asset("bottles/romble-rouge.jpg"),
     look: {
-      label: { src: asset("labels/romble-rouge.png"), shape: "diamond", y: 0.68, height: 0.86, arc: 2.54 },
+      label: { src: asset("labels/romble-rouge.png"), shape: "diamond", y: 0.68, height: 0.81, arc: 2.33 },
       colors: { glass: 0x1c1210, glassOpacity: 0.85, wine: 0x2a0a0a, capsule: 0x4c3428 },
       widthScale: 1.06,
     },
@@ -279,7 +281,7 @@ export const wines: Wine[] = [
       "Séduisant par son originalité et son bouquet fin et élégant, ce Sancerre rosé est désaltérant et plutôt vin d'été, qui s'associe bien avec les hors d'œuvres, charcuteries, viandes grillées et menus exotiques.",
     photo: asset("bottles/pynoz-rose.jpg"),
     look: {
-      label: { src: asset("labels/pynoz-rose.jpg"), y: 0.61, height: 0.68, arc: 2.18 },
+      label: { src: asset("labels/pynoz-rose.jpg"), y: 0.61, height: 0.68, arc: 2.1 },
       colors: { glass: 0xf2efe8, glassOpacity: 0.2, wine: 0xc8441a, capsule: 0x16181b },
     },
     sheet: [

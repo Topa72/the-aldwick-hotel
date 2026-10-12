@@ -1,4 +1,4 @@
-import { lazy, Suspense, useMemo, useState } from "react"
+import { lazy, Suspense, useEffect, useMemo, useState } from "react"
 import { AnimatePresence, motion } from "motion/react"
 import { ArrowLeft, ArrowRight } from "lucide-react"
 
@@ -7,6 +7,7 @@ import { SectionHeading } from "@/components/section-heading"
 import { awardsContest, estate, packagingNote, wineGroups, wines, type WineStyle } from "@/data/content"
 import { ease, fadeUp, inView } from "@/lib/motion"
 import { cn } from "@/lib/utils"
+import { onShowWine } from "@/lib/wine-nav"
 
 const Bottles3D = lazy(() => import("@/components/bottles-3d"))
 
@@ -22,6 +23,16 @@ export function Wines() {
   const group = wineGroups.find((g) => g.style === style)!
   const list = byStyle[style]
   const wine = list[selected] ?? list[0]
+
+  // The navigation menu can open a given cuvée directly.
+  useEffect(
+    () =>
+      onShowWine(({ style: nextStyle, index }) => {
+        setStyle(nextStyle)
+        setSelected(index)
+      }),
+    [],
+  )
 
   const pickStyle = (next: WineStyle) => {
     if (next === style) return

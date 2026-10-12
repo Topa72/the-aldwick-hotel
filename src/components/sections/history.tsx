@@ -9,7 +9,7 @@ export function History() {
   return (
     <section id="domaine" className="py-24 md:py-36" aria-labelledby="domaine-title">
       <div className="container">
-        <div className="grid items-end gap-12 lg:grid-cols-12 lg:gap-16">
+        <div className="grid items-start gap-12 lg:grid-cols-12 lg:gap-16">
           <div className="lg:col-span-5">
             <SectionHeading id="domaine-title" eyebrow="Le Domaine" title="Une famille, un coteau" />
             <motion.p

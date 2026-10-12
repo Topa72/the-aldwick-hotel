@@ -303,7 +303,7 @@ export default function Bottles3D({ bottles, estateName, selected, onSelect }: P
     scene.add(key, rim, new THREE.AmbientLight(0xffffff, 0.25))
 
     const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 50)
-    const lookAt = new THREE.Vector3(0, 1.45, 1.1)
+    const lookAt = new THREE.Vector3(0, 1.52, 1.1)
 
     const ring = new THREE.Group()
     scene.add(ring)
@@ -356,7 +356,7 @@ export default function Bottles3D({ bottles, estateName, selected, onSelect }: P
       renderer.setSize(w, h)
       camera.aspect = w / h
       // Pull back on narrow screens so the front bottle always fits.
-      const dist = camera.aspect < 0.8 ? 7.4 : 5.9
+      const dist = camera.aspect < 0.8 ? 7.4 : 6.4
       camera.position.set(0, 1.75, RING_RADIUS + dist)
       camera.lookAt(lookAt)
       camera.updateProjectionMatrix()
