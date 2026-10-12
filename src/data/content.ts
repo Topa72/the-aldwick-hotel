@@ -27,7 +27,7 @@ export const navLinks = [
   { label: "Le Domaine", href: "#domaine" },
   { label: "Nos Vins", href: "#vins" },
   { label: "Où trouver nos vins", href: "#ou-trouver" },
-  { label: "Visites", href: "#visites" },
+  { label: "Nous rendre visite", href: "#visites" },
 ] as const
 
 export const heroChips = ["Sancerre AOC", "Bio depuis 1964", "17 hectares", "7 cuvées", "Champtin"] as const

@@ -108,21 +108,19 @@ export function Visit() {
           </motion.div>
         )}
 
-        <motion.div
-          id="contact"
-          variants={fadeUp}
-          {...inView}
-          className={mapQuery ? "lg:col-span-7" : "lg:col-span-8 lg:col-start-3"}
-        >
-          <div className="flex items-center gap-3">
-            <Mail className="h-5 w-5 text-accent" strokeWidth={1.25} aria-hidden />
-            <h3 className="display text-4xl text-foreground">Nous écrire</h3>
-          </div>
-          <GoldRule className="mt-4 w-12" delay={0.2} />
-          <div className="mt-8">
-            <ContactForm />
-          </div>
-        </motion.div>
+        {/* The anchor sits outside the fade-in, so "Contactez-nous" links land below the header. */}
+        <div id="contact" className={mapQuery ? "lg:col-span-7" : "lg:col-span-8 lg:col-start-3"}>
+          <motion.div variants={fadeUp} {...inView}>
+            <div className="flex items-center gap-3">
+              <Mail className="h-5 w-5 text-accent" strokeWidth={1.25} aria-hidden />
+              <h3 className="display text-4xl text-foreground">Contactez-nous</h3>
+            </div>
+            <GoldRule className="mt-4 w-12" delay={0.2} />
+            <div className="mt-8">
+              <ContactForm />
+            </div>
+          </motion.div>
+        </div>
       </div>
     </section>
   )

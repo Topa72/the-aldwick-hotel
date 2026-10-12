@@ -143,8 +143,8 @@ export function Navbar() {
             )}
           </ul>
           <Button asChild variant="gold-outline" size="sm">
-            <a href="#visites">
-              Nous rendre visite <ArrowRight />
+            <a href="#contact">
+              Contactez-nous <ArrowRight />
             </a>
           </Button>
         </div>
@@ -201,8 +201,8 @@ export function Navbar() {
             </ul>
             <SheetClose asChild>
               <Button asChild variant="gold" className="mt-auto w-full">
-                <a href="#visites">
-                  Nous rendre visite <ArrowRight />
+                <a href="#contact">
+                  Contactez-nous <ArrowRight />
                 </a>
               </Button>
             </SheetClose>
