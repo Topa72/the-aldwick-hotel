@@ -2,6 +2,7 @@ import { lazy, Suspense, useMemo, useState } from "react"
 import { AnimatePresence, motion } from "motion/react"
 import { ArrowLeft, ArrowRight } from "lucide-react"
 
+import { PhotoLightbox } from "@/components/photo-lightbox"
 import { SectionHeading } from "@/components/section-heading"
 import { awardsContest, estate, packagingNote, wineGroups, wines, type WineStyle } from "@/data/content"
 import { ease, fadeUp, inView } from "@/lib/motion"
@@ -144,13 +145,12 @@ export function Wines() {
                     </ul>
                   )}
 
-                  <div className="mt-8 flex gap-6 border-t border-border pt-6">
+                  <div className="mt-8 flex flex-col gap-6 border-t border-border pt-6 sm:flex-row">
                     {wine.photo && (
-                      <img
+                      <PhotoLightbox
                         src={wine.photo}
                         alt={`Bouteille de ${wine.appellation} ${wine.name}`}
-                        loading="lazy"
-                        className="hidden w-24 shrink-0 self-start bg-white sm:block"
+                        className="w-24"
                       />
                     )}
                     <dl className="grid min-w-0 flex-1 grid-cols-[auto_1fr] gap-x-6 gap-y-2.5 text-sm">
