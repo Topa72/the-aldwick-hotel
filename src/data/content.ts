@@ -24,6 +24,9 @@ export const navLinks = [
 
 export const heroChips = ["Sancerre AOC", "Bio depuis 1964", "17 hectares", "7 cuvées", "Champtin"] as const
 
+export const domaineIntro =
+  "Depuis 1683, la famille Dauny cultive la vigne sur les coteaux de Champtin. Le domaine vous accueille au caveau, Champtin, 8 rue Corbossier, à Crézancy-en-Sancerre."
+
 export const history = [
   {
     year: "1683",

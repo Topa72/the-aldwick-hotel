@@ -1,7 +1,7 @@
 import { motion } from "motion/react"
 
 import { SectionHeading } from "@/components/section-heading"
-import { estate, history } from "@/data/content"
+import { domaineIntro, history } from "@/data/content"
 import { images } from "@/data/images"
 import { ease, fadeUp, inView, stagger } from "@/lib/motion"
 
@@ -17,8 +17,7 @@ export function History() {
               {...inView}
               className="mt-10 max-w-md text-[17px] font-light leading-relaxed text-muted-foreground"
             >
-              Depuis 1683, la famille Dauny cultive la vigne sur les coteaux de Champtin. Le domaine vous accueille au
-              caveau, {estate.address[0]}, à Crézancy-en-Sancerre.
+              {domaineIntro}
             </motion.p>
           </div>
 
@@ -40,7 +39,7 @@ export function History() {
                 />
                 <div aria-hidden className="absolute inset-0 ring-1 ring-inset ring-foreground/10" />
               </div>
-              <figcaption className="label mt-4 text-muted-foreground">Le domaine à Champtin</figcaption>
+              <figcaption className="label mt-4 text-muted-foreground">{images.facadeCaption}</figcaption>
             </motion.figure>
           )}
         </div>
