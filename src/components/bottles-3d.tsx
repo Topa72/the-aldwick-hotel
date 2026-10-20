@@ -4,7 +4,7 @@ import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js"
 import { mergeVertices } from "three/examples/jsm/utils/BufferGeometryUtils.js"
 
-import bottleObj from "@/assets/models/bouteille-sancerre.obj?raw"
+import bottleObj from "@/assets/models/bouteille-vin.obj?raw"
 
 import type { BottleLook, WineStyle } from "@/data/content"
 
@@ -34,13 +34,15 @@ const palette: Record<WineStyle, { glass: number; glassOpacity: number; wine: nu
   rouge: { glass: 0x2c4228, glassOpacity: 0.72, wine: 0x4a0d18, capsule: 0x5a1a26, label: "Rouge" },
 }
 
-// The Sancerre bottle model is in millimetres with Z up: 460 mm tall, 40 mm body radius.
-const MODEL_HEIGHT_MM = 460
+// The bottle model (bouteille-vin.obj) is Y up, in its own units: base at y = -188.66, top at 193.50,
+// 48.22 body radius; its capsule covers the neck from y = 136.3 up.
+const MODEL_BASE_Y = -188.66
+const MODEL_HEIGHT = 193.5 - MODEL_BASE_Y
+const MODEL_CAPSULE_Y = 136.3
 const BOTTLE_HEIGHT = 3
-const MODEL_SCALE = BOTTLE_HEIGHT / MODEL_HEIGHT_MM
-// Widens the model without changing its height: 1 keeps the model as drawn, 1.47 matches the studio photos of the 75 cl bottles.
-const WIDTH_FACTOR = 1.47
-const BODY_RADIUS = 40 * MODEL_SCALE * WIDTH_FACTOR
+const MODEL_SCALE = BOTTLE_HEIGHT / MODEL_HEIGHT
+const BODY_RADIUS = 48.22 * MODEL_SCALE
+const CAPSULE_Y = (MODEL_CAPSULE_Y - MODEL_BASE_Y) * MODEL_SCALE
 // Label sizes were measured on the studio photos, on a bottle 3 units tall with a 0.4 radius.
 const PHOTO_RADIUS = 0.4
 // The wine fills the bottle up to the neck.
@@ -48,19 +50,30 @@ const FILL_HEIGHT = 0.78 * BOTTLE_HEIGHT
 
 let bottleGeometry: THREE.BufferGeometry | null = null
 
-/** The bottle shell from the model, Y up, scaled to BOTTLE_HEIGHT, with smooth normals. */
+/**
+ * The bottle from the model, standing on y = 0 and scaled to BOTTLE_HEIGHT, keeping the model's own
+ * normals. Its triangles are split in two groups: glass (material 0), then the capsule (material 1).
+ */
 function modelGeometry() {
   if (bottleGeometry) return bottleGeometry
   const obj = new OBJLoader().parse(bottleObj)
   const shell = obj.children.find((c) => c.name === "Bouteille") as THREE.Mesh
-  let g = shell.geometry.clone()
-  g.deleteAttribute("normal")
-  g.deleteAttribute("uv")
-  g = mergeVertices(g, 1e-4)
-  g.scale(MODEL_SCALE * WIDTH_FACTOR, MODEL_SCALE * WIDTH_FACTOR, MODEL_SCALE)
-  // Z up → Y up; the model's front (−Y) now faces +Z, towards the camera.
-  g.rotateX(-Math.PI / 2)
-  g.computeVertexNormals()
+  const g = mergeVertices(shell.geometry, 1e-4)
+  g.translate(0, -MODEL_BASE_Y, 0)
+  g.scale(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE)
+
+  const pos = g.getAttribute("position")
+  const index = g.getIndex()!.array
+  const glass: number[] = []
+  const capsule: number[] = []
+  for (let t = 0; t < index.length; t += 3) {
+    const tri = [index[t], index[t + 1], index[t + 2]]
+    const y = (pos.getY(tri[0]) + pos.getY(tri[1]) + pos.getY(tri[2])) / 3
+    ;(y > CAPSULE_Y ? capsule : glass).push(...tri)
+  }
+  g.setIndex([...glass, ...capsule])
+  g.addGroup(0, glass.length, 0)
+  g.addGroup(glass.length, capsule.length, 1)
   bottleGeometry = g
   return g
 }
@@ -181,8 +194,13 @@ function buildBottle(spec: BottleSpec, estateName: string, index: number, shadow
   const p = { ...palette[spec.style], ...look?.colors }
   const bottle = new THREE.Group()
 
-  const glass = new THREE.Mesh(
-    tintedBottle(p.wine, p.glass, p.glassOpacity),
+  // Real bottles here carry a matte dark capsule; drawn ones a metallic foil.
+  const capsuleMat = new THREE.MeshStandardMaterial({
+    color: p.capsule,
+    metalness: look?.colors?.capsule !== undefined ? 0.3 : 0.85,
+    roughness: look?.colors?.capsule !== undefined ? 0.5 : 0.32,
+  })
+  const glass = new THREE.Mesh(tintedBottle(p.wine, p.glass, p.glassOpacity), [
     new THREE.MeshPhysicalMaterial({
       vertexColors: true,
       roughness: 0.08,
@@ -192,7 +210,8 @@ function buildBottle(spec: BottleSpec, estateName: string, index: number, shadow
       transparent: true,
       envMapIntensity: 1.2,
     }),
-  )
+    capsuleMat,
+  ])
   glass.renderOrder = 1
 
   const real = look?.label
@@ -235,19 +254,6 @@ function buildBottle(spec: BottleSpec, estateName: string, index: number, shadow
     )
   }
 
-  // Real bottles here carry a matte dark capsule; drawn ones a metallic foil.
-  const capsuleMat = new THREE.MeshStandardMaterial({
-    color: p.capsule,
-    metalness: look?.colors?.capsule !== undefined ? 0.3 : 0.85,
-    roughness: look?.colors?.capsule !== undefined ? 0.5 : 0.32,
-  })
-  const capsuleHeight = 0.45
-  const lip = 18 * MODEL_SCALE * WIDTH_FACTOR
-  const capsule = new THREE.Mesh(new THREE.CylinderGeometry(lip + 0.006, 16 * MODEL_SCALE * WIDTH_FACTOR + 0.006, capsuleHeight, 48), capsuleMat)
-  capsule.position.y = BOTTLE_HEIGHT - capsuleHeight / 2 + 0.005
-  const capTop = new THREE.Mesh(new THREE.CylinderGeometry(lip + 0.006, lip + 0.006, 0.015, 48), capsuleMat)
-  capTop.position.y = BOTTLE_HEIGHT + 0.0125
-
   const shadow = new THREE.Mesh(
     new THREE.PlaneGeometry(1.1, 1.1),
     new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false }),
@@ -255,7 +261,7 @@ function buildBottle(spec: BottleSpec, estateName: string, index: number, shadow
   shadow.rotation.x = -Math.PI / 2
   shadow.position.y = 0.001
 
-  bottle.add(shadow, glass, label, capsule, capTop)
+  bottle.add(shadow, glass, label)
   bottle.userData.label = label
   bottle.traverse((o) => (o.userData.index = index))
   if (look?.widthScale) bottle.scale.set(look.widthScale, 1, look.widthScale)
@@ -463,9 +469,11 @@ export default function Bottles3D({ bottles, estateName, selected, onSelect }: P
       scene.traverse((o) => {
         if (o instanceof THREE.Mesh) {
           o.geometry.dispose()
-          const m = o.material as THREE.MeshStandardMaterial
-          m.map?.dispose()
-          m.dispose()
+          // The bottle mesh carries two materials (glass, capsule); the others one.
+          for (const m of ([] as THREE.MeshStandardMaterial[]).concat(o.material)) {
+            m.map?.dispose()
+            m.dispose()
+          }
         }
       })
       shadowTex.dispose()
