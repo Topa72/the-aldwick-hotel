@@ -4,16 +4,24 @@ import { ArrowLeft, ArrowRight } from "lucide-react"
 
 import { PhotoLightbox } from "@/components/photo-lightbox"
 import { SectionHeading } from "@/components/section-heading"
-import { awardsContest, estate, packagingNote, wineGroups, wines, type WineStyle } from "@/data/content"
+import { awardsContest, estate, packagingNote, wineGroups, wines, wineSlug, type WineStyle } from "@/data/content"
 import { ease, fadeUp, inView } from "@/lib/motion"
 import { cn } from "@/lib/utils"
-import { onShowWine } from "@/lib/wine-nav"
+import { href, useRoute } from "@/lib/router"
+
+/** The cuvée an anchor names, as its colour and its position within that colour. */
+function findWine(anchor?: string) {
+  const wine = wines.find((w) => wineSlug(w) === anchor)
+  if (!wine) return null
+  return { style: wine.style, index: wines.filter((w) => w.style === wine.style).indexOf(wine) }
+}
 
 const Bottles3D = lazy(() => import("@/components/bottles-3d"))
 
 export function Wines() {
-  const [style, setStyle] = useState<WineStyle>(wineGroups[0].style)
-  const [selected, setSelected] = useState(0)
+  const { anchor } = useRoute()
+  const [style, setStyle] = useState<WineStyle>(() => findWine(anchor)?.style ?? wineGroups[0].style)
+  const [selected, setSelected] = useState(() => findWine(anchor)?.index ?? 0)
 
   // One stable array per colour, so the 3D scene only rebuilds when the colour changes.
   const byStyle = useMemo(
@@ -24,15 +32,13 @@ export function Wines() {
   const list = byStyle[style]
   const wine = list[selected] ?? list[0]
 
-  // The navigation menu can open a given cuvée directly.
-  useEffect(
-    () =>
-      onShowWine(({ style: nextStyle, index }) => {
-        setStyle(nextStyle)
-        setSelected(index)
-      }),
-    [],
-  )
+  // Links can open a given cuvée directly (nos-vins.html#clos-du-roy).
+  useEffect(() => {
+    const pick = findWine(anchor)
+    if (!pick) return
+    setStyle(pick.style)
+    setSelected(pick.index)
+  }, [anchor])
 
   const pickStyle = (next: WineStyle) => {
     if (next === style) return
@@ -143,7 +149,9 @@ export function Wines() {
                           key={`${a.medal}-${a.vintage}`}
                           className={cn(
                             "label inline-flex items-center gap-2 border px-2.5 py-1.5",
-                            a.medal === "Or" ? "border-accent/60 text-accent" : "border-foreground/30 text-foreground/80",
+                            a.medal === "Or"
+                              ? "border-accent/60 text-accent"
+                              : "border-foreground/30 text-foreground/80",
                           )}
                         >
                           <span
@@ -175,7 +183,7 @@ export function Wines() {
                   </div>
 
                   <a
-                    href="#ou-trouver"
+                    href={href("ou-trouver")}
                     className="label mt-8 inline-flex items-center gap-2 text-accent transition-colors hover:text-foreground"
                   >
                     Où trouver ce vin <ArrowRight className="h-3.5 w-3.5" />

@@ -3,9 +3,10 @@ import { ArrowRight } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { heroChips } from "@/data/content"
+import { heroChips, wines, wineSlug } from "@/data/content"
 import { images } from "@/data/images"
 import { ease } from "@/lib/motion"
+import { href } from "@/lib/router"
 
 const rise = (delay: number) => ({
   initial: { opacity: 0, y: 32 },
@@ -30,18 +31,42 @@ export function Hero() {
       />
 
       {images.range && (
-        <motion.img
-          src={images.range}
-          alt={images.rangeAlt}
-          fetchPriority="high"
+        <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.2, ease }}
-          className="relative z-10 mt-auto max-h-[40vh] w-full max-w-4xl object-contain drop-shadow-[0_30px_40px_rgba(0,0,0,0.55)]"
-        />
+          className="relative z-10 mt-auto"
+        >
+          <img
+            src={images.range}
+            alt={images.rangeAlt}
+            fetchPriority="high"
+            className="block max-h-[40vh] w-auto max-w-full drop-shadow-[0_30px_40px_rgba(0,0,0,0.55)]"
+          />
+          {/* The photo shows the cuvées side by side, in the same order as `wines`: each opens its own. */}
+          <ul className="absolute inset-0 grid" style={{ gridTemplateColumns: `repeat(${wines.length}, 1fr)` }}>
+            {wines.map((wine) => (
+              <li key={wineSlug(wine)}>
+                <a
+                  href={href("vins", wineSlug(wine))}
+                  aria-label={`${wine.name}, ${wine.appellation}`}
+                  className="group relative flex h-full justify-center outline-none"
+                >
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 bg-[radial-gradient(closest-side,rgba(201,165,90,0.22),transparent)] opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100"
+                  />
+                  <span className="label pointer-events-none absolute -bottom-9 whitespace-nowrap text-accent opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100">
+                    {wine.name}
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </motion.div>
       )}
 
-      <div className="relative z-10 mt-10 flex w-full flex-col items-center">
+      <div className="relative z-10 mt-16 flex w-full flex-col items-center">
         <motion.p {...rise(0)} className="label text-accent">
           Sancerre · Crézancy-en-Sancerre
         </motion.p>
@@ -65,12 +90,12 @@ export function Hero() {
 
         <motion.div {...rise(0.45)} className="mt-10 flex flex-col gap-3 sm:flex-row sm:gap-4">
           <Button asChild variant="gold" size="lg">
-            <a href="#vins">
+            <a href={href("vins")}>
               Découvrir nos vins <ArrowRight />
             </a>
           </Button>
           <Button asChild variant="ghost" size="lg">
-            <a href="#ou-trouver">Où trouver nos vins</a>
+            <a href={href("ou-trouver")}>Où trouver nos vins</a>
           </Button>
         </motion.div>
 

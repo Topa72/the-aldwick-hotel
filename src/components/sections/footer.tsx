@@ -1,10 +1,11 @@
 import { estate, legal } from "@/data/content"
+import { href } from "@/lib/router"
 
 export function Footer() {
   return (
     <footer className="bg-background py-16">
       <div className="container flex flex-col items-center gap-8 text-center">
-        <a href="#top" className="font-serif text-4xl font-semibold italic text-accent">
+        <a href={href("accueil")} className="font-serif text-4xl font-semibold italic text-accent">
           {estate.name}
         </a>
         <p className="label leading-loose text-foreground/80">

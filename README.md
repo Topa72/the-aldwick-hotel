@@ -13,9 +13,22 @@ npm run preview    # sert le build de production
 
 ## Structure
 
+Le site compte cinq pages, chacune avec son fichier HTML (titre et description propres) :
+
+| Page | Fichier | Sections |
+| --- | --- | --- |
+| Accueil | `index.html` | photo des 7 bouteilles (chacune mène à sa cuvée), accès aux autres pages |
+| Le domaine | `le-domaine.html` | histoire, façade, agriculture biologique |
+| Nos vins | `nos-vins.html` | bouteilles 3D, fiches techniques, médailles |
+| Où trouver nos vins | `ou-trouver-nos-vins.html` | revendeurs, export |
+| Nous rendre visite | `nous-rendre-visite.html` | horaires, carte, formulaire de contact |
+
+Une cuvée s'ouvre directement avec son nom après `#` : `nos-vins.html#clos-du-roy`, `nos-vins.html#pynoz-rose`. Les pages et leurs fichiers sont définis dans `src/lib/router.ts`. `public/ou-trouver-nos-vins/` redirige l'adresse de l'ancien site vers la nouvelle page.
+
 ```
 src/
-  App.tsx                     composition de la page
+  App.tsx                     sections de chaque page
+  lib/router.ts               pages, liens entre pages
   index.css                   tokens de design (variables HSL) + styles typographiques
   data/content.ts             tous les textes : histoire, cuvées, revendeurs, horaires…
   data/images.ts              toutes les photos au même endroit
@@ -27,6 +40,8 @@ src/
 ## Mise en ligne
 
 `npm run build` produit un site statique dans `dist/` : il suffit de déposer **le contenu** de ce dossier à la racine de l'hébergement (ou dans n'importe quel sous-dossier, les chemins sont relatifs). Aucun serveur, base de données ni PHP n'est nécessaire. Polices et images sont hébergées avec le site ; seule la carte de la section Visites est chargée depuis Google Maps (adresse dans `estate.mapQuery`, `src/data/content.ts`) ; `robots.txt` et `sitemap.xml` pointent vers https://www.vignobledauny.fr/.
+
+`VITE_SINGLE_FILE=1 npm run build` produit à la place un seul `index.html` contenant toutes les pages (on passe de l'une à l'autre par `#/vins`, `#/visite/contact`…) : c'est la version d'aperçu à ouvrir sans hébergement, pas celle à mettre en ligne.
 
 Le formulaire de contact (section Visites) n'a pas besoin de serveur : il passe par [FormSubmit](https://formsubmit.co), qui transfère chaque message par e-mail à l'adresse `contact.email` de `src/data/content.ts`. Au tout premier message, FormSubmit envoie à cette adresse un e-mail de confirmation : il faut cliquer sur le lien qu'il contient, ensuite les messages arrivent directement. Tant que `contact.email` est vide, le formulaire affiche une erreur et propose d'appeler le domaine.
 

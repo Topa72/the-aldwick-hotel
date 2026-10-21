@@ -23,11 +23,36 @@ export const legal = {
     "Ce site ne dépose lui-même aucun cookie. Les informations saisies dans le formulaire de contact (nom, prénom, téléphone, e-mail, message) servent uniquement à répondre à votre demande : elles sont transmises par e-mail au domaine via le service FormSubmit, ne sont pas conservées sur le site et ne sont jamais cédées. Vous pouvez demander leur suppression en nous écrivant. La carte de la section Visites est fournie par Google Maps, qui applique sa propre politique de confidentialité.",
 } as const
 
+/** Home page cards leading to the other pages. */
+export const discover = [
+  {
+    page: "domaine",
+    title: "Le domaine",
+    text: "L'histoire de la famille, ses coteaux et une vigne conduite en agriculture biologique.",
+  },
+  {
+    page: "vins",
+    title: "Nos vins",
+    text: "Sept cuvées de Sancerre, rouges, blancs et rosé, avec leurs fiches techniques et leurs médailles.",
+  },
+  {
+    page: "ou-trouver",
+    title: "Où trouver nos vins",
+    text: "Au domaine, chez nos revendeurs en France et dans les pays où nous exportons.",
+  },
+  {
+    page: "visite",
+    title: "Nous rendre visite",
+    text: "Horaires, plan d'accès et formulaire de contact pour préparer votre venue.",
+  },
+] as const
+
+/** The menu's pages (see src/lib/router.ts for their files). */
 export const navLinks = [
-  { label: "Le Domaine", href: "#domaine" },
-  { label: "Nos Vins", href: "#vins" },
-  { label: "Où trouver nos vins", href: "#ou-trouver" },
-  { label: "Nous rendre visite", href: "#visites" },
+  { label: "Le Domaine", page: "domaine" },
+  { label: "Nos Vins", page: "vins" },
+  { label: "Où trouver nos vins", page: "ou-trouver" },
+  { label: "Nous rendre visite", page: "visite" },
 ] as const
 
 export const heroChips = ["Sancerre AOC", "Bio depuis 1964", "17 hectares", "7 cuvées", "Champtin"] as const
@@ -315,6 +340,20 @@ export const packagingNote =
   "Cartons de 6 bouteilles · 11 cartons par couche, 9 couches maximum, panachage possible avec nos autres vins."
 
 /** Order in which the colours are shown: reds, then whites, then rosé. */
+const slugify = (s: string) =>
+  s
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+
+/** A cuvée's name in links (nos-vins.html#clos-du-roy), with its colour when two share a name. */
+export function wineSlug(wine: Wine) {
+  const shared = wines.filter((w) => w.name === wine.name).length > 1
+  return shared ? `${slugify(wine.name)}-${wine.style}` : slugify(wine.name)
+}
+
 export const wineGroups: { style: WineStyle; label: string }[] = [
   { style: "rouge", label: "Rouges" },
   { style: "blanc", label: "Blancs" },

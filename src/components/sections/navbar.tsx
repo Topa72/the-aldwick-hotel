@@ -3,17 +3,15 @@ import { ArrowRight, ChevronDown, Menu } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
-import { estate, navLinks, wineGroups, wines } from "@/data/content"
+import { estate, navLinks, wineGroups, wines, wineSlug } from "@/data/content"
+import { href, useRoute } from "@/lib/router"
 import { cn } from "@/lib/utils"
-import { showWine } from "@/lib/wine-nav"
-
-const WINES_HREF = "#vins"
 
 /** The cuvées of each colour, in the order of the wines section's tabs. */
 const winesByGroup = wineGroups.map((g) => ({ ...g, wines: wines.filter((w) => w.style === g.style) }))
 
 /** Desktop "Nos Vins" entry: opens a panel listing every cuvée by colour. */
-function WinesMenu({ label }: { label: string }) {
+function WinesMenu({ label, current }: { label: string; current: boolean }) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLLIElement>(null)
   // Set when hovering opened the panel, so the click that usually follows keeps it open instead of closing it.
@@ -35,11 +33,6 @@ function WinesMenu({ label }: { label: string }) {
     }
   }, [open])
 
-  const pick = (style: (typeof wineGroups)[number]["style"], index: number) => {
-    showWine({ style, index })
-    setOpen(false)
-  }
-
   return (
     <li
       ref={ref}
@@ -57,13 +50,14 @@ function WinesMenu({ label }: { label: string }) {
         type="button"
         aria-expanded={open}
         aria-controls="menu-vins"
+        aria-current={current ? "page" : undefined}
         onClick={() => {
           if (openedByHover.current) openedByHover.current = false
           else setOpen((o) => !o)
         }}
         className={cn(
           "label inline-flex items-center gap-1.5 transition-colors duration-200 hover:text-accent",
-          open ? "text-accent" : "text-foreground/80",
+          open || current ? "text-accent" : "text-foreground/80",
         )}
       >
         {label}
@@ -75,19 +69,19 @@ function WinesMenu({ label }: { label: string }) {
           {winesByGroup.map((g) => (
             <div key={g.style}>
               <a
-                href={WINES_HREF}
-                onClick={() => pick(g.style, 0)}
+                href={href("vins", wineSlug(g.wines[0]))}
+                onClick={() => setOpen(false)}
                 className="label flex items-baseline justify-between border-b border-border pb-3 text-accent transition-colors hover:text-foreground"
               >
                 {g.label}
                 <span className="tabular-nums text-muted-foreground">{g.wines.length}</span>
               </a>
               <ul className="mt-4 flex flex-col gap-3">
-                {g.wines.map((w, i) => (
+                {g.wines.map((w) => (
                   <li key={w.name}>
                     <a
-                      href={WINES_HREF}
-                      onClick={() => pick(g.style, i)}
+                      href={href("vins", wineSlug(w))}
+                      onClick={() => setOpen(false)}
                       className="font-serif text-xl font-semibold italic leading-tight text-foreground/85 transition-colors hover:text-accent"
                     >
                       {w.name}
@@ -105,6 +99,7 @@ function WinesMenu({ label }: { label: string }) {
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false)
+  const { page } = useRoute()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24)
@@ -121,20 +116,24 @@ export function Navbar() {
       )}
     >
       <nav className="container flex h-[72px] items-center justify-between" aria-label="Navigation principale">
-        <a href="#top" className="font-serif text-[28px] font-semibold italic leading-none text-accent">
+        <a href={href("accueil")} className="font-serif text-[28px] font-semibold italic leading-none text-accent">
           {estate.name}
         </a>
 
         <div className="hidden items-center gap-10 lg:flex">
           <ul className="flex items-center gap-8">
             {navLinks.map((link) =>
-              link.href === WINES_HREF ? (
-                <WinesMenu key={link.href} label={link.label} />
+              link.page === "vins" ? (
+                <WinesMenu key={link.page} label={link.label} current={page === link.page} />
               ) : (
-                <li key={link.href}>
+                <li key={link.page}>
                   <a
-                    href={link.href}
-                    className="label text-foreground/80 transition-colors duration-200 hover:text-accent"
+                    href={href(link.page)}
+                    aria-current={page === link.page ? "page" : undefined}
+                    className={cn(
+                      "label transition-colors duration-200 hover:text-accent",
+                      page === link.page ? "text-accent" : "text-foreground/80",
+                    )}
                   >
                     {link.label}
                   </a>
@@ -143,7 +142,7 @@ export function Navbar() {
             )}
           </ul>
           <Button asChild variant="gold-outline" size="sm">
-            <a href="#contact">
+            <a href={href("visite", "contact")}>
               Contactez-nous <ArrowRight />
             </a>
           </Button>
@@ -163,27 +162,30 @@ export function Navbar() {
             <SheetDescription className="label mt-2 text-muted-foreground">Sancerre · Bio depuis 1964</SheetDescription>
             <ul className="mt-14 flex flex-col">
               {navLinks.map((link) => (
-                <li key={link.href} className="border-b border-border">
+                <li key={link.page} className="border-b border-border">
                   <SheetClose asChild>
                     <a
-                      href={link.href}
-                      className="display block py-5 text-4xl text-foreground transition-colors hover:text-accent"
+                      href={href(link.page)}
+                      aria-current={page === link.page ? "page" : undefined}
+                      className={cn(
+                        "display block py-5 text-4xl transition-colors hover:text-accent",
+                        page === link.page ? "text-accent" : "text-foreground",
+                      )}
                     >
                       {link.label}
                     </a>
                   </SheetClose>
-                  {link.href === WINES_HREF && (
+                  {link.page === "vins" && (
                     <div className="-mt-1 grid grid-cols-3 gap-4 pb-6">
                       {winesByGroup.map((g) => (
                         <div key={g.style}>
                           <p className="label text-accent">{g.label}</p>
                           <ul className="mt-2 flex flex-col gap-1.5">
-                            {g.wines.map((w, i) => (
+                            {g.wines.map((w) => (
                               <li key={w.name}>
                                 <SheetClose asChild>
                                   <a
-                                    href={WINES_HREF}
-                                    onClick={() => showWine({ style: g.style, index: i })}
+                                    href={href("vins", wineSlug(w))}
                                     className="font-serif text-lg font-semibold italic leading-tight text-foreground/80 transition-colors hover:text-accent"
                                   >
                                     {w.name}
@@ -201,7 +203,7 @@ export function Navbar() {
             </ul>
             <SheetClose asChild>
               <Button asChild variant="gold" className="mt-auto w-full">
-                <a href="#contact">
+                <a href={href("visite", "contact")}>
                   Contactez-nous <ArrowRight />
                 </a>
               </Button>
