@@ -1,5 +1,5 @@
 /**
- * Outline of the estate's 75 cl Sancerre bottle, traced from the studio photo of Les Caillottes:
+ * Outline of the estate's 75 cl Sancerre bottle, traced from its studio photo of a white Sancerre:
  * [radius, height] pairs from the base (y = 0) to the top of the capsule (y = 3), turned into
  * the 3D bottle. The body radius (≈ 0.40) is the one the label sizes were measured on.
  */

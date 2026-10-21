@@ -1,5 +1,7 @@
 import { useSyncExternalStore } from "react"
 
+import { estate } from "@/data/content"
+
 /**
  * The site's pages. Online, each is its own HTML file (see the *.html files at the project root),
  * which tells the app which page it is through `<html data-page="…">`. The single-file preview
@@ -8,11 +10,11 @@ import { useSyncExternalStore } from "react"
 export type Page = "accueil" | "domaine" | "vins" | "ou-trouver" | "visite"
 
 export const pages: Record<Page, { file: string; title: string }> = {
-  accueil: { file: "index.html", title: "Vignoble Dauny · Sancerre bio depuis 1964" },
-  domaine: { file: "le-domaine.html", title: "Le domaine · Vignoble Dauny" },
-  vins: { file: "nos-vins.html", title: "Nos vins · Vignoble Dauny" },
-  "ou-trouver": { file: "ou-trouver-nos-vins.html", title: "Où trouver nos vins · Vignoble Dauny" },
-  visite: { file: "nous-rendre-visite.html", title: "Nous rendre visite · Vignoble Dauny" },
+  accueil: { file: "index.html", title: `${estate.name} · ${estate.tagline}` },
+  domaine: { file: "le-domaine.html", title: `Le domaine · ${estate.name}` },
+  vins: { file: "nos-vins.html", title: `Nos vins · ${estate.name}` },
+  "ou-trouver": { file: "ou-trouver-nos-vins.html", title: `Où trouver nos vins · ${estate.name}` },
+  visite: { file: "nous-rendre-visite.html", title: `Nous rendre visite · ${estate.name}` },
 }
 
 const SINGLE_FILE = import.meta.env.VITE_SINGLE_FILE === "1"

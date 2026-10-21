@@ -1,5 +1,6 @@
 export const estate = {
   name: "Vignoble Dauny",
+  tagline: "Sancerre bio depuis 1964",
   address: ["Champtin, 8 rue Corbossier", "18300 Crézancy-en-Sancerre", "France"],
   phone: "02 48 79 05 75",
   phoneHref: "tel:+33248790575",
