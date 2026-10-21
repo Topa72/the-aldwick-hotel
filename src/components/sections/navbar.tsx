@@ -142,7 +142,7 @@ export function Navbar() {
             )}
           </ul>
           <Button asChild variant="gold-outline" size="sm">
-            <a href={href("visite", "contact")}>
+            <a href={href(page, "contact")}>
               Contactez-nous <ArrowRight />
             </a>
           </Button>
@@ -203,7 +203,7 @@ export function Navbar() {
             </ul>
             <SheetClose asChild>
               <Button asChild variant="gold" className="mt-auto w-full">
-                <a href={href("visite", "contact")}>
+                <a href={href(page, "contact")}>
                   Contactez-nous <ArrowRight />
                 </a>
               </Button>

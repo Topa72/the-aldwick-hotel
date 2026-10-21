@@ -4,6 +4,7 @@ import { MotionConfig } from "motion/react"
 import { Awards } from "@/components/sections/awards"
 import { BookCta } from "@/components/sections/book-cta"
 import { Cellar } from "@/components/sections/cellar"
+import { Contact } from "@/components/sections/contact"
 import { Discover } from "@/components/sections/discover"
 import { Footer } from "@/components/sections/footer"
 import { Gallery } from "@/components/sections/gallery"
@@ -21,6 +22,7 @@ const sections: Record<Page, () => React.ReactNode> = {
       <Hero />
       <Discover />
       <BookCta />
+      <Contact />
     </>
   ),
   domaine: () => (
@@ -29,6 +31,7 @@ const sections: Record<Page, () => React.ReactNode> = {
       <Cellar />
       <Gallery />
       <BookCta />
+      <Contact />
     </>
   ),
   vins: () => (
@@ -36,12 +39,14 @@ const sections: Record<Page, () => React.ReactNode> = {
       <Wines />
       <Awards />
       <BookCta />
+      <Contact />
     </>
   ),
   "ou-trouver": () => (
     <>
       <WhereToBuy />
       <BookCta />
+      <Contact />
     </>
   ),
   visite: () => <Visit />,
