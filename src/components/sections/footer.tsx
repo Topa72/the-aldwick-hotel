@@ -1,6 +1,4 @@
-import { credits, estate, legal } from "@/data/content"
-
-const { bottleModel } = credits
+import { estate, legal } from "@/data/content"
 
 export function Footer() {
   return (
@@ -36,28 +34,6 @@ export function Footer() {
             <dd>{legal.host}</dd>
             <dt className="label text-foreground/60">Données</dt>
             <dd>{legal.privacy}</dd>
-            <dt className="label text-foreground/60">Crédits</dt>
-            <dd>
-              Bouteilles 3D d'après le modèle «{" "}
-              <a
-                href={bottleModel.source}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline hover:text-accent"
-              >
-                {bottleModel.title}
-              </a>{" "}
-              » de {bottleModel.author} (Sketchfab), sous licence{" "}
-              <a
-                href={bottleModel.licenseUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline hover:text-accent"
-              >
-                {bottleModel.license}
-              </a>{" "}
-              ({bottleModel.changes}).
-            </dd>
           </dl>
         </details>
       </div>

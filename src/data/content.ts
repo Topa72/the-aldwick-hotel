@@ -14,18 +14,6 @@ export const contact = {
   subject: "Message depuis le site du Vignoble Dauny",
 } as const
 
-/** Credits the CC BY licence of the 3D bottle model requires (title, author, source, licence, changes). */
-export const credits = {
-  bottleModel: {
-    title: "Bouteille de vin/Bottle of wine",
-    author: "oooFFFFEDDMODELS",
-    source: "https://sketchfab.com/3d-models/bouteille-de-vinbottle-of-wine-8cafbb08beef437cadfb3428f7df1626",
-    license: "CC BY-NC 4.0",
-    licenseUrl: "https://creativecommons.org/licenses/by-nc/4.0/deed.fr",
-    changes: "forme seule, couleurs et étiquettes modifiées",
-  },
-} as const
-
 /** Mentions légales (LCEN) — update the host if the site moves. */
 export const legal = {
   publisher: "Vignoble Dauny (EARL), Champtin, 8 rue Corbossier, 18300 Crézancy-en-Sancerre · 02 48 79 05 75",
@@ -87,7 +75,8 @@ export type Medal = { medal: "Or" | "Argent"; vintage: number; contest: number }
 /** How the real bottle looks: its photographed label and glass colours. */
 export type BottleLook = {
   label?: { src: string; shape?: "rect" | "diamond"; y: number; height: number; arc: number }
-  colors?: { glass?: number; glassOpacity?: number; wine?: number; capsule?: number }
+  /** `edge` multiplies the colour where the glass turns away from the viewer (see withEdgeTint). */
+  colors?: { glass?: number; glassOpacity?: number; wine?: number; capsule?: number; edge?: number }
   widthScale?: number
 }
 
@@ -177,7 +166,7 @@ export const wines: Wine[] = [
     photo: asset("bottles/caillottes.jpg"),
     look: {
       label: { src: asset("labels/caillottes.jpg"), y: 0.6, height: 0.69, arc: 2.11 },
-      colors: { glass: 0x8f8a2c, glassOpacity: 0.5, wine: 0x918100, capsule: 0x16181b },
+      colors: { glass: 0x8f8a2c, glassOpacity: 0.5, wine: 0x948200, capsule: 0x16181b, edge: 0x5f6a30 },
     },
     sheet: [
       { label: "Cépage", value: "Sauvignon 100 %" },
@@ -210,7 +199,7 @@ export const wines: Wine[] = [
     photo: asset("bottles/terres-blanches.jpg"),
     look: {
       label: { src: asset("labels/terres-blanches.jpg"), y: 0.6, height: 0.68, arc: 2.07 },
-      colors: { glass: 0x8f8a2c, glassOpacity: 0.5, wine: 0x918100, capsule: 0x16181b },
+      colors: { glass: 0x8f8a2c, glassOpacity: 0.5, wine: 0x948200, capsule: 0x16181b, edge: 0x5f6a30 },
     },
     sheet: [
       { label: "Cépage", value: "Sauvignon 100 %" },
@@ -238,7 +227,7 @@ export const wines: Wine[] = [
     photo: asset("bottles/clos-du-roy.jpg"),
     look: {
       label: { src: asset("labels/clos-du-roy.jpg"), y: 0.61, height: 0.69, arc: 2.22 },
-      colors: { glass: 0x8f8a2c, glassOpacity: 0.5, wine: 0x918100, capsule: 0x16181b },
+      colors: { glass: 0x8f8a2c, glassOpacity: 0.5, wine: 0x948200, capsule: 0x16181b, edge: 0x5f6a30 },
     },
     sheet: [
       { label: "Cépage", value: "Sauvignon 100 %" },
@@ -266,7 +255,7 @@ export const wines: Wine[] = [
     photo: asset("bottles/romble-blanc.jpg"),
     look: {
       label: { src: asset("labels/romble-blanc.png"), shape: "diamond", y: 0.68, height: 0.8, arc: 2.32 },
-      colors: { glass: 0x8f8a2c, glassOpacity: 0.5, wine: 0x918100, capsule: 0x16181b },
+      colors: { glass: 0x8f8a2c, glassOpacity: 0.5, wine: 0x948200, capsule: 0x16181b, edge: 0x5f6a30 },
     },
     sheet: [
       { label: "Cépage", value: "Sauvignon 100 %" },

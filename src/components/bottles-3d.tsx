@@ -1,11 +1,8 @@
 import { useEffect, useRef } from "react"
 import * as THREE from "three"
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js"
-import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js"
-import { mergeVertices } from "three/examples/jsm/utils/BufferGeometryUtils.js"
 
-import bottleObj from "@/assets/models/bouteille-vin.obj?raw"
-
+import { BOTTLE_CAPSULE_Y, BOTTLE_PROFILE } from "@/components/bottle-profile"
 import type { BottleLook, WineStyle } from "@/data/content"
 
 export type BottleSpec = {
@@ -34,33 +31,26 @@ const palette: Record<WineStyle, { glass: number; glassOpacity: number; wine: nu
   rouge: { glass: 0x2c4228, glassOpacity: 0.72, wine: 0x4a0d18, capsule: 0x5a1a26, label: "Rouge" },
 }
 
-// The bottle model (bouteille-vin.obj) is Y up, in its own units: base at y = -188.66, top at 193.50,
-// 48.22 body radius; its capsule covers the neck from y = 136.3 up.
-const MODEL_BASE_Y = -188.66
-const MODEL_HEIGHT = 193.5 - MODEL_BASE_Y
-const MODEL_CAPSULE_Y = 136.3
-const BOTTLE_HEIGHT = 3
-const MODEL_SCALE = BOTTLE_HEIGHT / MODEL_HEIGHT
-const BODY_RADIUS = 48.22 * MODEL_SCALE
-const CAPSULE_Y = (MODEL_CAPSULE_Y - MODEL_BASE_Y) * MODEL_SCALE
+// The bottle stands 3 units tall (see BOTTLE_PROFILE).
+const BODY_RADIUS = Math.max(...BOTTLE_PROFILE.map(([r]) => r))
+const CAPSULE_Y = BOTTLE_CAPSULE_Y
 // Label sizes were measured on the studio photos, on a bottle 3 units tall with a 0.4 radius.
 const PHOTO_RADIUS = 0.4
-// The wine fills the bottle up to the neck.
-const FILL_HEIGHT = 0.78 * BOTTLE_HEIGHT
+// As on the photos, the wine comes right up under the capsule.
+const FILL_HEIGHT = CAPSULE_Y - 0.01
 
 let bottleGeometry: THREE.BufferGeometry | null = null
 
 /**
- * The bottle from the model, standing on y = 0 and scaled to BOTTLE_HEIGHT, keeping the model's own
- * normals. Its triangles are split in two groups: glass (material 0), then the capsule (material 1).
+ * The bottle turned from the photo's outline, standing on y = 0. Its triangles are split in two
+ * groups: glass (material 0), then the capsule (material 1).
  */
 function modelGeometry() {
   if (bottleGeometry) return bottleGeometry
-  const obj = new OBJLoader().parse(bottleObj)
-  const shell = obj.children.find((c) => c.name === "Bouteille") as THREE.Mesh
-  const g = mergeVertices(shell.geometry, 1e-4)
-  g.translate(0, -MODEL_BASE_Y, 0)
-  g.scale(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE)
+  const g = new THREE.LatheGeometry(
+    BOTTLE_PROFILE.map(([r, y]) => new THREE.Vector2(r, y)),
+    96,
+  )
 
   const pos = g.getAttribute("position")
   const index = g.getIndex()!.array
@@ -76,6 +66,25 @@ function modelGeometry() {
   g.addGroup(glass.length, capsule.length, 1)
   bottleGeometry = g
   return g
+}
+
+/**
+ * Darkens the glass towards `edge` where it turns away from the viewer, as thick glass does on the
+ * photos: bright wine in the middle of the bottle, deeper tint along its sides.
+ */
+function withEdgeTint(material: THREE.MeshPhysicalMaterial, edge: number) {
+  const tint = new THREE.Color(edge)
+  material.onBeforeCompile = (shader) => {
+    shader.uniforms.edgeTint = { value: tint }
+    shader.fragmentShader = shader.fragmentShader
+      .replace("#include <common>", "#include <common>\nuniform vec3 edgeTint;")
+      .replace(
+        "#include <color_fragment>",
+        `#include <color_fragment>
+        float facing = abs(dot(normalize(vNormal), normalize(vViewPosition)));
+        diffuseColor.rgb *= mix(edgeTint, vec3(1.0), smoothstep(0.0, 0.45, facing));`,
+      )
+  }
 }
 
 /** Per-vertex colour: wine below the fill line, tinted glass above it. */
@@ -200,18 +209,18 @@ function buildBottle(spec: BottleSpec, estateName: string, index: number, shadow
     metalness: look?.colors?.capsule !== undefined ? 0.3 : 0.85,
     roughness: look?.colors?.capsule !== undefined ? 0.5 : 0.32,
   })
-  const glass = new THREE.Mesh(tintedBottle(p.wine, p.glass, p.glassOpacity), [
-    new THREE.MeshPhysicalMaterial({
-      vertexColors: true,
-      roughness: 0.08,
-      metalness: 0,
-      clearcoat: 1,
-      clearcoatRoughness: 0.05,
-      transparent: true,
-      envMapIntensity: 1.2,
-    }),
-    capsuleMat,
-  ])
+  const glassMat = new THREE.MeshPhysicalMaterial({
+    vertexColors: true,
+    roughness: 0.08,
+    metalness: 0,
+    clearcoat: 0.4,
+    specularIntensity: 0.5,
+    clearcoatRoughness: 0.05,
+    transparent: true,
+    envMapIntensity: 0.55,
+  })
+  if (look?.colors?.edge !== undefined) withEdgeTint(glassMat, look.colors.edge)
+  const glass = new THREE.Mesh(tintedBottle(p.wine, p.glass, p.glassOpacity), [glassMat, capsuleMat])
   glass.renderOrder = 1
 
   const real = look?.label
