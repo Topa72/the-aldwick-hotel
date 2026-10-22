@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react"
 import { ArrowRight, ChevronDown, Menu } from "lucide-react"
 
+import { EstateLogo } from "@/components/estate-logo"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
-import { estate, navLinks, wineGroups, wines, wineSlug } from "@/data/content"
+import { navLinks, wineGroups, wines, wineSlug } from "@/data/content"
 import { href, useRoute } from "@/lib/router"
 import { cn } from "@/lib/utils"
 
@@ -116,8 +117,8 @@ export function Navbar() {
       )}
     >
       <nav className="container flex h-[72px] items-center justify-between" aria-label="Navigation principale">
-        <a href={href("accueil")} className="font-serif text-[28px] font-semibold italic leading-none text-accent">
-          {estate.name}
+        <a href={href("accueil")} className="text-accent transition-opacity hover:opacity-80">
+          <EstateLogo className="h-10 text-[28px]" />
         </a>
 
         <div className="hidden items-center gap-10 lg:flex">
@@ -142,7 +143,7 @@ export function Navbar() {
             )}
           </ul>
           <Button asChild variant="gold-outline" size="sm">
-            <a href={href(page, "contact")}>
+            <a href={href("visite", "contact")}>
               Contactez-nous <ArrowRight />
             </a>
           </Button>
@@ -158,7 +159,9 @@ export function Navbar() {
             </button>
           </SheetTrigger>
           <SheetContent className="overflow-y-auto">
-            <SheetTitle className="font-serif text-3xl font-semibold italic text-accent">{estate.name}</SheetTitle>
+            <SheetTitle className="text-accent">
+              <EstateLogo className="h-12 text-3xl" />
+            </SheetTitle>
             <SheetDescription className="label mt-2 text-muted-foreground">Sancerre · Bio depuis 1964</SheetDescription>
             <ul className="mt-14 flex flex-col">
               {navLinks.map((link) => (
@@ -203,7 +206,7 @@ export function Navbar() {
             </ul>
             <SheetClose asChild>
               <Button asChild variant="gold" className="mt-auto w-full">
-                <a href={href(page, "contact")}>
+                <a href={href("visite", "contact")}>
                   Contactez-nous <ArrowRight />
                 </a>
               </Button>

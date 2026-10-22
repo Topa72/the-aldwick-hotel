@@ -1,3 +1,4 @@
+import { EstateLogo } from "@/components/estate-logo"
 import { estate, legal } from "@/data/content"
 import { href } from "@/lib/router"
 
@@ -5,8 +6,8 @@ export function Footer() {
   return (
     <footer className="bg-background py-16">
       <div className="container flex flex-col items-center gap-8 text-center">
-        <a href={href("accueil")} className="font-serif text-4xl font-semibold italic text-accent">
-          {estate.name}
+        <a href={href("accueil")} className="text-accent transition-opacity hover:opacity-80">
+          <EstateLogo className="h-16 text-4xl" />
         </a>
         <p className="label leading-loose text-foreground/80">
           {estate.address.join(" · ")}

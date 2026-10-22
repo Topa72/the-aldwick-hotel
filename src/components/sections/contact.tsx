@@ -1,41 +1,41 @@
 import { motion } from "motion/react"
-import { Phone } from "lucide-react"
+import { ArrowRight, Phone } from "lucide-react"
 
-import { ContactForm } from "@/components/contact-form"
-import { SectionHeading } from "@/components/section-heading"
+import { Button } from "@/components/ui/button"
 import { estate } from "@/data/content"
-import { fadeUp, inView } from "@/lib/motion"
+import { fadeUp, inView, stagger } from "@/lib/motion"
+import { href } from "@/lib/router"
 
-/** The contact form at the foot of each page (the visit page has its own, next to the map). */
+/** At the foot of each page: a way to the contact form (on the visit page) and the phone number. */
 export function Contact() {
   return (
-    <section className="border-t border-border py-24 md:py-32" aria-labelledby="contact-title">
-      {/* The anchor sits outside the fade-in, so "Contactez-nous" links land below the header. */}
-      <div id="contact" className="container grid gap-12 lg:grid-cols-12 lg:gap-16">
-        <div className="lg:col-span-5">
-          <SectionHeading id="contact-title" eyebrow="Contact" title="Contactez-nous" />
-          <motion.p
-            variants={fadeUp}
-            {...inView}
-            className="mt-10 max-w-md text-[17px] font-light leading-relaxed text-muted-foreground"
-          >
-            {
-              "Une question sur nos vins, une commande ou une visite ? Écrivez-nous, nous vous répondrons dès que possible."
-            }
-          </motion.p>
-          <motion.a
-            variants={fadeUp}
-            {...inView}
-            href={estate.phoneHref}
-            className="label mt-8 inline-flex items-center gap-3 text-accent hover:underline"
-          >
-            <Phone className="h-4 w-4" strokeWidth={1.5} aria-hidden /> {estate.phone}
-          </motion.a>
-        </div>
-        <motion.div variants={fadeUp} {...inView} className="lg:col-span-7">
-          <ContactForm />
+    <section className="border-t border-border py-20 md:py-24" aria-labelledby="contact-title">
+      <motion.div
+        className="container flex flex-col items-center gap-8 text-center md:flex-row md:justify-between md:text-left"
+        variants={stagger(0.1)}
+        {...inView}
+      >
+        <motion.div variants={fadeUp}>
+          <h2 id="contact-title" className="section-title">
+            Contactez-nous
+          </h2>
+          <p className="mt-4 max-w-md text-[17px] font-light leading-relaxed text-muted-foreground">
+            {"Une question sur nos vins, une commande ou une visite ? Écrivez-nous ou appelez-nous."}
+          </p>
         </motion.div>
-      </div>
+        <motion.div variants={fadeUp} className="flex flex-col items-center gap-4 sm:flex-row">
+          <Button asChild variant="gold" size="lg">
+            <a href={href("visite", "contact")}>
+              Contactez-nous <ArrowRight />
+            </a>
+          </Button>
+          <Button asChild variant="gold-outline" size="lg">
+            <a href={estate.phoneHref}>
+              <Phone /> {estate.phone}
+            </a>
+          </Button>
+        </motion.div>
+      </motion.div>
     </section>
   )
 }
