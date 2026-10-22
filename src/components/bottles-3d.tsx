@@ -127,7 +127,15 @@ function skinMaterial(src: string, onLoad: () => void, onError: () => void) {
       )
     shader.fragmentShader = shader.fragmentShader
       .replace("#include <common>", "#include <common>\nvarying vec2 vSkinUv;")
-      .replace("#include <map_fragment>", "diffuseColor *= texture2D(map, vSkinUv);")
+      .replace(
+        "#include <map_fragment>",
+        `diffuseColor *= texture2D(map, vSkinUv);
+        // Glass seen edge-on, and the heel it stands on, read darker; this also hides any trace of the
+        // photo's white backdrop along the outline.
+        float rim = smoothstep(1.0, 0.86, abs(vSkinUv.x * 2.0 - 1.0));
+        float heel = smoothstep(0.0, 0.025, vSkinUv.y);
+        diffuseColor.rgb *= mix(0.4, 1.0, rim) * mix(0.15, 1.0, heel);`,
+      )
   }
   new THREE.TextureLoader().load(
     src,
