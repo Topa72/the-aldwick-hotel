@@ -17,7 +17,7 @@ Le site compte cinq pages, chacune avec son fichier HTML (titre et description p
 
 | Page | Fichier | Sections |
 | --- | --- | --- |
-| Accueil | `index.html` | photo des 7 bouteilles (chacune mène à sa cuvée), accès aux autres pages |
+| Accueil | `index.html` | les 7 bouteilles en 3D (chacune mène à sa cuvée), accès aux autres pages |
 | Le domaine | `le-domaine.html` | histoire, façade, agriculture biologique |
 | Nos vins | `nos-vins.html` | bouteilles 3D, fiches techniques, médailles |
 | Où trouver nos vins | `ou-trouver-nos-vins.html` | revendeurs, export |
@@ -57,4 +57,5 @@ Le contenu reprend le site officiel vignobledauny.fr (histoire, vigne et bio, fi
 - **Répartition des ventes** : la page française indique 30 / 45 / 25 %, la page anglaise 35 / 30 / 35 %. La version française est utilisée.
 - **Cuvées** : gamme et fiches techniques du site officiel (2 rouges, 4 blancs, 1 rosé). Fiches complètes reprises des fiches officielles pour les 7 cuvées.
 - **Bouteilles 3D** : chaque cuvée a sa propre bouteille, tournée à partir de la silhouette de sa photo studio (`src/data/bottle-shapes.json`, `outline` de chaque cuvée), et habillée de cette même photo « déroulée » (`public/skins`, `skin`) : le verre, le vin et la capsule gardent la teinte, les reflets et les ombres de la photo sous tous les angles. Les vraies étiquettes, posées par-dessus à la hauteur mesurée sur la photo, sont dans `public/labels`. Sans habillage, la bouteille prend les couleurs `colors`.
-- **Photos** : l'accueil montre la gamme des 7 bouteilles, détourée des photos du domaine (`public/bottles/gamme.webp`) ; la section « Le domaine » montre la façade (`public/photos/facade.jpg`, aussi utilisée comme image de partage). La galerie reste masquée et la section bio n'a pas de photo tant qu'on n'a pas de photos du domaine : les ajouter dans `src/data/images.ts` et `gallery` (`src/data/content.ts`).
+- **Logo et icône** : le nom manuscrit « Vignoble Dauny » est tracé en vectoriel dans `src/data/logo.ts` ; l'icône du site (onglet, Google, écran d'accueil du téléphone) est le monogramme « VD » sur disque doré (`public/favicon.svg`, `favicon.ico`, `icon-192.png`, `apple-touch-icon.png`).
+- **Photos** : l'accueil montre les 7 bouteilles en 3D (`src/components/bottle-lineup.tsx`) ; la section « Le domaine » montre la façade (`public/photos/facade.jpg`, aussi utilisée comme image de partage). La galerie reste masquée et la section bio n'a pas de photo tant qu'on n'a pas de photos du domaine : les ajouter dans `src/data/images.ts` et `gallery` (`src/data/content.ts`).
