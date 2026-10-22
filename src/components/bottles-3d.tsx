@@ -25,7 +25,10 @@ const FOG_COLOR = 0x1c2026
 const RING_RADIUS = 2.4
 const TAU = Math.PI * 2
 
-const palette: Record<WineStyle, { glass: number; glassOpacity: number; wine: number; capsule: number; label: string }> = {
+const palette: Record<
+  WineStyle,
+  { glass: number; glassOpacity: number; wine: number; capsule: number; label: string }
+> = {
   blanc: { glass: 0x86a066, glassOpacity: 0.5, wine: 0xa88d36, capsule: 0xc9a55a, label: "Blanc" },
   rose: { glass: 0xf0ece4, glassOpacity: 0.26, wine: 0xd4766e, capsule: 0xd9c9a8, label: "Rosé" },
   rouge: { glass: 0x2c4228, glassOpacity: 0.72, wine: 0x4a0d18, capsule: 0x5a1a26, label: "Rouge" },
@@ -87,6 +90,44 @@ function withEdgeTint(material: THREE.MeshPhysicalMaterial, edge: number) {
   }
 }
 
+/**
+ * Paints the bottle with its studio photo, unrolled (public/skins). Each point takes the colour the
+ * photo shows at the same place seen from the front, so the glass keeps its real tint, highlights and
+ * shading from every side while the bottle turns. The photo's own light is kept: no scene lighting.
+ */
+function skinMaterial(src: string, onLoad: () => void, onError: () => void) {
+  const material = new THREE.MeshBasicMaterial({ toneMapped: false })
+  material.onBeforeCompile = (shader) => {
+    shader.vertexShader = shader.vertexShader
+      .replace("#include <common>", "#include <common>\nvarying vec2 vSkinUv;")
+      .replace(
+        "#include <begin_vertex>",
+        `#include <begin_vertex>
+      // Where this point sits across the bottle as seen from the camera: -1 left edge, 1 right edge.
+      vec3 radial = normalize(vec3(position.x, 0.0, position.z) + vec3(1e-5, 0.0, 0.0));
+      float across = normalize((modelViewMatrix * vec4(radial, 0.0)).xyz).x;
+      // The bottle is 3 units tall (BOTTLE_PROFILE).
+      vSkinUv = vec2(0.5 + 0.5 * across, position.y / 3.0);`,
+      )
+    shader.fragmentShader = shader.fragmentShader
+      .replace("#include <common>", "#include <common>\nvarying vec2 vSkinUv;")
+      .replace("#include <map_fragment>", "diffuseColor *= texture2D(map, vSkinUv);")
+  }
+  new THREE.TextureLoader().load(
+    src,
+    (tex) => {
+      tex.colorSpace = THREE.SRGBColorSpace
+      tex.anisotropy = 8
+      material.map = tex
+      material.needsUpdate = true
+      onLoad()
+    },
+    undefined,
+    onError,
+  )
+  return material
+}
+
 /** Per-vertex colour: wine below the fill line, tinted glass above it. */
 function tintedBottle(wine: number, glass: number, glassOpacity: number) {
   const g = modelGeometry().clone()
@@ -103,7 +144,13 @@ function tintedBottle(wine: number, glass: number, glassOpacity: number) {
   return g
 }
 
-function fitText(ctx: CanvasRenderingContext2D, text: string, font: (size: number) => string, start: number, maxWidth: number) {
+function fitText(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  font: (size: number) => string,
+  start: number,
+  maxWidth: number,
+) {
   let size = start
   ctx.font = font(size)
   while (ctx.measureText(text).width > maxWidth && size > 10) {
@@ -220,7 +267,26 @@ function buildBottle(spec: BottleSpec, estateName: string, index: number, shadow
     envMapIntensity: 0.55,
   })
   if (look?.colors?.edge !== undefined) withEdgeTint(glassMat, look.colors.edge)
-  const glass = new THREE.Mesh(tintedBottle(p.wine, p.glass, p.glassOpacity), [glassMat, capsuleMat])
+  const tinted = (): [THREE.BufferGeometry, THREE.Material[]] => [
+    tintedBottle(p.wine, p.glass, p.glassOpacity),
+    [glassMat, capsuleMat],
+  ]
+  let glass: THREE.Mesh
+  if (look?.skin) {
+    // The photographed bottle once its skin has loaded; the tinted one if it fails.
+    const skin = skinMaterial(
+      look.skin,
+      () => (glass.visible = true),
+      () => {
+        ;[glass.geometry, glass.material] = tinted()
+        glass.visible = true
+      },
+    )
+    glass = new THREE.Mesh(modelGeometry(), skin)
+    glass.visible = false
+  } else {
+    glass = new THREE.Mesh(...tinted())
+  }
   glass.renderOrder = 1
 
   const real = look?.label
