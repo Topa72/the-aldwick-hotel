@@ -3,6 +3,7 @@ import * as THREE from "three"
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js"
 
 import { BOTTLE_CAPSULE_Y, BOTTLE_PROFILE } from "@/components/bottle-profile"
+import bottleShapes from "@/data/bottle-shapes.json"
 import type { BottleLook, WineStyle } from "@/data/content"
 
 export type BottleSpec = {
@@ -42,16 +43,31 @@ const PHOTO_RADIUS = 0.4
 // As on the photos, the wine comes right up under the capsule.
 const FILL_HEIGHT = CAPSULE_Y - 0.01
 
-let bottleGeometry: THREE.BufferGeometry | null = null
+const shapes: Record<string, { bodyRadius: number; profile: number[][] }> = bottleShapes
 
 /**
- * The bottle turned from the photo's outline, standing on y = 0. Its triangles are split in two
- * groups: glass (material 0), then the capsule (material 1).
+ * The widest the bottle gets between two heights (its own outline when it has one), so a label laid
+ * there never sinks into glass that flares slightly towards the base.
  */
-function modelGeometry() {
-  if (bottleGeometry) return bottleGeometry
+function radiusOver(outline: string | undefined, from: number, to: number) {
+  const profile = outline && shapes[outline] ? shapes[outline].profile : BOTTLE_PROFILE
+  const radii = profile.filter(([, y]) => y >= from && y <= to).map(([r]) => r)
+  return radii.length ? Math.max(...radii) : BODY_RADIUS
+}
+
+const bottleGeometries = new Map<string, THREE.BufferGeometry>()
+
+/**
+ * The bottle turned from a photo's outline (the cuvée's own, else the default one), standing on
+ * y = 0. Its triangles are split in two groups: glass (material 0), then the capsule (material 1).
+ */
+function modelGeometry(outline?: string) {
+  const key = outline && shapes[outline] ? outline : ""
+  const cached = bottleGeometries.get(key)
+  if (cached) return cached
+  const profile = key ? shapes[key].profile : BOTTLE_PROFILE
   const g = new THREE.LatheGeometry(
-    BOTTLE_PROFILE.map(([r, y]) => new THREE.Vector2(r, y)),
+    profile.map(([r, y]) => new THREE.Vector2(r, y)),
     96,
   )
 
@@ -67,7 +83,7 @@ function modelGeometry() {
   g.setIndex([...glass, ...capsule])
   g.addGroup(0, glass.length, 0)
   g.addGroup(glass.length, capsule.length, 1)
-  bottleGeometry = g
+  bottleGeometries.set(key, g)
   return g
 }
 
@@ -282,7 +298,7 @@ function buildBottle(spec: BottleSpec, estateName: string, index: number, shadow
         glass.visible = true
       },
     )
-    glass = new THREE.Mesh(modelGeometry(), skin)
+    glass = new THREE.Mesh(modelGeometry(look.outline), skin)
     glass.visible = false
   } else {
     glass = new THREE.Mesh(...tinted())
@@ -291,10 +307,12 @@ function buildBottle(spec: BottleSpec, estateName: string, index: number, shadow
 
   const real = look?.label
   const arc = real?.arc ?? 2.2
-  // Same angular width as on the photos; height scaled with the radius so the label keeps its proportions.
-  const labelHeight = (real?.height ?? 0.8) * (BODY_RADIUS / PHOTO_RADIUS)
+  // A photographed label keeps its measured height and angular width; a drawn one scales with the bottle.
+  const labelHeight = real?.height ?? 0.8 * (BODY_RADIUS / PHOTO_RADIUS)
+  const labelY = real?.y ?? 0.7
+  const labelRadius = radiusOver(look?.outline, labelY - labelHeight / 2, labelY + labelHeight / 2) + 0.006
   const label = new THREE.Mesh(
-    new THREE.CylinderGeometry(BODY_RADIUS + 0.004, BODY_RADIUS + 0.004, labelHeight, 64, 1, true, -arc / 2, arc),
+    new THREE.CylinderGeometry(labelRadius, labelRadius, labelHeight, 64, 1, true, -arc / 2, arc),
     new THREE.MeshStandardMaterial({
       map: real ? null : labelTexture(spec, estateName),
       roughness: 0.85,
@@ -303,7 +321,7 @@ function buildBottle(spec: BottleSpec, estateName: string, index: number, shadow
       alphaTest: real?.shape === "diamond" ? 0.5 : 0,
     }),
   )
-  label.position.y = real?.y ?? 0.7
+  label.position.y = labelY
   label.renderOrder = 3
   if (real) {
     // Show the photographed label once it has loaded; fall back to a drawn one.

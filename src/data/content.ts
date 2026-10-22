@@ -100,9 +100,12 @@ export type Medal = { medal: "Or" | "Argent"; vintage: number; contest: number }
 
 /** How the real bottle looks: its photographed label and glass colours. */
 export type BottleLook = {
+  /** The label as photographed: its centre (`y`) and `height` on the bottle, which stands 3 units tall. */
   label?: { src: string; shape?: "rect" | "diamond"; y: number; height: number; arc: number }
   /** The bottle photographed and unrolled (public/skins): its glass, wine and capsule as they look from the front. */
   skin?: string
+  /** The bottle's own outline, traced from its photo (src/data/bottle-shapes.json). */
+  outline?: string
   /** `edge` multiplies the colour where the glass turns away from the viewer (see withEdgeTint). */
   colors?: { glass?: number; glassOpacity?: number; wine?: number; capsule?: number; edge?: number }
   widthScale?: number
@@ -132,8 +135,9 @@ export const wines: Wine[] = [
       "Ce Sancerre rouge issu du cépage Pinot Noir, de garde moyenne (4 à 7 ans), est un vin léger au bouquet agréable. Il se marie très bien avec les viandes blanches, les gibiers à plumes et les fromages.",
     photo: asset("bottles/pynoz-rouge.jpg"),
     look: {
+      outline: "pynoz-rouge",
       skin: asset("skins/pynoz-rouge.jpg"),
-      label: { src: asset("labels/pynoz-rouge.jpg"), y: 0.6, height: 0.68, arc: 2.11 },
+      label: { src: asset("labels/pynoz-rouge.jpg"), y: 0.594, height: 0.706, arc: 2.11 },
       colors: { glass: 0x2a1210, glassOpacity: 0.82, wine: 0x3a0a0c, capsule: 0x1e1a19 },
     },
     sheet: [
@@ -169,8 +173,9 @@ export const wines: Wine[] = [
       "Ce Sancerre rouge élevé en fûts de chêne est issu de vieilles vignes. C'est un vin de garde avec des tanins fins et souples. Il accompagnera à merveille les viandes rouges et les fromages.",
     photo: asset("bottles/romble-rouge.jpg"),
     look: {
+      outline: "romble-rouge",
       skin: asset("skins/romble-rouge.jpg"),
-      label: { src: asset("labels/romble-rouge.png"), shape: "diamond", y: 0.68, height: 0.81, arc: 2.33 },
+      label: { src: asset("labels/romble-rouge.png"), shape: "diamond", y: 0.673, height: 0.877, arc: 2.33 },
       colors: { glass: 0x1c1210, glassOpacity: 0.85, wine: 0x2a0a0a, capsule: 0x4c3428 },
     },
     sheet: [
@@ -198,8 +203,9 @@ export const wines: Wine[] = [
       "Ce Sancerre blanc provient de vignes cultivées sur terres calcaires. C'est un vin léger qui se consomme jeune et qui accompagne poissons froids, huîtres, crustacés ainsi que le Crottin de Chavignol.",
     photo: asset("bottles/caillottes.jpg"),
     look: {
-      skin: asset("skins/blanc.jpg"),
-      label: { src: asset("labels/caillottes.jpg"), y: 0.6, height: 0.69, arc: 2.11 },
+      outline: "caillottes",
+      skin: asset("skins/caillottes.jpg"),
+      label: { src: asset("labels/caillottes.jpg"), y: 0.58, height: 0.706, arc: 2.11 },
       colors: { glass: 0x8f8a2c, glassOpacity: 0.5, wine: 0x948200, capsule: 0x16181b, edge: 0x5f6a30 },
     },
     sheet: [
@@ -232,8 +238,9 @@ export const wines: Wine[] = [
       "Ce Sancerre blanc provient de vignes cultivées sur des terres argilo-calcaires appelées terres blanches. C'est un vin aromatique qui accompagne crustacés, fruits de mer, poissons chauds et fromages.",
     photo: asset("bottles/terres-blanches.jpg"),
     look: {
-      skin: asset("skins/blanc.jpg"),
-      label: { src: asset("labels/terres-blanches.jpg"), y: 0.6, height: 0.68, arc: 2.07 },
+      outline: "terres-blanches",
+      skin: asset("skins/terres-blanches.jpg"),
+      label: { src: asset("labels/terres-blanches.jpg"), y: 0.595, height: 0.712, arc: 2.07 },
       colors: { glass: 0x8f8a2c, glassOpacity: 0.5, wine: 0x948200, capsule: 0x16181b, edge: 0x5f6a30 },
     },
     sheet: [
@@ -261,8 +268,9 @@ export const wines: Wine[] = [
       "Ce Sancerre blanc est issu de terrains calcaires bénéficiant d'une exposition parfaite plein Sud. Ce vin rond et plein de finesse a une belle tenue au vieillissement. Il accompagne très bien poissons et fruits de mer, et sait également se faire apprécier avec un foie gras après 2 ou 3 ans de garde.",
     photo: asset("bottles/clos-du-roy.jpg"),
     look: {
-      skin: asset("skins/blanc.jpg"),
-      label: { src: asset("labels/clos-du-roy.jpg"), y: 0.61, height: 0.69, arc: 2.22 },
+      outline: "clos-du-roy",
+      skin: asset("skins/clos-du-roy.jpg"),
+      label: { src: asset("labels/clos-du-roy.jpg"), y: 0.61, height: 0.713, arc: 2.22 },
       colors: { glass: 0x8f8a2c, glassOpacity: 0.5, wine: 0x948200, capsule: 0x16181b, edge: 0x5f6a30 },
     },
     sheet: [
@@ -290,8 +298,9 @@ export const wines: Wine[] = [
       "Ce Sancerre blanc élevé sur lies fines en fûts de chêne est issu d'une sélection de nos différents terroirs. Ce vin de garde accompagnera parfaitement vos apéritifs, poissons chauds et fruits de mer.",
     photo: asset("bottles/romble-blanc.jpg"),
     look: {
-      skin: asset("skins/blanc.jpg"),
-      label: { src: asset("labels/romble-blanc.png"), shape: "diamond", y: 0.68, height: 0.8, arc: 2.32 },
+      outline: "romble-blanc",
+      skin: asset("skins/romble-blanc.jpg"),
+      label: { src: asset("labels/romble-blanc.png"), shape: "diamond", y: 0.673, height: 0.874, arc: 2.32 },
       colors: { glass: 0x8f8a2c, glassOpacity: 0.5, wine: 0x948200, capsule: 0x16181b, edge: 0x5f6a30 },
     },
     sheet: [
@@ -323,8 +332,9 @@ export const wines: Wine[] = [
       "Séduisant par son originalité et son bouquet fin et élégant, ce Sancerre rosé est désaltérant et plutôt vin d'été, qui s'associe bien avec les hors d'œuvres, charcuteries, viandes grillées et menus exotiques.",
     photo: asset("bottles/pynoz-rose.jpg"),
     look: {
-      skin: asset("skins/rose.jpg"),
-      label: { src: asset("labels/pynoz-rose.jpg"), y: 0.61, height: 0.68, arc: 2.1 },
+      outline: "pynoz-rose",
+      skin: asset("skins/pynoz-rose.jpg"),
+      label: { src: asset("labels/pynoz-rose.jpg"), y: 0.602, height: 0.713, arc: 2.1 },
       colors: { glass: 0xf6e4d8, glassOpacity: 0.22, wine: 0xe65c3d, capsule: 0x16181b },
     },
     sheet: [
