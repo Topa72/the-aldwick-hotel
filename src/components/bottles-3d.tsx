@@ -257,7 +257,7 @@ function labelTexture(spec: BottleSpec, estateName: string) {
   return tex
 }
 
-function shadowTexture() {
+export function shadowTexture() {
   const c = document.createElement("canvas")
   c.width = c.height = 128
   const ctx = c.getContext("2d")!
@@ -269,7 +269,7 @@ function shadowTexture() {
   return new THREE.CanvasTexture(c)
 }
 
-function buildBottle(spec: BottleSpec, estateName: string, index: number, shadowTex: THREE.Texture) {
+export function buildBottle(spec: BottleSpec, estateName: string, index: number, shadowTex: THREE.Texture) {
   const look = spec.look
   const p = { ...palette[spec.style], ...look?.colors }
   const bottle = new THREE.Group()
