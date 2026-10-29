@@ -18,8 +18,11 @@ export type GalleryItem = {
 }
 
 export const images = {
-  /** Behind the 3D bottles on the home page, dimmed so the bottles stand out. */
-  heroBackdrop: asset("photos/coteaux.webp") as string | null,
+  /**
+   * The vineyard soil the home page's 3D bottles stand on (a ground-level photo of the estate's vines,
+   * with the bottle it was taken with removed). Null puts them on a plain background.
+   */
+  heroBackdrop: asset("photos/accueil-vignes.webp") as string | null,
   /** Beside the estate's history. */
   family: asset("photos/famille.webp") as string | null,
   familyAlt: "La famille Dauny réunie au caveau, autour d'une table de bouteilles et de médailles",

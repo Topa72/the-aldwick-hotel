@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react"
 import * as THREE from "three"
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js"
 
-import { buildBottle, shadowTexture, type BottleSpec } from "@/components/bottles-3d"
+import { buildBottle, type BottleSpec } from "@/components/bottles-3d"
 
 type Props = {
   bottles: BottleSpec[]
@@ -11,6 +11,8 @@ type Props = {
   hovered: number | null
   onHover: (index: number | null) => void
   onPick: (index: number) => void
+  /** Standing in the page's sunlit vineyard photo rather than on a plain background. */
+  outdoor?: boolean
 }
 
 // Bottles stand 3 units tall, side by side on a shallow arc that curves away from the viewer.
@@ -18,7 +20,7 @@ const SPACING = 0.88
 const CURVE = 0.12
 
 /** The home page's line-up: every cuvée in 3D, side by side; point to lift one, click to open it. */
-export default function BottleLineup({ bottles, estateName, hovered, onHover, onPick }: Props) {
+export default function BottleLineup({ bottles, estateName, hovered, onHover, onPick, outdoor = false }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
   const hoveredRef = useRef(hovered)
   const onHoverRef = useRef(onHover)
@@ -51,11 +53,11 @@ export default function BottleLineup({ bottles, estateName, hovered, onHover, on
     rim.position.set(-4, 3, -3)
     scene.add(key, rim, new THREE.AmbientLight(0xffffff, 0.25))
 
-    const shadowTex = shadowTexture()
     const items = bottles.map((spec, i) => {
-      const b = buildBottle(spec, estateName, i, shadowTex)
+      const b = buildBottle(spec, estateName, i, { outdoor })
       const t = i - (n - 1) / 2
       b.position.set(t * SPACING, 0, -CURVE * t * t)
+      b.userData.baseZ = b.position.z
       // Each bottle turns slightly towards the middle, as if set out for a photograph.
       b.userData.baseRotation = -t * 0.08
       b.rotation.y = b.userData.baseRotation
@@ -74,7 +76,9 @@ export default function BottleLineup({ bottles, estateName, hovered, onHover, on
       const halfWidth = ((n - 1) * SPACING) / 2 + 0.48
       const tanV = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))
       const dist = Math.max(halfWidth / (tanV * camera.aspect), 1.75 / tanV)
-      camera.position.set(0, 1.9, dist)
+      // In the vineyard photo the camera looks down on the soil (about 15°): look down on the bottles
+      // the same way, so they and their shadows sit on that ground. Otherwise almost level.
+      camera.position.set(0, outdoor ? lookAt.y + dist * Math.tan(THREE.MathUtils.degToRad(15)) : 1.9, dist)
       camera.lookAt(lookAt)
       camera.updateProjectionMatrix()
     }
@@ -121,8 +125,10 @@ export default function BottleLineup({ bottles, estateName, hovered, onHover, on
       const dt = Math.min(clock.getDelta(), 0.05)
       const t = clock.elapsedTime
       items.forEach((b, i) => {
-        const lift = i === hoveredRef.current ? 0.14 : 0
-        b.position.y += (lift - b.position.y) * Math.min(1, dt * 6)
+        // The bottle under the pointer steps forward, staying on the ground (it would float off the soil).
+        const step = i === hoveredRef.current ? 0.45 : 0
+        const z = b.userData.baseZ + step
+        b.position.z += (z - b.position.z) * Math.min(1, dt * 6)
         // A slow, gentle turn so the labels catch the light.
         const sway = reduceMotion ? 0 : Math.sin(t * 0.45 + i * 0.9) * 0.22
         b.rotation.y = b.userData.baseRotation + sway
@@ -147,14 +153,13 @@ export default function BottleLineup({ bottles, estateName, hovered, onHover, on
           }
         }
       })
-      shadowTex.dispose()
       envTex.dispose()
       pmrem.dispose()
       renderer.dispose()
       renderer.forceContextLoss()
       container.removeChild(el)
     }
-  }, [bottles, estateName])
+  }, [bottles, estateName, outdoor])
 
   return <div ref={containerRef} className="absolute inset-0" />
 }

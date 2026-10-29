@@ -7,9 +7,12 @@ import { Button } from "@/components/ui/button"
 import { estate, heroChips, wines, wineSlug } from "@/data/content"
 import { images } from "@/data/images"
 import { ease } from "@/lib/motion"
+import { cn } from "@/lib/utils"
 import { href } from "@/lib/router"
 
 const BottleLineup = lazy(() => import("@/components/bottle-lineup"))
+
+const backdrop = images.heroBackdrop
 
 const rise = (delay: number) => ({
   initial: { opacity: 0, y: 32 },
@@ -25,33 +28,42 @@ export function Hero() {
   return (
     <section
       id="top"
-      className="relative flex w-full items-center overflow-hidden pb-16 pt-24 lg:min-h-[100svh] lg:pb-10"
+      className="relative flex w-full items-center overflow-hidden pb-16 pt-24 lg:min-h-[100svh] lg:items-stretch lg:pb-10"
       aria-label="Accueil"
     >
-      {images.heroBackdrop && (
-        <img
-          src={images.heroBackdrop}
-          alt=""
-          aria-hidden
-          fetchPriority="high"
-          decoding="async"
-          className="absolute inset-0 h-full w-full object-cover"
-        />
-      )}
-      {/* Over the photo: dark enough for the text on the left and for the bottles to stand out. */}
-      {images.heroBackdrop && <div aria-hidden className="absolute inset-0 bg-background/45 lg:hidden" />}
       <div
         aria-hidden
         className="absolute inset-0"
         style={{
-          background: images.heroBackdrop
-            ? "radial-gradient(ellipse 55% 60% at 68% 52%, rgba(201,165,90,0.16), transparent 70%), linear-gradient(to right, rgba(19,24,31,0.92), rgba(19,24,31,0.55) 55%, rgba(19,24,31,0.45)), linear-gradient(to bottom, rgba(19,24,31,0.7), transparent 30%, transparent 65%, #13181f)"
-            : "radial-gradient(ellipse 55% 60% at 68% 52%, rgba(201,165,90,0.18), transparent 70%), linear-gradient(to bottom, #13181f, #171c24 60%, #13181f)",
+          background:
+            "radial-gradient(ellipse 55% 60% at 68% 52%, rgba(201,165,90,0.18), transparent 70%), linear-gradient(to bottom, #13181f, #171c24 60%, #13181f)",
         }}
       />
+      {/* On large screens the bottles stand on the vineyard soil of a photo filling the section. */}
+      {backdrop && (
+        <>
+          <img
+            src={backdrop}
+            alt=""
+            aria-hidden
+            fetchPriority="high"
+            decoding="async"
+            className="absolute inset-0 hidden h-full w-full object-cover object-bottom lg:block"
+          />
+          {/* Dark behind the text, clear over the soil the bottles stand on. */}
+          <div
+            aria-hidden
+            className="absolute inset-0 hidden lg:block"
+            style={{
+              background:
+                "linear-gradient(to right, rgba(19,24,31,0.9), rgba(19,24,31,0.72) 32%, rgba(19,24,31,0.12) 58%, rgba(19,24,31,0)), linear-gradient(to bottom, rgba(19,24,31,0.6), transparent 22%, transparent 93%, #13181f)",
+            }}
+          />
+        </>
+      )}
 
       <div className="container relative z-10 grid items-center gap-6 lg:grid-cols-12 lg:gap-10">
-        <div className="order-2 flex flex-col items-center text-center lg:order-1 lg:col-span-5 lg:items-start lg:text-left">
+        <div className="order-2 flex flex-col items-center text-center lg:order-1 lg:col-span-5 lg:items-start lg:self-center lg:text-left">
           <motion.p {...rise(0)} className="label text-accent">
             Sancerre · Crézancy-en-Sancerre
           </motion.p>
@@ -99,12 +111,27 @@ export function Hero() {
         </div>
 
         <motion.div
-          className="order-1 lg:order-2 lg:col-span-7"
+          className="order-1 lg:order-2 lg:col-span-7 lg:self-end"
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.2, ease }}
         >
-          <div className="relative h-[30vh] min-h-[220px] lg:h-[58vh] lg:min-h-[420px]">
+          <div
+            className={cn(
+              "relative min-h-[220px] lg:h-[62vh] lg:min-h-[420px]",
+              backdrop ? "h-[36vh] min-h-[260px]" : "h-[30vh]",
+            )}
+          >
+            {/* On phones the photo sits behind the bottles only, its edges melting into the page. */}
+            {backdrop && (
+              <img
+                src={backdrop}
+                alt=""
+                aria-hidden
+                decoding="async"
+                className="absolute inset-0 h-full w-full object-cover object-[50%_88%] [mask-image:linear-gradient(to_bottom,transparent,black_22%,black_80%,transparent),linear-gradient(to_right,transparent,black_12%,black_88%,transparent)] [mask-composite:intersect] [-webkit-mask-composite:source-in] lg:hidden"
+              />
+            )}
             <Suspense fallback={null}>
               <BottleLineup
                 bottles={wines}
@@ -112,16 +139,17 @@ export function Hero() {
                 hovered={hovered}
                 onHover={setHovered}
                 onPick={open}
+                outdoor={!!backdrop}
               />
             </Suspense>
           </div>
-          <p className="label mt-2 min-h-5 text-center" aria-live="polite">
+          <p className="label mt-2 min-h-5 text-center [text-shadow:0_1px_10px_rgba(0,0,0,0.9)]" aria-live="polite">
             {named ? (
               <span className="text-accent">
                 {named.name} · {named.appellation}
               </span>
             ) : (
-              <span className="text-muted-foreground">Choisissez une bouteille</span>
+              <span className={backdrop ? "text-foreground/85" : "text-muted-foreground"}>Choisissez une bouteille</span>
             )}
           </p>
           {/* The same choice for keyboards and screen readers. */}

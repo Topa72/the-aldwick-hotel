@@ -113,13 +113,22 @@ function withEdgeTint(material: THREE.MeshPhysicalMaterial, edge: number) {
 const REFLECTION_FADE = "0.2 * (1.0 - smoothstep(0.0, 1.1, vFadeY))"
 
 /**
+ * Bottles set in the home page's vineyard photo take its light: warm sun, a little darker than the
+ * studio, and a bright rim on the left where the sun comes from behind. `vAcross` runs from the left
+ * edge of the bottle (-1) to its right edge (1), as seen from the camera.
+ */
+const OUTDOOR_LIGHT = `
+  diffuseColor.rgb *= vec3(0.93, 0.88, 0.8);
+  diffuseColor.rgb += smoothstep(-0.55, -0.97, vAcross) * vec3(1.0, 0.86, 0.62) * 0.32;`
+
+/**
  * Paints the bottle with its studio photo, unrolled (public/skins). Each point takes the colour the
  * photo shows at the same place seen from the front, so the glass keeps its real tint, highlights and
  * shading from every side while the bottle turns. The photo's own light is kept: no scene lighting.
  * With `reflection`, it paints the faded copy under the bottle (see REFLECTION_FADE) instead.
  */
-function skinMaterial(src: string, onLoad: (tex: THREE.Texture) => void, onError: () => void) {
-  const material = shadedSkin(false)
+function skinMaterial(src: string, outdoor: boolean, onLoad: (tex: THREE.Texture) => void, onError: () => void) {
+  const material = shadedSkin(false, outdoor)
   new THREE.TextureLoader().load(
     src,
     (tex) => {
@@ -135,7 +144,7 @@ function skinMaterial(src: string, onLoad: (tex: THREE.Texture) => void, onError
   return material
 }
 
-function shadedSkin(reflection: boolean) {
+function shadedSkin(reflection: boolean, outdoor = false) {
   const material = new THREE.MeshBasicMaterial({ toneMapped: false, transparent: reflection, depthWrite: !reflection })
   material.onBeforeCompile = (shader) => {
     shader.vertexShader = shader.vertexShader
@@ -160,11 +169,12 @@ function shadedSkin(reflection: boolean) {
         float rim = smoothstep(1.0, 0.86, abs(vSkinUv.x * 2.0 - 1.0));
         float heel = smoothstep(0.0, 0.025, vSkinUv.y);
         diffuseColor.rgb *= mix(0.4, 1.0, rim) * mix(0.15, 1.0, heel);
+        ${outdoor ? `float vAcross = vSkinUv.x * 2.0 - 1.0;${OUTDOOR_LIGHT}` : ""}
         ${reflection ? `diffuseColor.a *= ${REFLECTION_FADE};` : ""}`,
       )
   }
-  // Both variants share the same onBeforeCompile source: tell three.js they are different programs.
-  material.customProgramCacheKey = () => `skin-${reflection}`
+  // The variants share the same onBeforeCompile source: tell three.js they are different programs.
+  material.customProgramCacheKey = () => `skin-${reflection}-${outdoor}`
   return material
 }
 
@@ -174,7 +184,7 @@ function shadedSkin(reflection: boolean) {
  * stamping, picked out by colour) catches a glint as the bottle turns. Unlit otherwise, like the skin,
  * so a label photographed with its bottle keeps the photo's brightness.
  */
-function labelMaterial(options: { cutout: boolean; reflection?: boolean; labelY: number }) {
+function labelMaterial(options: { cutout: boolean; reflection?: boolean; outdoor?: boolean; labelY: number }) {
   const material = new THREE.MeshBasicMaterial({
     toneMapped: false,
     transparent: options.cutout || !!options.reflection,
@@ -225,10 +235,11 @@ function labelMaterial(options: { cutout: boolean; reflection?: boolean; labelY:
         float band = max(dot(nh, normalize(vec2(h.x, h.z))), 0.0);
         diffuseColor.rgb += gold * (pow(band, 90.0) * 0.9 + pow(band, 12.0) * 0.15) * vec3(1.0, 0.86, 0.55);
         diffuseColor.rgb += pow(band, 30.0) * 0.05;
+        ${options.outdoor ? `float vAcross = n.x;${OUTDOOR_LIGHT}` : ""}
         ${options.reflection ? `diffuseColor.a *= ${REFLECTION_FADE};` : ""}`,
       )
   }
-  material.customProgramCacheKey = () => `label-${!!options.reflection}`
+  material.customProgramCacheKey = () => `label-${!!options.reflection}-${!!options.outdoor}`
   return material
 }
 
@@ -337,28 +348,42 @@ function labelTexture(spec: BottleSpec, estateName: string) {
   return tex
 }
 
-export function shadowTexture() {
-  const c = document.createElement("canvas")
-  c.width = c.height = 128
-  const ctx = c.getContext("2d")!
-  const g = ctx.createRadialGradient(64, 64, 0, 64, 64, 64)
-  g.addColorStop(0, "rgba(0,0,0,0.55)")
-  g.addColorStop(1, "rgba(0,0,0,0)")
-  ctx.fillStyle = g
-  ctx.fillRect(0, 0, 128, 128)
-  return new THREE.CanvasTexture(c)
+/**
+ * A soft shadow on the ground, drawn by the shader rather than from an image: "round" is darkest in the
+ * middle; "contact" is solid under the foot and fades just past its edge, where glass meets the ground;
+ * "cast" runs along the plane from its top edge (darkest, at the bottle's foot) and fades away.
+ */
+function shadowMaterial(shape: "round" | "contact" | "cast", strength: number) {
+  const material = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, depthWrite: false })
+  material.onBeforeCompile = (shader) => {
+    shader.vertexShader = shader.vertexShader
+      .replace("#include <common>", "#include <common>\nvarying vec2 vShadowUv;")
+      .replace("#include <begin_vertex>", "#include <begin_vertex>\nvShadowUv = uv;")
+    shader.fragmentShader = shader.fragmentShader
+      .replace("#include <common>", "#include <common>\nvarying vec2 vShadowUv;")
+      .replace(
+        "#include <color_fragment>",
+        `#include <color_fragment>
+        ${
+          {
+            round: "float fall = 1.0 - min(1.0, length(vShadowUv - 0.5) * 2.0); diffuseColor.a *= fall * fall;",
+            contact: "diffuseColor.a *= 1.0 - smoothstep(0.72, 1.0, length(vShadowUv - 0.5) * 2.0);",
+            cast: "float x = (vShadowUv.x - 0.5) / 0.3; diffuseColor.a *= exp(-x * x) * pow(vShadowUv.y, 1.3);",
+          }[shape]
+        }
+        diffuseColor.a *= ${strength.toFixed(3)};`,
+      )
+  }
+  material.customProgramCacheKey = () => `shadow-${shape}-${strength}`
+  return material
 }
 
-/**
- * One bottle, standing on y = 0. With `reflection`, a faded copy of it hangs upside down underneath
- * (`userData.mirror`), as on a polished table.
- */
+
 export function buildBottle(
   spec: BottleSpec,
   estateName: string,
   index: number,
-  shadowTex: THREE.Texture,
-  { reflection = false }: { reflection?: boolean } = {},
+  { reflection = false, outdoor = false }: { reflection?: boolean; outdoor?: boolean } = {},
 ) {
   const look = spec.look
   const p = { ...palette[spec.style], ...look?.colors }
@@ -394,6 +419,7 @@ export function buildBottle(
     const mirrorSkin = shadedSkin(true)
     const skin = skinMaterial(
       look.skin,
+      outdoor,
       (tex) => {
         glass.visible = true
         mirrorSkin.map = tex
@@ -421,7 +447,7 @@ export function buildBottle(
   const labelRadius = radiusOver(look?.outline, labelY - labelHeight / 2, labelY + labelHeight / 2) + 0.006
   const labelGeometry = new THREE.CylinderGeometry(labelRadius, labelRadius, labelHeight, 64, 1, true, -arc / 2, arc)
   const cutout = real?.shape === "diamond"
-  const label = new THREE.Mesh(labelGeometry, labelMaterial({ cutout, labelY }))
+  const label = new THREE.Mesh(labelGeometry, labelMaterial({ cutout, labelY, outdoor }))
   label.position.y = labelY
   label.renderOrder = 3
   const mirrorLabel = new THREE.Mesh(labelGeometry, labelMaterial({ cutout, labelY, reflection: true }))
@@ -455,19 +481,28 @@ export function buildBottle(
 
   const shadow = new THREE.Mesh(
     new THREE.PlaneGeometry(1.1, 1.1),
-    new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false }),
+    shadowMaterial("round", 0.5),
   )
   shadow.rotation.x = -Math.PI / 2
   shadow.position.y = 0.001
-  // A tighter, darker shadow right under the foot, where the bottle meets the table.
-  const contact = new THREE.Mesh(
-    new THREE.PlaneGeometry(0.62, 0.62),
-    new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false, opacity: 0.9 }),
-  )
+  // A darker ring right at the foot, where the bottle meets the table.
+  const contactSize = 2 * (look?.outline && shapes[look.outline] ? shapes[look.outline].bodyRadius : BODY_RADIUS) + 0.22
+  const contact = new THREE.Mesh(new THREE.PlaneGeometry(contactSize, contactSize), shadowMaterial("contact", 0.7))
   contact.rotation.x = -Math.PI / 2
   contact.position.y = 0.002
 
   bottle.add(mirror, shadow, contact, glass, label)
+  if (outdoor) {
+    // The sun is behind and to the left: the shadow falls forward and to the right, long and soft.
+    // Short enough to stay inside the scene's frame, where it would otherwise end on a hard edge.
+    const length = 1.5
+    const cast = new THREE.Mesh(new THREE.PlaneGeometry(0.95, length), shadowMaterial("cast", 0.78))
+    // Lying flat, its top edge (the dark end) at the foot, pointing forward and to the right.
+    const dir = new THREE.Vector3(0.5, 0, 0.85).normalize()
+    cast.rotation.set(-Math.PI / 2, 0, Math.atan2(dir.x, dir.z))
+    cast.position.copy(dir).multiplyScalar(length / 2 - 0.12).setY(0.003)
+    bottle.add(cast)
+  }
   bottle.userData.label = label
   bottle.userData.setLabel = setLabel
   bottle.userData.mirror = mirror
@@ -522,9 +557,8 @@ export default function Bottles3D({ bottles, estateName, selected, onSelect }: P
 
     const ring = new THREE.Group()
     scene.add(ring)
-    const shadowTex = shadowTexture()
     const items = bottles.map((spec, i) => {
-      const b = buildBottle(spec, estateName, i, shadowTex, { reflection: true })
+      const b = buildBottle(spec, estateName, i, { reflection: true })
       const a = i * step
       b.position.set(Math.sin(a) * RING_RADIUS, 0, Math.cos(a) * RING_RADIUS)
       b.rotation.y = a
@@ -686,7 +720,6 @@ export default function Bottles3D({ bottles, estateName, selected, onSelect }: P
           }
         }
       })
-      shadowTex.dispose()
       envTex.dispose()
       pmrem.dispose()
       renderer.dispose()
