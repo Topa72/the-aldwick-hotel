@@ -1,5 +1,6 @@
 import { motion } from "motion/react"
 
+import { Medal } from "@/components/medal"
 import { SectionHeading } from "@/components/section-heading"
 import { awardsContest, wines } from "@/data/content"
 import { fadeUp, inView, stagger } from "@/lib/motion"
@@ -41,14 +42,11 @@ export function Awards() {
               </span>
               <span
                 className={cn(
-                  "label inline-flex items-center gap-2",
+                  "label inline-flex items-center gap-3",
                   m.medal === "Or" ? "text-accent" : "text-foreground/80",
                 )}
               >
-                <span
-                  aria-hidden
-                  className={cn("h-2.5 w-2.5 rounded-full", m.medal === "Or" ? "bg-accent" : "bg-foreground/60")}
-                />
+                <Medal award={m} className="h-11 w-11" />
                 {m.medal}
               </span>
             </motion.li>

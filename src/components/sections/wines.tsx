@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useMemo, useState } from "react"
 import { AnimatePresence, motion } from "motion/react"
 import { ArrowLeft, ArrowRight } from "lucide-react"
 
+import { Medal } from "@/components/medal"
 import { PhotoLightbox } from "@/components/photo-lightbox"
 import { SectionHeading } from "@/components/section-heading"
 import { awardsContest, estate, packagingNote, wineGroups, wines, wineSlug, type WineStyle } from "@/data/content"
@@ -174,22 +175,11 @@ export function Wines() {
                   </p>
 
                   {wine.awards.length > 0 && (
-                    <ul className="mt-6 flex flex-wrap gap-2" aria-label={`Médailles, ${awardsContest}`}>
+                    <ul className="mt-7 flex flex-wrap gap-5" aria-label={`Médailles, ${awardsContest}`}>
                       {wine.awards.map((a) => (
-                        <li
-                          key={`${a.medal}-${a.vintage}`}
-                          className={cn(
-                            "label inline-flex items-center gap-2 border px-2.5 py-1.5",
-                            a.medal === "Or"
-                              ? "border-accent/60 text-accent"
-                              : "border-foreground/30 text-foreground/80",
-                          )}
-                        >
-                          <span
-                            aria-hidden
-                            className={cn("h-2 w-2 rounded-full", a.medal === "Or" ? "bg-accent" : "bg-foreground/60")}
-                          />
-                          {a.medal} · {a.vintage}
+                        <li key={`${a.medal}-${a.vintage}`} className="flex w-24 flex-col items-center gap-2">
+                          <Medal award={a} className="h-24 w-24" />
+                          <span className="label whitespace-nowrap text-[10px] text-muted-foreground">Millésime {a.vintage}</span>
                         </li>
                       ))}
                     </ul>
