@@ -107,36 +107,19 @@ function withEdgeTint(material: THREE.MeshPhysicalMaterial, edge: number) {
 }
 
 /**
+ * Fades a copy of the bottle seen upside down under it, like a reflection on a polished table: strongest
+ * at the foot, gone a third of the way up. `y` is the height on the bottle, 3 units tall.
+ */
+const REFLECTION_FADE = "0.2 * (1.0 - smoothstep(0.0, 1.1, vFadeY))"
+
+/**
  * Paints the bottle with its studio photo, unrolled (public/skins). Each point takes the colour the
  * photo shows at the same place seen from the front, so the glass keeps its real tint, highlights and
  * shading from every side while the bottle turns. The photo's own light is kept: no scene lighting.
+ * With `reflection`, it paints the faded copy under the bottle (see REFLECTION_FADE) instead.
  */
-function skinMaterial(src: string, onLoad: () => void, onError: () => void) {
-  const material = new THREE.MeshBasicMaterial({ toneMapped: false })
-  material.onBeforeCompile = (shader) => {
-    shader.vertexShader = shader.vertexShader
-      .replace("#include <common>", "#include <common>\nvarying vec2 vSkinUv;")
-      .replace(
-        "#include <begin_vertex>",
-        `#include <begin_vertex>
-      // Where this point sits across the bottle as seen from the camera: -1 left edge, 1 right edge.
-      vec3 radial = normalize(vec3(position.x, 0.0, position.z) + vec3(1e-5, 0.0, 0.0));
-      float across = normalize((modelViewMatrix * vec4(radial, 0.0)).xyz).x;
-      // The bottle is 3 units tall (BOTTLE_PROFILE).
-      vSkinUv = vec2(0.5 + 0.5 * across, position.y / 3.0);`,
-      )
-    shader.fragmentShader = shader.fragmentShader
-      .replace("#include <common>", "#include <common>\nvarying vec2 vSkinUv;")
-      .replace(
-        "#include <map_fragment>",
-        `diffuseColor *= texture2D(map, vSkinUv);
-        // Glass seen edge-on, and the heel it stands on, read darker; this also hides any trace of the
-        // photo's white backdrop along the outline.
-        float rim = smoothstep(1.0, 0.86, abs(vSkinUv.x * 2.0 - 1.0));
-        float heel = smoothstep(0.0, 0.025, vSkinUv.y);
-        diffuseColor.rgb *= mix(0.4, 1.0, rim) * mix(0.15, 1.0, heel);`,
-      )
-  }
+function skinMaterial(src: string, onLoad: (tex: THREE.Texture) => void, onError: () => void) {
+  const material = shadedSkin(false)
   new THREE.TextureLoader().load(
     src,
     (tex) => {
@@ -144,11 +127,108 @@ function skinMaterial(src: string, onLoad: () => void, onError: () => void) {
       tex.anisotropy = 8
       material.map = tex
       material.needsUpdate = true
-      onLoad()
+      onLoad(tex)
     },
     undefined,
     onError,
   )
+  return material
+}
+
+function shadedSkin(reflection: boolean) {
+  const material = new THREE.MeshBasicMaterial({ toneMapped: false, transparent: reflection, depthWrite: !reflection })
+  material.onBeforeCompile = (shader) => {
+    shader.vertexShader = shader.vertexShader
+      .replace("#include <common>", "#include <common>\nvarying vec2 vSkinUv;\nvarying float vFadeY;")
+      .replace(
+        "#include <begin_vertex>",
+        `#include <begin_vertex>
+      // Where this point sits across the bottle as seen from the camera: -1 left edge, 1 right edge.
+      vec3 radial = normalize(vec3(position.x, 0.0, position.z) + vec3(1e-5, 0.0, 0.0));
+      float across = normalize((modelViewMatrix * vec4(radial, 0.0)).xyz).x;
+      // The bottle is 3 units tall (BOTTLE_PROFILE).
+      vSkinUv = vec2(0.5 + 0.5 * across, position.y / 3.0);
+      vFadeY = position.y;`,
+      )
+    shader.fragmentShader = shader.fragmentShader
+      .replace("#include <common>", "#include <common>\nvarying vec2 vSkinUv;\nvarying float vFadeY;")
+      .replace(
+        "#include <map_fragment>",
+        `diffuseColor *= texture2D(map, vSkinUv);
+        // Glass seen edge-on, and the heel it stands on, read darker; this also hides any trace of the
+        // photo's white backdrop along the outline.
+        float rim = smoothstep(1.0, 0.86, abs(vSkinUv.x * 2.0 - 1.0));
+        float heel = smoothstep(0.0, 0.025, vSkinUv.y);
+        diffuseColor.rgb *= mix(0.4, 1.0, rim) * mix(0.15, 1.0, heel);
+        ${reflection ? `diffuseColor.a *= ${REFLECTION_FADE};` : ""}`,
+      )
+  }
+  // Both variants share the same onBeforeCompile source: tell three.js they are different programs.
+  material.customProgramCacheKey = () => `skin-${reflection}`
+  return material
+}
+
+/**
+ * The label, lit as paper wrapped round glass rather than printed flat: it darkens where it turns away,
+ * takes a soft studio light from the upper left, has a faint paper grain, and its gold (hot-foil
+ * stamping, picked out by colour) catches a glint as the bottle turns. Unlit otherwise, like the skin,
+ * so a label photographed with its bottle keeps the photo's brightness.
+ */
+function labelMaterial(options: { cutout: boolean; reflection?: boolean; labelY: number }) {
+  const material = new THREE.MeshBasicMaterial({
+    toneMapped: false,
+    transparent: options.cutout || options.reflection,
+    alphaTest: options.cutout ? 0.5 : 0,
+    depthWrite: !options.reflection,
+  })
+  material.onBeforeCompile = (shader) => {
+    shader.uniforms.labelY = { value: options.labelY }
+    shader.vertexShader = shader.vertexShader
+      .replace(
+        "#include <common>",
+        "#include <common>\nuniform float labelY;\nvarying vec3 vViewN;\nvarying vec3 vViewDir;\nvarying float vFadeY;",
+      )
+      .replace(
+        "#include <begin_vertex>",
+        `#include <begin_vertex>
+        vViewN = normalize(normalMatrix * normal);
+        vViewDir = normalize(-(modelViewMatrix * vec4(position, 1.0)).xyz);
+        vFadeY = position.y + labelY;`,
+      )
+    shader.fragmentShader = shader.fragmentShader
+      .replace("#include <common>", "#include <common>\nvarying vec3 vViewN;\nvarying vec3 vViewDir;\nvarying float vFadeY;")
+      .replace(
+        "#include <map_fragment>",
+        `#include <map_fragment>
+        vec3 n = normalize(vViewN);
+        vec3 v = normalize(vViewDir);
+        // Paper curving away from the eye falls into shade, as on the glass beside it.
+        float facing = clamp(dot(n, v), 0.0, 1.0);
+        float shade = mix(0.45, 1.0, smoothstep(0.0, 0.75, facing));
+        // A broad softbox up and to the left of the camera.
+        vec3 l = normalize(vec3(-0.55, 0.3, 0.8));
+        shade *= 0.82 + 0.22 * max(dot(n, l), 0.0);
+        // Paper grain, too fine to see but enough to break the flat print.
+        #ifdef USE_MAP
+          vec2 cell = floor(vMapUv * vec2(1400.0, 1100.0));
+          float grain = fract(sin(dot(cell, vec2(12.9898, 78.233))) * 43758.5453);
+          shade *= 0.985 + 0.03 * grain;
+        #endif
+        vec3 base = diffuseColor.rgb;
+        diffuseColor.rgb *= shade;
+        // Gold foil: warm, saturated, brighter in red than in blue and green above blue.
+        float gold = smoothstep(0.12, 0.28, base.r - base.b) * smoothstep(0.05, 0.14, base.g - base.b)
+          * smoothstep(0.22, 0.45, base.r);
+        // The softbox seen in the label: a vertical band (the label is a cylinder), sharp on foil.
+        vec3 h = normalize(l + v);
+        vec2 nh = normalize(vec2(n.x, n.z));
+        float band = max(dot(nh, normalize(vec2(h.x, h.z))), 0.0);
+        diffuseColor.rgb += gold * (pow(band, 90.0) * 0.9 + pow(band, 12.0) * 0.15) * vec3(1.0, 0.86, 0.55);
+        diffuseColor.rgb += pow(band, 30.0) * 0.05;
+        ${options.reflection ? `diffuseColor.a *= ${REFLECTION_FADE};` : ""}`,
+      )
+  }
+  material.customProgramCacheKey = () => `label-${!!options.reflection}`
   return material
 }
 
@@ -269,7 +349,17 @@ export function shadowTexture() {
   return new THREE.CanvasTexture(c)
 }
 
-export function buildBottle(spec: BottleSpec, estateName: string, index: number, shadowTex: THREE.Texture) {
+/**
+ * One bottle, standing on y = 0. With `reflection`, a faded copy of it hangs upside down underneath
+ * (`userData.mirror`), as on a polished table.
+ */
+export function buildBottle(
+  spec: BottleSpec,
+  estateName: string,
+  index: number,
+  shadowTex: THREE.Texture,
+  { reflection = false }: { reflection?: boolean } = {},
+) {
   const look = spec.look
   const p = { ...palette[spec.style], ...look?.colors }
   const bottle = new THREE.Group()
@@ -296,11 +386,20 @@ export function buildBottle(spec: BottleSpec, estateName: string, index: number,
     [glassMat, capsuleMat],
   ]
   let glass: THREE.Mesh
+  const mirror = new THREE.Group()
+  mirror.scale.y = -1
+  mirror.visible = false
   if (look?.skin) {
     // The photographed bottle once its skin has loaded; the tinted one if it fails.
+    const mirrorSkin = shadedSkin(true)
     const skin = skinMaterial(
       look.skin,
-      () => (glass.visible = true),
+      (tex) => {
+        glass.visible = true
+        mirrorSkin.map = tex
+        mirrorSkin.needsUpdate = true
+        mirror.visible = reflection
+      },
       () => {
         ;[glass.geometry, glass.material] = tinted()
         glass.visible = true
@@ -308,6 +407,7 @@ export function buildBottle(spec: BottleSpec, estateName: string, index: number,
     )
     glass = new THREE.Mesh(modelGeometry(look.outline), skin)
     glass.visible = false
+    mirror.add(new THREE.Mesh(modelGeometry(look.outline), mirrorSkin))
   } else {
     glass = new THREE.Mesh(...tinted())
   }
@@ -319,18 +419,22 @@ export function buildBottle(spec: BottleSpec, estateName: string, index: number,
   const labelHeight = real?.height ?? 0.8 * (BODY_RADIUS / PHOTO_RADIUS)
   const labelY = real?.y ?? 0.7
   const labelRadius = radiusOver(look?.outline, labelY - labelHeight / 2, labelY + labelHeight / 2) + 0.006
-  const label = new THREE.Mesh(
-    new THREE.CylinderGeometry(labelRadius, labelRadius, labelHeight, 64, 1, true, -arc / 2, arc),
-    new THREE.MeshStandardMaterial({
-      map: real ? null : labelTexture(spec, estateName),
-      roughness: 0.85,
-      metalness: 0,
-      transparent: real?.shape === "diamond",
-      alphaTest: real?.shape === "diamond" ? 0.5 : 0,
-    }),
-  )
+  const labelGeometry = new THREE.CylinderGeometry(labelRadius, labelRadius, labelHeight, 64, 1, true, -arc / 2, arc)
+  const cutout = real?.shape === "diamond"
+  const label = new THREE.Mesh(labelGeometry, labelMaterial({ cutout, labelY }))
   label.position.y = labelY
   label.renderOrder = 3
+  const mirrorLabel = new THREE.Mesh(labelGeometry, labelMaterial({ cutout, labelY, reflection: true }))
+  mirrorLabel.position.y = labelY
+  mirror.add(mirrorLabel)
+  const setLabel = (tex: THREE.Texture, cut: boolean) => {
+    for (const m of [label.material, mirrorLabel.material]) {
+      m.map = tex
+      m.alphaTest = cut ? 0.5 : 0
+      m.needsUpdate = true
+    }
+    label.visible = true
+  }
   if (real) {
     // Show the photographed label once it has loaded; fall back to a drawn one.
     label.userData.realLabel = true
@@ -340,19 +444,13 @@ export function buildBottle(spec: BottleSpec, estateName: string, index: number,
       (tex) => {
         tex.colorSpace = THREE.SRGBColorSpace
         tex.anisotropy = 8
-        label.material.map = tex
-        label.material.needsUpdate = true
-        label.visible = true
+        setLabel(tex, cutout)
       },
       undefined,
-      () => {
-        label.material.map = labelTexture(spec, estateName)
-        label.material.transparent = false
-        label.material.alphaTest = 0
-        label.material.needsUpdate = true
-        label.visible = true
-      },
+      () => setLabel(labelTexture(spec, estateName), false),
     )
+  } else {
+    setLabel(labelTexture(spec, estateName), false)
   }
 
   const shadow = new THREE.Mesh(
@@ -361,9 +459,18 @@ export function buildBottle(spec: BottleSpec, estateName: string, index: number,
   )
   shadow.rotation.x = -Math.PI / 2
   shadow.position.y = 0.001
+  // A tighter, darker shadow right under the foot, where the bottle meets the table.
+  const contact = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.62, 0.62),
+    new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false, opacity: 0.9 }),
+  )
+  contact.rotation.x = -Math.PI / 2
+  contact.position.y = 0.002
 
-  bottle.add(shadow, glass, label)
+  bottle.add(mirror, shadow, contact, glass, label)
   bottle.userData.label = label
+  bottle.userData.setLabel = setLabel
+  bottle.userData.mirror = mirror
   bottle.traverse((o) => (o.userData.index = index))
   if (look?.widthScale) bottle.scale.set(look.widthScale, 1, look.widthScale)
   return bottle
@@ -410,13 +517,14 @@ export default function Bottles3D({ bottles, estateName, selected, onSelect }: P
     scene.add(key, rim, new THREE.AmbientLight(0xffffff, 0.25))
 
     const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 50)
-    const lookAt = new THREE.Vector3(0, 1.52, 1.1)
+    // Aimed low enough to leave room for the reflection under the front bottle.
+    const lookAt = new THREE.Vector3(0, 1.34, 1.1)
 
     const ring = new THREE.Group()
     scene.add(ring)
     const shadowTex = shadowTexture()
     const items = bottles.map((spec, i) => {
-      const b = buildBottle(spec, estateName, i, shadowTex)
+      const b = buildBottle(spec, estateName, i, shadowTex, { reflection: true })
       const a = i * step
       b.position.set(Math.sin(a) * RING_RADIUS, 0, Math.cos(a) * RING_RADIUS)
       b.rotation.y = a
@@ -449,11 +557,10 @@ export default function Bottles3D({ bottles, estateName, selected, onSelect }: P
     fontsReady.then(() => {
       if (disposed) return
       items.forEach((b, i) => {
-        const label = b.userData.label as THREE.Mesh<THREE.BufferGeometry, THREE.MeshStandardMaterial>
+        const label = b.userData.label as THREE.Mesh<THREE.BufferGeometry, THREE.MeshBasicMaterial>
         if (label.userData.realLabel) return
         label.material.map?.dispose()
-        label.material.map = labelTexture(bottles[i], estateName)
-        label.material.needsUpdate = true
+        b.userData.setLabel(labelTexture(bottles[i], estateName), false)
       })
     })
 
@@ -463,7 +570,7 @@ export default function Bottles3D({ bottles, estateName, selected, onSelect }: P
       renderer.setSize(w, h)
       camera.aspect = w / h
       // Pull back on narrow screens so the front bottle always fits.
-      const dist = camera.aspect < 0.8 ? 7.4 : 6.4
+      const dist = camera.aspect < 0.8 ? 7.9 : 6.9
       camera.position.set(0, 1.75, RING_RADIUS + dist)
       camera.lookAt(lookAt)
       camera.updateProjectionMatrix()
@@ -550,6 +657,8 @@ export default function Bottles3D({ bottles, estateName, selected, onSelect }: P
         const isFront = i === front
         const lift = isFront ? 0.1 : 0
         b.position.y += (lift - b.position.y) * Math.min(1, dt * 5)
+        // The reflection stays on the table while the bottle lifts.
+        b.userData.mirror.position.y = -2 * b.position.y
         const sway = isFront && !reduceMotion && !dragging ? Math.sin(t * 0.7) * 0.28 : 0
         const baseRot = i * step
         b.rotation.y += (baseRot + sway - b.rotation.y) * Math.min(1, dt * 3)
