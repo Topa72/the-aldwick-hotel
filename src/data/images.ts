@@ -33,8 +33,6 @@ export const images = {
   basketBack: asset("photos/panier-fond.webp"),
   /** The same soil, faint behind the home page's cards under the hero (a strip without the corner stones). */
   soil: asset("photos/terre.webp") as string | null,
-  /** Behind the cuvées on the wines page, dimmed under the text. */
-  winesBackdrop: asset("photos/bouteilles-dans-les-vignes.webp") as string | null,
   /** Beside the estate's history. */
   family: asset("photos/famille.webp") as string | null,
   familyAlt: "La famille Dauny réunie au caveau, autour d'une table de bouteilles et de médailles",
@@ -54,8 +52,12 @@ export const images = {
       alt: "Le Vignoble Dauny à Champtin, entre ses vignes, le village et les coteaux",
       position: "72% 40%",
     },
-    // Its photo sits behind the cuvées instead (`winesBackdrop`), so the page opens on the wines.
-    vins: null,
+    vins: {
+      src: asset("photos/bouteilles-dans-les-vignes.webp"),
+      alt: "Des bouteilles du Vignoble Dauny posées dans le feuillage de la vigne",
+      position: "50% 45%",
+      tone: "surface",
+    },
     "ou-trouver": {
       src: asset("photos/bouteilles-caveau.webp"),
       alt: "Trois cuvées du Vignoble Dauny sur leur présentoir",
