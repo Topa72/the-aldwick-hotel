@@ -2,9 +2,9 @@ import * as THREE from "three"
 
 /**
  * A long wicker basket for the home page's bottles: oval (straight sides, round ends), woven of
- * willow, with a braided rim, a looped handle at each end and a bed of straw the bottles stand in.
- * Everything is drawn from code: the weave is a generated texture (colour and relief), so the basket
- * takes the scene's sunlight.
+ * rattan, with a braided rim and a looped handle rising at each end, filled with straw that spills
+ * up between the bottles, and sprigs of leaves tucked along its rim. Everything is drawn from code
+ * (the weave is a generated texture, colour and relief), so the basket takes the scene's sunlight.
  */
 
 /** A point on the oval outline, `d` along its length (0 at the front left), with its outward normal. */
@@ -33,8 +33,8 @@ function outline(halfLength: number, halfWidth: number) {
   return { at, length }
 }
 
-// The weave texture: 16 stakes across and 8 rows of weavers down, about 1.2 cm and 6 mm each on a
-// bottle 30 cm tall (3 units).
+// The weave texture: 14 stakes across and 6 rows of weavers down, about 1.4 cm and 8 mm each on a
+// bottle 30 cm tall (3 units): a rattan weave.
 const TILE_WIDTH = 1.92
 const TILE_HEIGHT = 0.48
 
@@ -51,8 +51,8 @@ function hash(a: number, b: number) {
 function weaveTextures() {
   const w = 512
   const h = 256
-  const stakes = 16
-  const rows = 8
+  const stakes = 14
+  const rows = 6
   const height = new Float32Array(w * h)
   const colour = new Uint8Array(w * h * 4)
   for (let y = 0; y < h; y++) {
@@ -79,15 +79,16 @@ function weaveTextures() {
         0.5 + 0.5 * Math.sin(Math.PI * 2 * (u * 3 + hash(row, 3))) * Math.sin(Math.PI * 2 * (u + hash(row, 4)))
       const fibre = hash(Math.floor(y * 1.7), Math.floor(x / 6)) - 0.5
       const shade = 0.78 + 0.22 * hash(row, 1) + 0.16 * drift + 0.08 * fibre
-      const light = (0.3 + 0.7 * Math.pow(relief, 0.6)) * shade
+      // Deep, dark gaps between weavers, as on a real basket.
+      const light = (0.12 + 0.88 * Math.pow(relief, 0.5)) * shade
       const i = (y * w + x) * 4
-      colour[i] = Math.min(255, 186 * light)
-      colour[i + 1] = Math.min(255, 140 * light)
-      colour[i + 2] = Math.min(255, 86 * light)
+      colour[i] = Math.min(255, 200 * light)
+      colour[i + 1] = Math.min(255, 142 * light)
+      colour[i + 2] = Math.min(255, 82 * light)
       colour[i + 3] = 255
     }
   }
-  return { map: colourTexture(colour, w, h), normalMap: normalTexture(height, w, h, 3.2) }
+  return { map: colourTexture(colour, w, h), normalMap: normalTexture(height, w, h, 4.5) }
 }
 
 /** A braided rim: strands twisting along it, seen as diagonal ridges. */
@@ -111,6 +112,25 @@ function braidTextures() {
     }
   }
   return { map: colourTexture(colour, w, h), normalMap: normalTexture(height, w, h, 2.5) }
+}
+
+/** A lanceolate leaf (olive-like), `length` long, lying along +x from its stalk, curving a little. */
+function leafGeometry(length: number) {
+  const w = length * 0.16
+  const s = new THREE.Shape()
+  s.moveTo(0, 0)
+  s.bezierCurveTo(length * 0.3, w, length * 0.75, w * 0.8, length, 0)
+  s.bezierCurveTo(length * 0.75, -w * 0.8, length * 0.3, -w, 0, 0)
+  const g = new THREE.ShapeGeometry(s, 8)
+  // Leaves are not flat: curl the blade along its length and fold it a little along the midrib.
+  const pos = g.getAttribute("position")
+  for (let i = 0; i < pos.count; i++) {
+    const x = pos.getX(i)
+    const y = pos.getY(i)
+    pos.setZ(i, -0.25 * (x * x) / length + 0.4 * Math.abs(y))
+  }
+  g.computeVertexNormals()
+  return g
 }
 
 /** Loose straw: thin golden stalks lying every which way over darker ones. */
@@ -220,6 +240,85 @@ function wall(
   return g
 }
 
+/**
+ * Straw spilling over the rim: a tangle of thin stalks, short along the front where they would hide
+ * the labels, taller in the gaps between the bottles (at `bottleXs`, `bottleRadius` wide).
+ */
+function straw(shape: ReturnType<typeof outline>, height: number, bottleXs: number[], bottleRadius: number) {
+  const count = 4200
+  const stalk = new THREE.CylinderGeometry(0.008, 0.008, 1, 4, 1, true)
+  stalk.translate(0, 0.5, 0)
+  const material = new THREE.MeshStandardMaterial({ roughness: 0.85, metalness: 0, envMapIntensity: 0.3 })
+  const mesh = new THREE.InstancedMesh(stalk, material, count)
+  const m = new THREE.Matrix4()
+  const q = new THREE.Quaternion()
+  const e = new THREE.Euler()
+  const colour = new THREE.Color()
+  for (let i = 0; i < count; i++) {
+    // Somewhere inside the rim, a little more often near it.
+    const p = shape.at(hash(i, 11) * shape.length)
+    const inward = Math.pow(hash(i, 12), 0.6) * 0.42
+    const x = p.x - p.nx * inward
+    const z = p.z - p.nz * inward
+    const gap = Math.min(...bottleXs.map((bx) => Math.abs(x - bx))) > bottleRadius * 0.92
+    // In front of a label: keep low, lying over the rim, so the label stays readable.
+    const front = !gap && z > 0.1
+    // Stalks between the bottles stand up out of the basket; the others lie low over the rim.
+    const rise = gap ? 0.05 + 0.15 * hash(i, 13) : front ? 0 : 0.05 + 0.1 * hash(i, 13)
+    const y = front ? height - 0.05 + 0.04 * hash(i, 14) : height - 0.08 + 0.1 * hash(i, 14)
+    const length = front ? 0.08 + 0.1 * hash(i, 15) : 0.14 + 0.22 * hash(i, 15)
+    // Tilt: from almost flat to pointing up, any direction; flat over the rim in front of the labels.
+    const tilt = gap ? 0.55 + 0.85 * hash(i, 16) : front ? 1.35 + 0.2 * hash(i, 16) : 0.9 + 0.6 * hash(i, 16)
+    e.set(tilt * Math.cos(hash(i, 17) * Math.PI * 2), hash(i, 18) * Math.PI * 2, tilt * Math.sin(hash(i, 17) * Math.PI * 2))
+    q.setFromEuler(e)
+    m.compose(new THREE.Vector3(x, y + rise * 0.3, z), q, new THREE.Vector3(1, length + rise, 1))
+    mesh.setMatrixAt(i, m)
+    const l = 0.75 + 0.45 * hash(i, 19)
+    mesh.setColorAt(i, colour.setRGB(0.92 * l, 0.76 * l, 0.44 * l, THREE.SRGBColorSpace))
+  }
+  return mesh
+}
+
+/** Sprigs of leaves tucked along the rim, between the bottles and at both ends, hanging over the edge. */
+function leaves(height: number, bottleXs: number[], halfLength: number) {
+  const spots: { x: number; z: number; out: number }[] = []
+  // Along the front, in each gap between two bottles, and at the ends by the handles.
+  for (let k = 0; k < bottleXs.length - 1; k++) spots.push({ x: (bottleXs[k] + bottleXs[k + 1]) / 2, z: 0.5, out: 0 })
+  for (const side of [-1, 1]) {
+    spots.push({ x: side * (halfLength - 0.15), z: 0.42, out: side })
+    spots.push({ x: side * (halfLength - 0.05), z: 0.05, out: side })
+    spots.push({ x: side * (halfLength - 0.25), z: -0.4, out: side })
+  }
+  for (let k = 0; k < bottleXs.length - 1; k += 2) spots.push({ x: (bottleXs[k] + bottleXs[k + 1]) / 2, z: -0.45, out: 0 })
+  const perSpot = 7
+  const count = spots.length * perSpot
+  const blade = leafGeometry(0.36)
+  const material = new THREE.MeshStandardMaterial({ roughness: 0.55, metalness: 0, side: THREE.DoubleSide, envMapIntensity: 0.5 })
+  const mesh = new THREE.InstancedMesh(blade, material, count)
+  const m = new THREE.Matrix4()
+  const q = new THREE.Quaternion()
+  const colour = new THREE.Color()
+  let i = 0
+  spots.forEach((spot, s) => {
+    for (let k = 0; k < perSpot; k++, i++) {
+      // Fanned out from the sprig, pointing outward and down over the rim (or up between bottles).
+      const yaw = (spot.out !== 0 ? (spot.out > 0 ? 0 : Math.PI) : -Math.PI / 2) + (hash(s, k) - 0.5) * 2.2
+      const pitch = -0.6 + hash(s, k + 20) * 1.2
+      q.setFromEuler(new THREE.Euler(hash(s, k + 40) * Math.PI, yaw, pitch, "YZX"))
+      const scale = 0.8 + 0.5 * hash(s, k + 60)
+      m.compose(
+        new THREE.Vector3(spot.x + (hash(s, k + 80) - 0.5) * 0.12, height + 0.02 + 0.05 * hash(s, k + 90), spot.z),
+        q,
+        new THREE.Vector3(scale, scale, scale),
+      )
+      mesh.setMatrixAt(i, m)
+      const l = 0.55 + 0.45 * hash(s, k + 100)
+      mesh.setColorAt(i, colour.setRGB(0.36 * l, 0.52 * l, 0.24 * l, THREE.SRGBColorSpace))
+    }
+  })
+  return mesh
+}
+
 export type Basket = {
   group: THREE.Group
   /** Height of the tray's floor, where the bottles stand. */
@@ -230,18 +329,23 @@ export type Basket = {
 
 /**
  * The basket, standing on y = 0, centred on the origin, `halfLength` along x and `halfWidth` along z,
- * its rim `height` above the ground and its bed of straw at `floor`, where the bottles stand.
+ * its rim `height` above the ground and its bed of straw at `floor`, where the bottles stand (at
+ * `bottleXs` along x, `bottleRadius` wide: the straw rises between them).
  */
 export function buildBasket({
   halfLength,
   halfWidth,
   height,
   floor,
+  bottleXs,
+  bottleRadius,
 }: {
   halfLength: number
   halfWidth: number
   height: number
   floor: number
+  bottleXs: number[]
+  bottleRadius: number
 }): Basket {
   const group = new THREE.Group()
   const shape = outline(halfLength, halfWidth)
@@ -304,18 +408,19 @@ export function buildBasket({
   for (let i = 0; i < rimUv.count; i++) rimUv.setX(i, rimUv.getX(i) * (shape.length / 0.6))
   group.add(new THREE.Mesh(rim, braided))
 
-  // A looped handle standing out from each end, just under the rim.
+  // A looped handle rising from each end above the rim, leaning outward.
   const handles: THREE.BufferGeometry[] = []
   for (const side of [-1, 1]) {
-    const handle = new THREE.TorusGeometry(0.2, 0.045, 10, 40, Math.PI)
-    // The half loop points away from the basket: to the right at the right end, to the left at the left.
-    handle.rotateZ(side > 0 ? -Math.PI / 2 : Math.PI / 2)
-    handle.translate(side * (halfLength + 0.02), height - 0.17, 0)
+    const handle = new THREE.TorusGeometry(0.32, 0.055, 10, 40, Math.PI)
+    handle.rotateZ(-side * 0.5)
+    handle.translate(side * (halfLength - 0.05), height - 0.1, 0)
     const uv = handle.getAttribute("uv")
     for (let i = 0; i < uv.count; i++) uv.setX(i, uv.getX(i) * 4)
     handles.push(handle)
     group.add(new THREE.Mesh(handle, braided))
   }
+
+  group.add(straw(shape, height, bottleXs, bottleRadius), leaves(height, bottleXs, halfLength))
 
   group.traverse((o) => {
     if (o instanceof THREE.Mesh) o.renderOrder = 0

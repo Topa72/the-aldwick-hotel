@@ -123,8 +123,12 @@ const OUTDOOR_SHADE = `
   diffuseColor.rgb *= vec3(0.86, 0.81, 0.72) * mix(1.0, 0.76, smoothstep(-0.2, 0.95, vAcross));
   diffuseColor.rgb += smoothstep(-0.55, -0.97, vAcross) * vec3(1.0, 0.86, 0.62) * 0.3;`
 const OUTDOOR_GLASS = `${OUTDOOR_SHADE}
-  float glintX = (vAcross + 0.64) / 0.045;
-  diffuseColor.rgb += exp(-glintX * glintX) * vec3(1.0, 0.94, 0.82) * 0.32 * smoothstep(0.04, 0.2, vHeight);
+  // The sun's glint, a bright vertical streak down the glass, and a softer one on the other side.
+  float glintX = (vAcross + 0.55) / 0.06;
+  float glintY = smoothstep(0.04, 0.2, vHeight) * (1.0 - smoothstep(0.62, 0.8, vHeight) * 0.6);
+  diffuseColor.rgb += exp(-glintX * glintX) * vec3(1.0, 0.95, 0.85) * 0.5 * glintY;
+  float softX = (vAcross - 0.5) / 0.14;
+  diffuseColor.rgb += exp(-softX * softX) * vec3(1.0, 0.92, 0.8) * 0.12 * glintY;
   diffuseColor.rgb += smoothstep(0.75, 0.98, vAcross) * vec3(0.012, 0.025, 0.006);
   diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * vec3(0.78, 0.64, 0.5), (1.0 - smoothstep(0.0, 0.07, vHeight)) * 0.55);`
 

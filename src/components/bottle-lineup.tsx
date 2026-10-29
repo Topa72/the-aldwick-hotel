@@ -82,7 +82,14 @@ export default function BottleLineup({
     if (basket) {
       // Deep enough to read as a basket; the bottles stand on straw high enough inside for the rim to
       // hide no more than the plain foot of their labels.
-      const tray = buildBasket({ halfLength: ((n - 1) * SPACING) / 2 + 0.47, halfWidth: 0.52, height: 0.95, floor: 0.68 })
+      const tray = buildBasket({
+        halfLength: ((n - 1) * SPACING) / 2 + 0.47,
+        halfWidth: 0.52,
+        height: 0.95,
+        floor: 0.68,
+        bottleXs: bottles.map((_, i) => (i - (n - 1) / 2) * SPACING),
+        bottleRadius: 0.42,
+      })
       floor = tray.floor
       scene.add(tray.group)
       if (outdoor) for (const part of tray.casters) scene.add(sunShadow(part, 1.2))
