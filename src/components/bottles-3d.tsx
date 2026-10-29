@@ -177,7 +177,7 @@ function shadedSkin(reflection: boolean) {
 function labelMaterial(options: { cutout: boolean; reflection?: boolean; labelY: number }) {
   const material = new THREE.MeshBasicMaterial({
     toneMapped: false,
-    transparent: options.cutout || options.reflection,
+    transparent: options.cutout || !!options.reflection,
     alphaTest: options.cutout ? 0.5 : 0,
     depthWrite: !options.reflection,
   })
