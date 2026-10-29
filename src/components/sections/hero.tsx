@@ -167,13 +167,16 @@ export function Hero() {
               </Suspense>
             )}
           </div>
-          <p className="label mt-2 min-h-5 text-center [text-shadow:0_1px_10px_rgba(0,0,0,0.9)]" aria-live="polite">
+          <p
+            className="label mt-2 min-h-5 text-center [text-shadow:0_1px_10px_rgba(0,0,0,0.9)] lg:translate-y-9"
+            aria-live="polite"
+          >
             {named ? (
-              <span className={cn("text-accent", backdrop && "bg-background/75 px-3 py-1.5")}>
+              <span className={cn("text-accent", backdrop && "bg-background/90 px-4 py-2")}>
                 {named.name} · {named.appellation}
               </span>
             ) : (
-              <span className={backdrop ? "bg-background/75 px-3 py-1.5 text-foreground/85" : "text-muted-foreground"}>
+              <span className={backdrop ? "bg-background/90 px-4 py-2 text-foreground/85" : "text-muted-foreground"}>
                 Choisissez une bouteille
               </span>
             )}
