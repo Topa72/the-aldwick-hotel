@@ -21,6 +21,7 @@ const FRAME = { width: PHOTO_W, top: PHOTO_TOP + HEADROOM, height: PHOTO_H + HEA
  */
 export function BasketPhoto({
   src,
+  shadow,
   back,
   bottles,
   estateName,
@@ -29,6 +30,8 @@ export function BasketPhoto({
   onPick,
 }: {
   src: string
+  /** The basket's shadow on the surface it stands on. */
+  shadow: string
   /** The straw inside the basket, behind the bottles. */
   back: string
   bottles: BottleSpec[]
@@ -38,16 +41,18 @@ export function BasketPhoto({
   onPick: (index: number) => void
 }) {
   return (
-    <div className="absolute inset-x-0 bottom-[4%] mx-auto w-[96%] max-w-[900px] lg:-ml-[2%] lg:w-[106%] lg:max-w-[980px]">
+    <div className="absolute inset-x-0 bottom-[4%] mx-auto w-[96%] max-w-[900px] lg:-ml-[2%] lg:w-[106%] lg:max-w-[980px] lg:translate-y-[26px]">
       <div className="relative aspect-[1631/788]">
-        {/* Where the basket rests on the soil: a soft shadow, darker right under it. */}
-        <div
+        {/* The basket's shadow on the stone, drawn from its own outline (898 pixels tall: it reaches
+            below the picture). */}
+        <img
+          src={shadow}
+          alt=""
           aria-hidden
-          className="absolute -bottom-[5%] left-[6%] right-[4%] h-[22%] rounded-[50%] bg-black/55 blur-xl"
-        />
-        <div
-          aria-hidden
-          className="absolute bottom-[1%] left-[10%] right-[8%] h-[8%] rounded-[50%] bg-black/60 blur-md"
+          decoding="async"
+          draggable={false}
+          className="pointer-events-none absolute inset-x-0 top-0 w-full select-none"
+          style={{ height: `${(898 / 788) * 100}%` }}
         />
         <img
           src={back}

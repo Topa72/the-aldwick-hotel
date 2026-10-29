@@ -31,6 +31,8 @@ export const images = {
   basketPhoto: asset("photos/panier-devant.webp") as string | null,
   /** The straw filling that basket, behind the bottles (seen when one is lifted out). */
   basketBack: asset("photos/panier-fond.webp"),
+  /** That basket's shadow on the ledge. */
+  basketShadow: asset("photos/panier-ombre.webp"),
   /** The same soil, faint behind the home page's cards under the hero (a strip without the corner stones). */
   soil: asset("photos/terre.webp") as string | null,
   /** Beside the estate's history. */

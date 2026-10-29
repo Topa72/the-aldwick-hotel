@@ -129,9 +129,7 @@ export function Hero() {
               "relative min-h-[220px] lg:h-[62vh] lg:min-h-[420px]",
               // In the photo, the bottles take its softness and colour: a touch of blur (the photo is
               // enlarged, so never razor sharp), a little less saturation, a little more contrast.
-              backdrop
-                ? "h-[36vh] min-h-[260px] [&_canvas]:[filter:blur(0.45px)_saturate(0.9)_contrast(1.05)]"
-                : "h-[30vh]",
+              backdrop ? "h-[36vh] min-h-[260px] [&_canvas]:[filter:blur(0.35px)_saturate(0.92)]" : "h-[30vh]",
             )}
           >
             {/* On phones the photo sits behind the bottles only, its edges melting into the page. */}
@@ -148,6 +146,7 @@ export function Hero() {
               <BasketPhoto
                 src={images.basketPhoto}
                 back={images.basketBack}
+                shadow={images.basketShadow}
                 bottles={wines}
                 estateName={estate.name}
                 hovered={hovered}
@@ -170,11 +169,11 @@ export function Hero() {
           </div>
           <p className="label mt-2 min-h-5 text-center [text-shadow:0_1px_10px_rgba(0,0,0,0.9)]" aria-live="polite">
             {named ? (
-              <span className="text-accent">
+              <span className={cn("text-accent", backdrop && "bg-background/75 px-3 py-1.5")}>
                 {named.name} · {named.appellation}
               </span>
             ) : (
-              <span className={backdrop ? "text-foreground/85" : "text-muted-foreground"}>
+              <span className={backdrop ? "bg-background/75 px-3 py-1.5 text-foreground/85" : "text-muted-foreground"}>
                 Choisissez une bouteille
               </span>
             )}
