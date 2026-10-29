@@ -7,6 +7,7 @@ import { Sheet, SheetClose, SheetContent, SheetDescription, SheetTitle, SheetTri
 import { navLinks, wineGroups, wines, wineSlug } from "@/data/content"
 import { href, useRoute } from "@/lib/router"
 import { cn } from "@/lib/utils"
+import { winePigment } from "@/lib/wine-colors"
 
 /** The cuvées of each colour, in the order of the wines section's tabs. */
 const winesByGroup = wineGroups.map((g) => ({ ...g, wines: wines.filter((w) => w.style === g.style) }))
@@ -66,26 +67,52 @@ function WinesMenu({ label, current }: { label: string; current: boolean }) {
       </button>
       {/* The top padding bridges the gap to the panel so it stays open while the pointer moves down. */}
       <div id="menu-vins" hidden={!open} className="absolute left-1/2 top-full -translate-x-1/2 pt-5">
-        <div className="grid w-[600px] grid-cols-3 gap-8 border border-border bg-background p-7 shadow-2xl">
+        <div className="grid w-[760px] grid-cols-3 gap-10 border border-border border-t-accent/70 bg-background px-9 pb-8 pt-7 shadow-2xl">
           {winesByGroup.map((g) => (
             <div key={g.style}>
               <a
                 href={href("vins", wineSlug(g.wines[0]))}
                 onClick={() => setOpen(false)}
-                className="label flex items-baseline justify-between border-b border-border pb-3 text-accent transition-colors hover:text-foreground"
+                className="group flex items-start gap-3 border-b border-border pb-4"
               >
-                {g.label}
-                <span className="tabular-nums text-muted-foreground">{g.wines.length}</span>
+                <span
+                  aria-hidden
+                  className="mt-[9px] h-3 w-3 shrink-0 rounded-full ring-1 ring-foreground/15"
+                  style={{ background: winePigment[g.style] }}
+                />
+                <span className="flex flex-col">
+                  <span className="display text-3xl leading-none text-foreground transition-colors group-hover:text-accent">
+                    {g.label}
+                  </span>
+                  <span className="label mt-2 text-[10px] text-muted-foreground">
+                    {g.wines.length} {g.wines.length > 1 ? "cuvées" : "cuvée"}
+                  </span>
+                </span>
               </a>
-              <ul className="mt-4 flex flex-col gap-3">
+              <ul className="mt-3 flex flex-col">
                 {g.wines.map((w) => (
                   <li key={w.name}>
                     <a
                       href={href("vins", wineSlug(w))}
                       onClick={() => setOpen(false)}
-                      className="font-serif text-xl font-semibold italic leading-tight text-foreground/85 transition-colors hover:text-accent"
+                      className="group flex items-center gap-3 py-2.5"
                     >
-                      {w.name}
+                      {w.look?.label && (
+                        <img
+                          src={w.look.label.src}
+                          alt=""
+                          aria-hidden
+                          loading="lazy"
+                          className="h-9 w-11 shrink-0 object-contain opacity-80 transition-opacity group-hover:opacity-100"
+                        />
+                      )}
+                      <span className="min-w-0 flex-1">
+                        <span className="block font-serif text-lg font-semibold italic leading-tight text-foreground/85 transition-colors group-hover:text-accent">
+                          {w.name}
+                        </span>
+                        <span className="label block text-[10px] text-muted-foreground">{w.appellation}</span>
+                      </span>
+                      <ArrowRight className="h-3.5 w-3.5 -translate-x-1 text-accent opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100" />
                     </a>
                   </li>
                 ))}
@@ -182,7 +209,14 @@ export function Navbar() {
                     <div className="-mt-1 grid grid-cols-3 gap-4 pb-6">
                       {winesByGroup.map((g) => (
                         <div key={g.style}>
-                          <p className="label text-accent">{g.label}</p>
+                          <p className="label flex items-center gap-2 text-foreground/70">
+                            <span
+                              aria-hidden
+                              className="h-2.5 w-2.5 rounded-full ring-1 ring-foreground/15"
+                              style={{ background: winePigment[g.style] }}
+                            />
+                            {g.label}
+                          </p>
                           <ul className="mt-2 flex flex-col gap-1.5">
                             {g.wines.map((w) => (
                               <li key={w.name}>

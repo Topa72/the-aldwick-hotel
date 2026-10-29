@@ -48,7 +48,6 @@ export default function BottleLineup({
 
   useEffect(() => {
     const container = containerRef.current!
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
     const n = bottles.length
 
     // The stencil lets each sun shadow darken the ground once where its triangles overlap.
@@ -188,7 +187,6 @@ export default function BottleLineup({
       raf = requestAnimationFrame(tick)
       if (!visible) return
       const dt = Math.min(clock.getDelta(), 0.05)
-      const t = clock.elapsedTime
       items.forEach((b, i) => {
         // The bottle under the pointer comes forward: lifted out of the basket, or stepping forward on
         // the ground (lifted, it would float off the soil).
@@ -198,9 +196,8 @@ export default function BottleLineup({
         const z = b.userData.baseZ + (!lifts && picked ? 0.45 : 0)
         b.position.y += (y - b.position.y) * Math.min(1, dt * 6)
         b.position.z += (z - b.position.z) * Math.min(1, dt * 6)
-        // A slow, gentle turn so the labels catch the light.
-        const sway = reduceMotion ? 0 : Math.sin(t * 0.45 + i * 0.9) * 0.22
-        b.rotation.y = b.userData.baseRotation + sway
+        // Standing still, labels to the front.
+        b.rotation.y = b.userData.baseRotation
         b.userData.alignShadow?.()
       })
       renderer.render(scene, camera)

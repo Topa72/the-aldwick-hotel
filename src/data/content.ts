@@ -52,6 +52,7 @@ export const discover = [
 
 /** The menu's pages (see src/lib/router.ts for their files). */
 export const navLinks = [
+  { label: "Accueil", page: "accueil" },
   { label: "Le Domaine", page: "domaine" },
   { label: "Nos Vins", page: "vins" },
   { label: "Où trouver nos vins", page: "ou-trouver" },
