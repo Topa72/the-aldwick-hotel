@@ -21,6 +21,7 @@ const FRAME = { width: PHOTO_W, top: PHOTO_TOP + HEADROOM, height: PHOTO_H + HEA
  */
 export function BasketPhoto({
   src,
+  back,
   bottles,
   estateName,
   hovered,
@@ -28,6 +29,8 @@ export function BasketPhoto({
   onPick,
 }: {
   src: string
+  /** The straw inside the basket, behind the bottles. */
+  back: string
   bottles: BottleSpec[]
   estateName: string
   hovered: number | null
@@ -45,6 +48,14 @@ export function BasketPhoto({
         <div
           aria-hidden
           className="absolute bottom-[1%] left-[10%] right-[8%] h-[8%] rounded-[50%] bg-black/60 blur-md"
+        />
+        <img
+          src={back}
+          alt=""
+          aria-hidden
+          decoding="async"
+          draggable={false}
+          className="pointer-events-none absolute inset-0 h-full w-full select-none [filter:saturate(0.92)_brightness(0.93)_sepia(0.08)]"
         />
         <div className="absolute inset-x-0 bottom-0" style={{ top: `${(-HEADROOM / PHOTO_H) * 100}%` }}>
           <Suspense fallback={null}>

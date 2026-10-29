@@ -28,6 +28,8 @@ export const images = {
    * on that soil. Null shows the bottles in a basket drawn in 3D instead.
    */
   basketPhoto: asset("photos/panier-devant.webp") as string | null,
+  /** The straw filling that basket, behind the bottles (seen when one is lifted out). */
+  basketBack: asset("photos/panier-fond.webp"),
   /** The same soil, faint behind the home page's cards under the hero (a strip without the corner stones). */
   soil: asset("photos/terre.webp") as string | null,
   /** Beside the estate's history. */

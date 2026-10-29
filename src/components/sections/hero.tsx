@@ -147,6 +147,7 @@ export function Hero() {
             {images.basketPhoto ? (
               <BasketPhoto
                 src={images.basketPhoto}
+                back={images.basketBack}
                 bottles={wines}
                 estateName={estate.name}
                 hovered={hovered}
