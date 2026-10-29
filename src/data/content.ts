@@ -463,9 +463,10 @@ export const salesSplit = [
   { share: 25, label: "Cavistes et magasins bio" },
 ] as const
 
+/** As on the estate's Google Maps listing. */
 export const openingHours = [
-  { period: "16 mars – 15 octobre", days: "Lundi – samedi", hours: "9h – 12h · 14h – 19h" },
-  { period: "16 octobre – 15 mars", days: "Lundi – samedi", hours: "9h – 12h · 14h – 18h" },
+  { period: "En semaine", days: "Lundi – vendredi", hours: "8h – 12h · 14h – 19h" },
+  { period: "Week-end", days: "Samedi", hours: "9h – 12h · 14h – 19h" },
 ] as const
 
 export const visitInfo = [

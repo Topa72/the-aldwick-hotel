@@ -64,7 +64,7 @@ export function Visit() {
                 </div>
               ))}
             </dl>
-            <p className="mt-4 text-sm font-light text-muted-foreground">Fermé le dimanche et les jours fériés.</p>
+            <p className="mt-4 text-sm font-light text-muted-foreground">Fermé le dimanche. Les jours fériés, les horaires peuvent varier.</p>
           </motion.div>
 
           <motion.ul className="grid gap-10 sm:grid-cols-3" variants={stagger(0.12)} {...inView}>

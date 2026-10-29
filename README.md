@@ -49,10 +49,10 @@ Les mentions légales (éditeur, hébergeur) sont dans `legal`, dans `src/data/c
 
 ## À vérifier avant la mise en ligne
 
-Le contenu reprend le site officiel vignobledauny.fr (histoire, vigne et bio, fiches techniques, médailles, revendeurs), lu par recherche web car le site n'était pas accessible directement. Les pages officielles datent d'environ 2020 ; les horaires de visite et les revendeurs étrangers viennent d'autres sources publiques (office de tourisme, cavistes).
+Le contenu reprend le site officiel vignobledauny.fr (histoire, vigne et bio, fiches techniques, médailles, revendeurs), lu par recherche web car le site n'était pas accessible directement. Les pages officielles datent d'environ 2020 ; les horaires viennent de la fiche Google Maps du domaine, les revendeurs étrangers de leurs propres sites.
 
 - **Revendeurs** (`stockists` dans `src/data/content.ts`) : les enseignes bio viennent de la page officielle ; les revendeurs étrangers, de leurs propres sites.
-- **Horaires** : les sources divergent (ouverture à 8h ou 9h). À confirmer.
+- **Horaires** : ceux de la fiche Google Maps du domaine (`openingHours`, `src/data/content.ts`).
 - **Médailles** : palmarès du site officiel, arrêté en 2020. À compléter avec les médailles plus récentes.
 - **Répartition des ventes** : la page française indique 30 / 45 / 25 %, la page anglaise 35 / 30 / 35 %. La version française est utilisée.
 - **Cuvées** : gamme et fiches techniques du site officiel (2 rouges, 4 blancs, 1 rosé). Fiches complètes reprises des fiches officielles pour les 7 cuvées.
