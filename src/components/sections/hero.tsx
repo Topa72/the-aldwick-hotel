@@ -14,6 +14,13 @@ const BottleLineup = lazy(() => import("@/components/bottle-lineup"))
 
 const backdrop = images.heroBackdrop
 
+/**
+ * Film grain laid over both the photo and the 3D bottles, so they share the same texture, as if they
+ * came out of the same camera.
+ */
+const GRAIN =
+  "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>\")"
+
 const rise = (delay: number) => ({
   initial: { opacity: 0, y: 32 },
   animate: { opacity: 1, y: 0 },
@@ -119,7 +126,11 @@ export function Hero() {
           <div
             className={cn(
               "relative min-h-[220px] lg:h-[62vh] lg:min-h-[420px]",
-              backdrop ? "h-[36vh] min-h-[260px]" : "h-[30vh]",
+              // In the photo, the bottles take its softness and colour: a touch of blur (the photo is
+              // enlarged, so never razor sharp), a little less saturation, a little more contrast.
+              backdrop
+                ? "h-[36vh] min-h-[260px] [&_canvas]:[filter:blur(0.45px)_saturate(0.9)_contrast(1.05)]"
+                : "h-[30vh]",
             )}
           >
             {/* On phones the photo sits behind the bottles only, its edges melting into the page. */}
@@ -164,6 +175,13 @@ export function Hero() {
           </ul>
         </motion.div>
       </div>
+      {backdrop && (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 z-20 opacity-[0.13] mix-blend-overlay"
+          style={{ backgroundImage: GRAIN }}
+        />
+      )}
     </section>
   )
 }

@@ -34,7 +34,8 @@ export default function BottleLineup({ bottles, estateName, hovered, onHover, on
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
     const n = bottles.length
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
+    // The stencil lets each sun shadow darken the ground once where its triangles overlap.
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, stencil: true })
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     renderer.toneMapping = THREE.ACESFilmicToneMapping
     renderer.toneMappingExposure = 1.05
@@ -73,7 +74,8 @@ export default function BottleLineup({ bottles, estateName, hovered, onHover, on
       renderer.setSize(w, h)
       camera.aspect = w / h
       // Pull back until the whole row (and the bottles' height) fits.
-      const halfWidth = ((n - 1) * SPACING) / 2 + 0.48
+      // Outdoors, room on the right for the last bottle's shadow, which would otherwise end on the edge.
+      const halfWidth = ((n - 1) * SPACING) / 2 + (outdoor ? 0.95 : 0.48)
       const tanV = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))
       const dist = Math.max(halfWidth / (tanV * camera.aspect), 1.75 / tanV)
       // In the vineyard photo the camera looks down on the soil (about 15°): look down on the bottles
@@ -132,6 +134,7 @@ export default function BottleLineup({ bottles, estateName, hovered, onHover, on
         // A slow, gentle turn so the labels catch the light.
         const sway = reduceMotion ? 0 : Math.sin(t * 0.45 + i * 0.9) * 0.22
         b.rotation.y = b.userData.baseRotation + sway
+        b.userData.alignShadow?.()
       })
       renderer.render(scene, camera)
     }

@@ -113,13 +113,20 @@ function withEdgeTint(material: THREE.MeshPhysicalMaterial, edge: number) {
 const REFLECTION_FADE = "0.2 * (1.0 - smoothstep(0.0, 1.1, vFadeY))"
 
 /**
- * Bottles set in the home page's vineyard photo take its light: warm sun, a little darker than the
- * studio, and a bright rim on the left where the sun comes from behind. `vAcross` runs from the left
- * edge of the bottle (-1) to its right edge (1), as seen from the camera.
+ * Bottles set in the home page's vineyard photo take its light. The sun is behind them, to the left:
+ * the side we see is in shade (darker, warmer, more so towards the right), the left rim is lit, and
+ * the glass shows the sun's glint just inside that rim, the foliage along its right edge and the soil
+ * in its heel. `vAcross` runs from the left edge of the bottle (-1) to its right edge (1), as seen from
+ * the camera; `vHeight` from its foot (0) to its top (1).
  */
-const OUTDOOR_LIGHT = `
-  diffuseColor.rgb *= vec3(0.93, 0.88, 0.8);
-  diffuseColor.rgb += smoothstep(-0.55, -0.97, vAcross) * vec3(1.0, 0.86, 0.62) * 0.32;`
+const OUTDOOR_SHADE = `
+  diffuseColor.rgb *= vec3(0.86, 0.81, 0.72) * mix(1.0, 0.76, smoothstep(-0.2, 0.95, vAcross));
+  diffuseColor.rgb += smoothstep(-0.55, -0.97, vAcross) * vec3(1.0, 0.86, 0.62) * 0.3;`
+const OUTDOOR_GLASS = `${OUTDOOR_SHADE}
+  float glintX = (vAcross + 0.64) / 0.045;
+  diffuseColor.rgb += exp(-glintX * glintX) * vec3(1.0, 0.94, 0.82) * 0.32 * smoothstep(0.04, 0.2, vHeight);
+  diffuseColor.rgb += smoothstep(0.75, 0.98, vAcross) * vec3(0.012, 0.025, 0.006);
+  diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * vec3(0.78, 0.64, 0.5), (1.0 - smoothstep(0.0, 0.07, vHeight)) * 0.55);`
 
 /**
  * Paints the bottle with its studio photo, unrolled (public/skins). Each point takes the colour the
@@ -169,7 +176,7 @@ function shadedSkin(reflection: boolean, outdoor = false) {
         float rim = smoothstep(1.0, 0.86, abs(vSkinUv.x * 2.0 - 1.0));
         float heel = smoothstep(0.0, 0.025, vSkinUv.y);
         diffuseColor.rgb *= mix(0.4, 1.0, rim) * mix(0.15, 1.0, heel);
-        ${outdoor ? `float vAcross = vSkinUv.x * 2.0 - 1.0;${OUTDOOR_LIGHT}` : ""}
+        ${outdoor ? `float vAcross = vSkinUv.x * 2.0 - 1.0; float vHeight = vSkinUv.y;${OUTDOOR_GLASS}` : ""}
         ${reflection ? `diffuseColor.a *= ${REFLECTION_FADE};` : ""}`,
       )
   }
@@ -235,7 +242,7 @@ function labelMaterial(options: { cutout: boolean; reflection?: boolean; outdoor
         float band = max(dot(nh, normalize(vec2(h.x, h.z))), 0.0);
         diffuseColor.rgb += gold * (pow(band, 90.0) * 0.9 + pow(band, 12.0) * 0.15) * vec3(1.0, 0.86, 0.55);
         diffuseColor.rgb += pow(band, 30.0) * 0.05;
-        ${options.outdoor ? `float vAcross = n.x;${OUTDOOR_LIGHT}` : ""}
+        ${options.outdoor ? `float vAcross = n.x;${OUTDOOR_SHADE}` : ""}
         ${options.reflection ? `diffuseColor.a *= ${REFLECTION_FADE};` : ""}`,
       )
   }
@@ -350,10 +357,9 @@ function labelTexture(spec: BottleSpec, estateName: string) {
 
 /**
  * A soft shadow on the ground, drawn by the shader rather than from an image: "round" is darkest in the
- * middle; "contact" is solid under the foot and fades just past its edge, where glass meets the ground;
- * "cast" runs along the plane from its top edge (darkest, at the bottle's foot) and fades away.
+ * middle; "contact" is solid under the foot and fades just past its edge, where glass meets the ground.
  */
-function shadowMaterial(shape: "round" | "contact" | "cast", strength: number) {
+function shadowMaterial(shape: "round" | "contact", strength: number) {
   const material = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, depthWrite: false })
   material.onBeforeCompile = (shader) => {
     shader.vertexShader = shader.vertexShader
@@ -368,7 +374,6 @@ function shadowMaterial(shape: "round" | "contact" | "cast", strength: number) {
           {
             round: "float fall = 1.0 - min(1.0, length(vShadowUv - 0.5) * 2.0); diffuseColor.a *= fall * fall;",
             contact: "diffuseColor.a *= 1.0 - smoothstep(0.72, 1.0, length(vShadowUv - 0.5) * 2.0);",
-            cast: "float x = (vShadowUv.x - 0.5) / 0.3; diffuseColor.a *= exp(-x * x) * pow(vShadowUv.y, 1.3);",
           }[shape]
         }
         diffuseColor.a *= ${strength.toFixed(3)};`,
@@ -378,7 +383,63 @@ function shadowMaterial(shape: "round" | "contact" | "cast", strength: number) {
   return material
 }
 
+/**
+ * The sun is behind the bottles and to the left (as on the stones of the vineyard photo): it sends the
+ * bottle's own silhouette, broad body then thin neck, forward and a little to the right along the soil.
+ */
+const SUN = new THREE.Vector3(0.3, -1, 0.62)
 
+/**
+ * The bottle flattened onto the ground along the sun's rays: dark at the foot, fading towards the
+ * shadow of the neck. Drawn once per pixel (stencil), however many of its triangles overlap there.
+ */
+function sunShadow(geometry: THREE.BufferGeometry) {
+  const material = new THREE.MeshBasicMaterial({
+    color: 0x000000,
+    // Flattened, half the triangles face away from the camera: draw both sides.
+    side: THREE.DoubleSide,
+    transparent: true,
+    depthWrite: false,
+    stencilWrite: true,
+    stencilRef: 1,
+    stencilFunc: THREE.NotEqualStencilFunc,
+    stencilZPass: THREE.ReplaceStencilOp,
+  })
+  material.onBeforeCompile = (shader) => {
+    shader.vertexShader = shader.vertexShader
+      .replace("#include <common>", "#include <common>\nvarying float vShadowY;")
+      .replace("#include <begin_vertex>", "#include <begin_vertex>\nvShadowY = position.y;")
+    shader.fragmentShader = shader.fragmentShader
+      .replace("#include <common>", "#include <common>\nvarying float vShadowY;")
+      .replace(
+        "#include <color_fragment>",
+        "#include <color_fragment>\ndiffuseColor.a *= 0.62 * pow(1.0 - clamp(vShadowY / 3.0, 0.0, 1.0), 1.4);",
+      )
+  }
+  material.customProgramCacheKey = () => "sun-shadow"
+  const shadow = new THREE.Mesh(geometry, material)
+  // Each point moves along the ray down to the ground (y = 0, just above it to avoid flicker).
+  const project = new THREE.Matrix4().set(1, -SUN.x / SUN.y, 0, 0, 0, 0, 0, 0.004, 0, -SUN.z / SUN.y, 1, 0, 0, 0, 0, 1)
+  shadow.matrixAutoUpdate = false
+  shadow.matrix.copy(project)
+  shadow.renderOrder = -1
+  // The sun stays put while the bottle turns: undo the bottle's own turn (and width) around the
+  // projection. Call after changing the bottle's rotation.
+  const turn = new THREE.Matrix4()
+  const unturn = new THREE.Matrix4()
+  shadow.userData.align = (bottle: THREE.Object3D) => {
+    turn.makeRotationY(bottle.rotation.y).scale(bottle.scale)
+    unturn.copy(turn).invert()
+    shadow.matrix.multiplyMatrices(unturn, project).multiply(turn)
+  }
+  return shadow
+}
+
+/**
+ * One bottle, standing on y = 0. With `reflection`, a faded copy of it hangs upside down underneath
+ * (`userData.mirror`), as on a polished table. `outdoor` sets it in the sunlit vineyard photo of the
+ * home page: its light, and its shadow cast by the sun along the soil.
+ */
 export function buildBottle(
   spec: BottleSpec,
   estateName: string,
@@ -493,15 +554,9 @@ export function buildBottle(
 
   bottle.add(mirror, shadow, contact, glass, label)
   if (outdoor) {
-    // The sun is behind and to the left: the shadow falls forward and to the right, long and soft.
-    // Short enough to stay inside the scene's frame, where it would otherwise end on a hard edge.
-    const length = 1.5
-    const cast = new THREE.Mesh(new THREE.PlaneGeometry(0.95, length), shadowMaterial("cast", 0.78))
-    // Lying flat, its top edge (the dark end) at the foot, pointing forward and to the right.
-    const dir = new THREE.Vector3(0.5, 0, 0.85).normalize()
-    cast.rotation.set(-Math.PI / 2, 0, Math.atan2(dir.x, dir.z))
-    cast.position.copy(dir).multiplyScalar(length / 2 - 0.12).setY(0.003)
-    bottle.add(cast)
+    const shadow = sunShadow(modelGeometry(look?.outline))
+    bottle.add(shadow)
+    bottle.userData.alignShadow = () => shadow.userData.align(bottle)
   }
   bottle.userData.label = label
   bottle.userData.setLabel = setLabel
