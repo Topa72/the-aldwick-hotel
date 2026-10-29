@@ -16,6 +16,13 @@ function findWine(anchor?: string) {
   return { style: wine.style, index: wines.filter((w) => w.style === wine.style).indexOf(wine) }
 }
 
+/** The colour of each style of wine in the glass, for the tabs. */
+const winePigment: Record<WineStyle, string> = {
+  rouge: "radial-gradient(circle at 35% 30%, #a3344a, #4a0d18 70%)",
+  blanc: "radial-gradient(circle at 35% 30%, #f3e39a, #b99a2e 70%)",
+  rose: "radial-gradient(circle at 35% 30%, #f6b7a2, #d4685a 70%)",
+}
+
 const Bottles3D = lazy(() => import("@/components/bottles-3d"))
 
 export function Wines() {
@@ -52,9 +59,14 @@ export function Wines() {
       <div className="container">
         <SectionHeading id="vins-title" eyebrow="Nos Vins" title="Les cuvées" />
 
-        <div role="tablist" aria-label="Couleur" className="mt-12 flex flex-wrap gap-2 md:mt-16">
+        <div
+          role="tablist"
+          aria-label="Couleur"
+          className="mt-12 grid grid-cols-3 border-b border-border md:mt-16 md:flex md:gap-14"
+        >
           {wineGroups.map((g) => {
             const active = g.style === style
+            const count = byStyle[g.style].length
             return (
               <button
                 key={g.style}
@@ -63,17 +75,42 @@ export function Wines() {
                 aria-selected={active}
                 aria-controls="vins-panel"
                 onClick={() => pickStyle(g.style)}
-                className={cn(
-                  "label inline-flex h-11 items-center gap-2 border px-5 transition-colors duration-200",
-                  active
-                    ? "border-accent bg-accent text-accent-foreground"
-                    : "border-border text-foreground/80 hover:border-accent hover:text-accent",
-                )}
+                className="group relative flex items-start gap-3 pb-5 text-left outline-none md:gap-4"
               >
-                {g.label}
-                <span className={cn("tabular-nums", active ? "text-accent-foreground/70" : "text-muted-foreground")}>
-                  {byStyle[g.style].length}
+                {/* A drop of the wine's own colour. */}
+                <span
+                  aria-hidden
+                  className={cn(
+                    "mt-[7px] h-3.5 w-3.5 shrink-0 rounded-full ring-1 ring-foreground/15 transition-transform duration-300 md:mt-[13px] md:h-4 md:w-4",
+                    active ? "scale-110" : "opacity-70 group-hover:opacity-100",
+                  )}
+                  style={{ background: winePigment[g.style] }}
+                />
+                <span className="flex flex-col">
+                  <span
+                    className={cn(
+                      "display text-[26px] leading-none transition-colors duration-200 md:text-[40px]",
+                      active ? "text-accent" : "text-foreground/60 group-hover:text-foreground",
+                    )}
+                  >
+                    {g.label}
+                  </span>
+                  <span className="label mt-2 text-[10px] text-muted-foreground md:text-[11px]">
+                    {count} {count > 1 ? "cuvées" : "cuvée"}
+                  </span>
                 </span>
+                {active && (
+                  <motion.span
+                    layoutId="wine-tab"
+                    aria-hidden
+                    className="absolute inset-x-0 -bottom-px h-0.5 bg-accent"
+                    transition={{ duration: 0.45, ease }}
+                  />
+                )}
+                <span
+                  aria-hidden
+                  className="absolute inset-0 -m-1 rounded-sm ring-accent group-focus-visible:ring-2"
+                />
               </button>
             )
           })}
