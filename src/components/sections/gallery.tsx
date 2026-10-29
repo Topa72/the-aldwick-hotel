@@ -1,8 +1,9 @@
 import { motion } from "motion/react"
 
+import { PhotoLightbox } from "@/components/photo-lightbox"
 import { SectionHeading } from "@/components/section-heading"
 import { SmartImage } from "@/components/smart-image"
-import { gallery, type GalleryItem } from "@/data/content"
+import { gallery, type GalleryItem } from "@/data/images"
 import { ease } from "@/lib/motion"
 import { cn } from "@/lib/utils"
 
@@ -26,18 +27,21 @@ function Tile({ item, index, fill }: { item: GalleryItem; index: number; fill: b
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.8, delay: (index % 3) * 0.12, ease }}
     >
-      <SmartImage
-        src={item.src}
-        alt={item.alt}
-        loading="lazy"
-        decoding="async"
-        className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-      />
-      <div
-        aria-hidden
-        className="absolute inset-0 bg-background opacity-0 transition-opacity duration-500 group-hover:opacity-70"
-      />
-      <figcaption className="absolute inset-0 flex flex-col items-center justify-center gap-4 p-6 text-center opacity-0 transition-all duration-500 group-hover:opacity-100">
+      {/* A click opens the photo nearly full screen. */}
+      <PhotoLightbox src={item.src} alt={item.alt} className="absolute inset-0 cursor-zoom-in">
+        <SmartImage
+          src={item.src}
+          alt={item.alt}
+          loading="lazy"
+          decoding="async"
+          className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+        />
+        <span
+          aria-hidden
+          className="absolute inset-0 bg-background opacity-0 transition-opacity duration-500 group-hover:opacity-60"
+        />
+      </PhotoLightbox>
+      <figcaption className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-4 p-6 text-center opacity-0 transition-all duration-500 group-hover:opacity-100">
         <span className="h-px w-10 bg-accent" />
         <span className="display translate-y-3 text-[clamp(30px,3vw,46px)] leading-none text-foreground transition-transform duration-500 group-hover:translate-y-0">
           {item.label}

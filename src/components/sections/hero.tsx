@@ -5,6 +5,7 @@ import { ArrowRight } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { estate, heroChips, wines, wineSlug } from "@/data/content"
+import { images } from "@/data/images"
 import { ease } from "@/lib/motion"
 import { href } from "@/lib/router"
 
@@ -27,12 +28,25 @@ export function Hero() {
       className="relative flex w-full items-center overflow-hidden pb-16 pt-24 lg:min-h-[100svh] lg:pb-10"
       aria-label="Accueil"
     >
+      {images.heroBackdrop && (
+        <img
+          src={images.heroBackdrop}
+          alt=""
+          aria-hidden
+          fetchPriority="high"
+          decoding="async"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      )}
+      {/* Over the photo: dark enough for the text on the left and for the bottles to stand out. */}
+      {images.heroBackdrop && <div aria-hidden className="absolute inset-0 bg-background/45 lg:hidden" />}
       <div
         aria-hidden
         className="absolute inset-0"
         style={{
-          background:
-            "radial-gradient(ellipse 55% 60% at 68% 52%, rgba(201,165,90,0.18), transparent 70%), linear-gradient(to bottom, #13181f, #171c24 60%, #13181f)",
+          background: images.heroBackdrop
+            ? "radial-gradient(ellipse 55% 60% at 68% 52%, rgba(201,165,90,0.16), transparent 70%), linear-gradient(to right, rgba(19,24,31,0.92), rgba(19,24,31,0.55) 55%, rgba(19,24,31,0.45)), linear-gradient(to bottom, rgba(19,24,31,0.7), transparent 30%, transparent 65%, #13181f)"
+            : "radial-gradient(ellipse 55% 60% at 68% 52%, rgba(201,165,90,0.18), transparent 70%), linear-gradient(to bottom, #13181f, #171c24 60%, #13181f)",
         }}
       />
 

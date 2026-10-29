@@ -1,6 +1,8 @@
 import { useEffect } from "react"
 import { MotionConfig } from "motion/react"
 
+import { PageBanner } from "@/components/page-banner"
+
 import { Awards } from "@/components/sections/awards"
 import { BookCta } from "@/components/sections/book-cta"
 import { Cellar } from "@/components/sections/cellar"
@@ -14,6 +16,7 @@ import { Navbar } from "@/components/sections/navbar"
 import { Visit } from "@/components/sections/visit"
 import { WhereToBuy } from "@/components/sections/where-to-buy"
 import { Wines } from "@/components/sections/wines"
+import { images } from "@/data/images"
 import { pages, useRoute, type Page } from "@/lib/router"
 
 const sections: Record<Page, () => React.ReactNode> = {
@@ -27,6 +30,7 @@ const sections: Record<Page, () => React.ReactNode> = {
   ),
   domaine: () => (
     <>
+      <PageBanner banner={images.banners.domaine} />
       <History />
       <Cellar />
       <Gallery />
@@ -36,6 +40,7 @@ const sections: Record<Page, () => React.ReactNode> = {
   ),
   vins: () => (
     <>
+      <PageBanner banner={images.banners.vins} />
       <Wines />
       <Awards />
       <BookCta />
@@ -44,12 +49,18 @@ const sections: Record<Page, () => React.ReactNode> = {
   ),
   "ou-trouver": () => (
     <>
+      <PageBanner banner={images.banners["ou-trouver"]} />
       <WhereToBuy />
       <BookCta />
       <Contact />
     </>
   ),
-  visite: () => <Visit />,
+  visite: () => (
+    <>
+      <PageBanner banner={images.banners.visite} />
+      <Visit />
+    </>
+  ),
 }
 
 export default function App() {

@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils"
 
 export function WhereToBuy() {
   return (
-    <section id="ou-trouver" className="border-y border-border bg-surface py-24 md:py-36" aria-labelledby="ou-title">
+    <section id="ou-trouver" className="border-b border-border bg-surface py-24 md:py-36" aria-labelledby="ou-title">
       <div className="container">
         <SectionHeading id="ou-title" eyebrow="Revendeurs" title="Où trouver nos vins" />
         <motion.p

@@ -21,7 +21,7 @@ export function History() {
             </motion.p>
           </div>
 
-          {images.facade && (
+          {images.family && (
             <motion.figure
               className="lg:col-span-7"
               initial={{ opacity: 0, y: 24 }}
@@ -31,15 +31,15 @@ export function History() {
             >
               <div className="relative aspect-[4/3] overflow-hidden">
                 <img
-                  src={images.facade}
-                  alt={images.facadeAlt}
+                  src={images.family}
+                  alt={images.familyAlt}
                   loading="lazy"
                   decoding="async"
                   className="absolute inset-0 h-full w-full object-cover"
                 />
                 <div aria-hidden className="absolute inset-0 ring-1 ring-inset ring-foreground/10" />
               </div>
-              <figcaption className="label mt-4 text-muted-foreground">{images.facadeCaption}</figcaption>
+              <figcaption className="label mt-4 text-muted-foreground">{images.familyCaption}</figcaption>
             </motion.figure>
           )}
         </div>

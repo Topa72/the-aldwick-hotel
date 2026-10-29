@@ -385,16 +385,6 @@ export const wineGroups: { style: WineStyle; label: string }[] = [
   { style: "rose", label: "Rosé" },
 ]
 
-export type GalleryItem = {
-  src: string
-  label: string
-  alt: string
-  ratio: "portrait" | "landscape"
-}
-
-/** Photos of the estate for the gallery; the section stays hidden while this is empty. */
-export const gallery: GalleryItem[] = []
-
 export const cellarChips = [
   "Bio depuis 1964",
   "Pressurage pneumatique",

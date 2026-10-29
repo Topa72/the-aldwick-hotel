@@ -1,28 +1,47 @@
 import * as DialogPrimitive from "@radix-ui/react-dialog"
+import type { ReactNode } from "react"
 import { X, ZoomIn } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
-/** A thumbnail that opens the photo nearly full screen; click anywhere or press Escape to close. */
-export function PhotoLightbox({ src, alt, className }: { src: string; alt: string; className?: string }) {
+/**
+ * A thumbnail that opens the photo nearly full screen; click anywhere or press Escape to close.
+ * `children` replaces the default bottle thumbnail (a white card with a zoom badge).
+ */
+export function PhotoLightbox({
+  src,
+  alt,
+  className,
+  children,
+}: {
+  src: string
+  alt: string
+  className?: string
+  children?: ReactNode
+}) {
   return (
     <DialogPrimitive.Root>
       <DialogPrimitive.Trigger
         className={cn(
-          "group relative block shrink-0 self-start overflow-hidden bg-white outline-none ring-accent focus-visible:ring-2",
+          "group relative block overflow-hidden outline-none ring-accent focus-visible:ring-2",
+          !children && "shrink-0 self-start bg-white",
           className,
         )}
         aria-label={`Agrandir la photo : ${alt}`}
       >
-        <img
-          src={src}
-          alt={alt}
-          loading="lazy"
-          className="aspect-[2/3] w-full object-contain transition-transform duration-300 group-hover:scale-105"
-        />
-        <span className="absolute bottom-1.5 right-1.5 flex h-7 w-7 items-center justify-center bg-background/80 text-foreground transition-colors group-hover:bg-accent group-hover:text-accent-foreground">
-          <ZoomIn className="h-3.5 w-3.5" strokeWidth={1.5} />
-        </span>
+        {children ?? (
+          <>
+            <img
+              src={src}
+              alt={alt}
+              loading="lazy"
+              className="aspect-[2/3] w-full object-contain transition-transform duration-300 group-hover:scale-105"
+            />
+            <span className="absolute bottom-1.5 right-1.5 flex h-7 w-7 items-center justify-center bg-background/80 text-foreground transition-colors group-hover:bg-accent group-hover:text-accent-foreground">
+              <ZoomIn className="h-3.5 w-3.5" strokeWidth={1.5} />
+            </span>
+          </>
+        )}
       </DialogPrimitive.Trigger>
       <DialogPrimitive.Portal>
         <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-background/95 backdrop-blur-sm data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0" />

@@ -48,7 +48,7 @@ export function Wines() {
   const go = (delta: number) => setSelected((i) => (i + delta + list.length) % list.length)
 
   return (
-    <section id="vins" className="border-t border-border bg-surface py-24 md:py-36" aria-labelledby="vins-title">
+    <section id="vins" className="bg-surface py-24 md:py-36" aria-labelledby="vins-title">
       <div className="container">
         <SectionHeading id="vins-title" eyebrow="Nos Vins" title="Les cuvées" />
 
