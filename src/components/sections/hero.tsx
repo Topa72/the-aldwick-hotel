@@ -93,6 +93,21 @@ export function Hero() {
             biologique depuis 1964
           </motion.p>
 
+          {images.organicLogo && (
+            <motion.div
+              {...rise(0.38)}
+              className="mt-8 flex items-center gap-4 border border-[#009901]/50 bg-[#009901]/10 py-3 pl-3 pr-6 backdrop-blur-sm"
+            >
+              <img src={images.organicLogo} alt="Logo Agriculture biologique (AB)" className="h-14 w-auto" />
+              <span className="flex flex-col text-left">
+                <span className="label text-[#7fd17f]">Agriculture biologique</span>
+                <span className="font-serif text-2xl font-semibold italic leading-tight text-foreground">
+                  En bio depuis 1964
+                </span>
+              </span>
+            </motion.div>
+          )}
+
           <motion.div {...rise(0.45)} className="mt-10 flex flex-col gap-3 sm:flex-row sm:gap-4">
             <Button asChild variant="gold" size="lg">
               <a href={href("vins")}>

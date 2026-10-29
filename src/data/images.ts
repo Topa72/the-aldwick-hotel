@@ -49,6 +49,10 @@ export const images = {
   cellar: asset("photos/chai.webp") as string | null,
   cellarAlt: "Le chai à barriques du Vignoble Dauny",
   /** Labels shown with the organic-farming text and at the foot of every page. */
+  /** The organic farming logo on its own, put forward on the home and wines pages. */
+  organicLogo: asset("logos/agriculture-biologique.png") as string | null,
+  /** Faint behind the organic farming band of the home page. */
+  coteauxForOrganic: asset("photos/rangs-de-vigne.webp") as string | null,
   labels: [
     { src: asset("logos/agriculture-biologique.png"), alt: "Agriculture biologique (logo AB)" },
     { src: asset("logos/vigneron-independant.jpg"), alt: "Vigneron indépendant" },

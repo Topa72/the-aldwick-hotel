@@ -12,6 +12,7 @@ import { Gallery } from "@/components/sections/gallery"
 import { Hero } from "@/components/sections/hero"
 import { History } from "@/components/sections/history"
 import { Navbar } from "@/components/sections/navbar"
+import { Organic } from "@/components/sections/organic"
 import { Visit } from "@/components/sections/visit"
 import { WhereToBuy } from "@/components/sections/where-to-buy"
 import { Wines } from "@/components/sections/wines"
@@ -22,6 +23,7 @@ const sections: Record<Page, () => React.ReactNode> = {
   accueil: () => (
     <>
       <Hero />
+      <Organic />
       <Discover />
       <BookCta />
     </>

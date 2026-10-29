@@ -7,6 +7,7 @@ import { PhotoLightbox } from "@/components/photo-lightbox"
 import { SectionHeading } from "@/components/section-heading"
 import { awardsContest, estate, packagingNote, wineGroups, wines, wineSlug, type WineStyle } from "@/data/content"
 import { ease, fadeUp, inView } from "@/lib/motion"
+import { images } from "@/data/images"
 import { cn } from "@/lib/utils"
 import { winePigment } from "@/lib/wine-colors"
 import { href, useRoute } from "@/lib/router"
@@ -166,7 +167,23 @@ export function Wines() {
                   exit={{ opacity: 0, y: -12 }}
                   transition={{ duration: 0.35, ease }}
                 >
-                  <p className="label text-accent">{wine.appellation}</p>
+                  <div className="flex items-center justify-between gap-4">
+                    <p className="label text-accent">{wine.appellation}</p>
+                    {images.organicLogo && (
+                      <span className="inline-flex items-center gap-2.5">
+                        <span className="label hidden text-right text-[10px] leading-tight text-[#7fd17f] sm:block">
+                          Agriculture
+                          <br />
+                          biologique
+                        </span>
+                        <img
+                          src={images.organicLogo}
+                          alt="Vin issu de l'agriculture biologique (logo AB)"
+                          className="h-12 w-auto"
+                        />
+                      </span>
+                    )}
+                  </div>
                   <h3 className="mt-4 font-serif text-[clamp(48px,5vw,72px)] font-semibold italic leading-none text-foreground">
                     {wine.name}
                   </h3>
