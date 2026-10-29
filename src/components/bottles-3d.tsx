@@ -357,9 +357,10 @@ function labelTexture(spec: BottleSpec, estateName: string) {
 
 /**
  * A soft shadow on the ground, drawn by the shader rather than from an image: "round" is darkest in the
- * middle; "contact" is solid under the foot and fades just past its edge, where glass meets the ground.
+ * middle; "contact" is solid under the foot and fades just past its edge, where glass meets the ground;
+ * "pad" is a long soft rectangle, for what rests on the ground along its length (the basket).
  */
-function shadowMaterial(shape: "round" | "contact", strength: number) {
+export function shadowMaterial(shape: "round" | "contact" | "pad", strength: number) {
   const material = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, depthWrite: false })
   material.onBeforeCompile = (shader) => {
     shader.vertexShader = shader.vertexShader
@@ -374,6 +375,7 @@ function shadowMaterial(shape: "round" | "contact", strength: number) {
           {
             round: "float fall = 1.0 - min(1.0, length(vShadowUv - 0.5) * 2.0); diffuseColor.a *= fall * fall;",
             contact: "diffuseColor.a *= 1.0 - smoothstep(0.72, 1.0, length(vShadowUv - 0.5) * 2.0);",
+            pad: "vec2 q = abs(vShadowUv - 0.5) * 2.0; diffuseColor.a *= (1.0 - smoothstep(0.8, 1.0, q.x)) * (1.0 - smoothstep(0.45, 1.0, q.y));",
           }[shape]
         }
         diffuseColor.a *= ${strength.toFixed(3)};`,
@@ -390,10 +392,11 @@ function shadowMaterial(shape: "round" | "contact", strength: number) {
 const SUN = new THREE.Vector3(0.3, -1, 0.62)
 
 /**
- * The bottle flattened onto the ground along the sun's rays: dark at the foot, fading towards the
- * shadow of the neck. Drawn once per pixel (stencil), however many of its triangles overlap there.
+ * The bottle (or any shape `height` tall) flattened onto the ground along the sun's rays: dark at the
+ * foot, fading towards the shadow of its top. Drawn once per pixel (stencil), however many of its
+ * triangles overlap there.
  */
-function sunShadow(geometry: THREE.BufferGeometry) {
+export function sunShadow(geometry: THREE.BufferGeometry, height = 3) {
   const material = new THREE.MeshBasicMaterial({
     color: 0x000000,
     // Flattened, half the triangles face away from the camera: draw both sides.
@@ -413,24 +416,33 @@ function sunShadow(geometry: THREE.BufferGeometry) {
       .replace("#include <common>", "#include <common>\nvarying float vShadowY;")
       .replace(
         "#include <color_fragment>",
-        "#include <color_fragment>\ndiffuseColor.a *= 0.62 * pow(1.0 - clamp(vShadowY / 3.0, 0.0, 1.0), 1.4);",
+        `#include <color_fragment>\ndiffuseColor.a *= 0.62 * pow(1.0 - clamp(vShadowY / ${height.toFixed(2)}, 0.0, 1.0), 1.4);`,
       )
   }
-  material.customProgramCacheKey = () => "sun-shadow"
+  material.customProgramCacheKey = () => `sun-shadow-${height}`
   const shadow = new THREE.Mesh(geometry, material)
-  // Each point moves along the ray down to the ground (y = 0, just above it to avoid flicker).
-  const project = new THREE.Matrix4().set(1, -SUN.x / SUN.y, 0, 0, 0, 0, 0, 0.004, 0, -SUN.z / SUN.y, 1, 0, 0, 0, 0, 1)
+  // Each point moves along the ray down to the ground, at `ground` in the shape's own frame (just
+  // above it, to avoid flicker).
+  const project = new THREE.Matrix4()
+  const projectTo = (ground: number) =>
+    project.set(
+      1, -SUN.x / SUN.y, 0, (-SUN.x / SUN.y) * -ground,
+      0, 0, 0, ground + 0.004,
+      0, -SUN.z / SUN.y, 1, (-SUN.z / SUN.y) * -ground,
+      0, 0, 0, 1,
+    )
   shadow.matrixAutoUpdate = false
-  shadow.matrix.copy(project)
+  shadow.matrix.copy(projectTo(0))
   shadow.renderOrder = -1
-  // The sun stays put while the bottle turns: undo the bottle's own turn (and width) around the
-  // projection. Call after changing the bottle's rotation.
+  // The sun stays put while the bottle turns, and the ground stays put while it is lifted (out of a
+  // basket, onto its bed of straw): project with the bottle's own turn (and width) undone, onto the
+  // ground below it. Call after moving the bottle.
   const turn = new THREE.Matrix4()
   const unturn = new THREE.Matrix4()
   shadow.userData.align = (bottle: THREE.Object3D) => {
     turn.makeRotationY(bottle.rotation.y).scale(bottle.scale)
     unturn.copy(turn).invert()
-    shadow.matrix.multiplyMatrices(unturn, project).multiply(turn)
+    shadow.matrix.multiplyMatrices(unturn, projectTo(-bottle.position.y)).multiply(turn)
   }
   return shadow
 }

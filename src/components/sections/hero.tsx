@@ -151,6 +151,7 @@ export function Hero() {
                 onHover={setHovered}
                 onPick={open}
                 outdoor={!!backdrop}
+                basket
               />
             </Suspense>
           </div>
