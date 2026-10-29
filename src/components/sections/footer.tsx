@@ -1,5 +1,6 @@
 import { EstateLogo } from "@/components/estate-logo"
 import { estate, legal } from "@/data/content"
+import { images } from "@/data/images"
 import { href } from "@/lib/router"
 
 export function Footer() {
@@ -16,6 +17,15 @@ export function Footer() {
             {estate.phone}
           </a>
         </p>
+        {images.labels.length > 0 && (
+          <ul className="flex items-center gap-4">
+            {images.labels.map((logo) => (
+              <li key={logo.src}>
+                <img src={logo.src} alt={logo.alt} loading="lazy" decoding="async" className="h-14 w-auto" />
+              </li>
+            ))}
+          </ul>
+        )}
         <span aria-hidden className="h-px w-16 bg-border" />
         <p className="max-w-3xl text-xs font-light leading-relaxed text-muted-foreground">
           © 2026 {estate.name} · Sancerre, Crézancy-en-Sancerre

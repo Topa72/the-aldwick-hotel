@@ -9,6 +9,11 @@ import { estate, openingHours, visitInfo } from "@/data/content"
 import { fadeUp, inView, stagger } from "@/lib/motion"
 
 const mapQuery = estate.mapQuery && encodeURIComponent(estate.mapQuery)
+// With the place id, Google opens the estate's own card (photos, reviews, hours) rather than a search.
+const placeId = estate.mapPlaceId ? `&destination_place_id=${estate.mapPlaceId}` : ""
+// The map is Google's own embed of the estate's listing, which writes spaces as "+".
+const embedQuery = mapQuery && mapQuery.replace(/%20/g, "+")
+const queryPlaceId = estate.mapPlaceId ? `&query_place_id=${estate.mapPlaceId}` : ""
 
 export function Visit() {
   return (
@@ -79,7 +84,7 @@ export function Visit() {
             <div className="relative aspect-[4/3] overflow-hidden border border-border bg-surface lg:aspect-auto lg:min-h-[360px] lg:flex-1">
               <iframe
                 title={`Plan d'accès : ${estate.name}`}
-                src={`https://maps.google.com/maps?q=${mapQuery}&z=14&hl=fr&output=embed`}
+                src={`https://www.google.com/maps/embed?origin=mfe&pb=!1m4!2m1!1s${embedQuery}!5e0!6i10`}
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
                 className="absolute inset-0 h-full w-full border-0"
@@ -88,7 +93,7 @@ export function Visit() {
             <div className="mt-4 flex flex-wrap gap-3">
               <Button asChild variant="gold" size="sm">
                 <a
-                  href={`https://www.google.com/maps/dir/?api=1&destination=${mapQuery}`}
+                  href={`https://www.google.com/maps/dir/?api=1&destination=${mapQuery}${placeId}`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -97,7 +102,7 @@ export function Visit() {
               </Button>
               <Button asChild variant="gold-outline" size="sm">
                 <a
-                  href={`https://www.google.com/maps/search/?api=1&query=${mapQuery}`}
+                  href={`https://www.google.com/maps/search/?api=1&query=${mapQuery}${queryPlaceId}`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >

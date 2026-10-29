@@ -11,5 +11,11 @@ export const images = {
   facadeAlt: "La façade du Vignoble Dauny à Champtin, avec son vieux pressoir et l'inscription « Culture biologique »",
   facadeCaption: "Le domaine à Champtin",
   /** Photo beside the organic-farming text; the text spans the page until one is set. */
-  cellar: null as string | null,
+  cellar: asset("photos/chai.webp") as string | null,
+  cellarAlt: "Le chai à barriques du Vignoble Dauny",
+  /** Labels shown with the organic-farming text and at the foot of every page. */
+  labels: [
+    { src: asset("logos/agriculture-biologique.png"), alt: "Agriculture biologique (logo AB)" },
+    { src: asset("logos/vigneron-independant.jpg"), alt: "Vigneron indépendant" },
+  ] as { src: string; alt: string }[],
 }

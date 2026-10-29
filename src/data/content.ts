@@ -6,7 +6,9 @@ export const estate = {
   phoneHref: "tel:+33248790575",
   website: "https://www.vignobledauny.fr/",
   /** What Google Maps searches for, for the map and the directions link; null hides the map. */
-  mapQuery: "Vignoble Dauny, 8 Rue Corbossier, Champtin, 18300 Crézancy-en-Sancerre" as string | null,
+  mapQuery: "Vignoble Dauny Champtin 8 rue Corbossier 18300 Crézancy-en-Sancerre" as string | null,
+  /** The estate's Google Maps listing, so the links open its card (reviews, hours) rather than a search. */
+  mapPlaceId: "ChIJ2ZScoDYE8EcRCv9HB9LrgoU" as string | null,
 } as const
 
 /** Where the contact form's messages go (forwarded by formsubmit.co, see src/components/contact-form.tsx). */

@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils"
 export function Cellar() {
   return (
     <section className="py-24 md:py-36" aria-labelledby="chai-title">
-      <div className={cn("container grid items-center gap-16 lg:gap-24", images.cellar ? "lg:grid-cols-2" : "max-w-4xl")}>
+      <div className={cn("container grid items-start gap-16 lg:gap-24", images.cellar ? "lg:grid-cols-2" : "max-w-4xl")}>
         <div>
           <SectionHeading id="chai-title" eyebrow="Du cep au chai" title="Le bio, depuis toujours" />
 
@@ -43,12 +43,22 @@ export function Cellar() {
                 </li>
               ))}
             </motion.ul>
+
+            {images.labels.length > 0 && (
+              <motion.ul variants={fadeUp} className="mt-10 flex items-center gap-5">
+                {images.labels.map((logo) => (
+                  <li key={logo.src}>
+                    <img src={logo.src} alt={logo.alt} loading="lazy" decoding="async" className="h-20 w-auto md:h-24" />
+                  </li>
+                ))}
+              </motion.ul>
+            )}
           </motion.div>
         </div>
 
         {images.cellar && (
         <motion.div
-          className="relative aspect-[4/5] overflow-hidden"
+          className="relative aspect-[16/9] overflow-hidden lg:sticky lg:top-28 lg:aspect-[4/3]"
           initial={{ opacity: 0, scale: 0.97 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true, margin: "-80px" }}
@@ -56,7 +66,7 @@ export function Cellar() {
         >
           <SmartImage
             src={images.cellar}
-            alt="Le chai du domaine"
+            alt={images.cellarAlt}
             loading="lazy"
             decoding="async"
             className="absolute inset-0 h-full w-full object-cover"
