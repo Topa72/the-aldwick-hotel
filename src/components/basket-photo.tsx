@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils"
 
 /**
- * Where each bottle stands in the basket photo (public/photos/panier-bouteilles.webp), as fractions of
+ * Where each bottle stands in the basket photo (`images.basketPhoto`), as fractions of
  * the picture: its centre across, its half-width, and its top and the bottom of its label.
  */
 const BOTTLES = [247, 435, 622, 812, 1000, 1190, 1382].map((x) => ({ x: x / 1631, half: 92 / 1631 }))
