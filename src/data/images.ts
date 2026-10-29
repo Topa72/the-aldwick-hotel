@@ -19,10 +19,11 @@ export type GalleryItem = {
 
 export const images = {
   /**
-   * The vineyard soil the home page's 3D bottles stand on (a ground-level photo of the estate's vines,
-   * with the bottle it was taken with removed). Null puts them on a plain background.
+   * The setting of the home page's bottles: a sunlit stone ledge against a pale wall, olive branches
+   * and an earthenware jar (an illustration, its own basket and bottles removed). Null puts them on a
+   * plain background.
    */
-  heroBackdrop: asset("photos/accueil-vignes.webp") as string | null,
+  heroBackdrop: asset("photos/accueil-muret.webp") as string | null,
   /**
    * The front of a wicker basket (photo, cut out, straw and leaves included) the 3D bottles stand in,
    * on that soil. Null shows the bottles in a basket drawn in 3D instead.
@@ -32,6 +33,8 @@ export const images = {
   basketBack: asset("photos/panier-fond.webp"),
   /** The same soil, faint behind the home page's cards under the hero (a strip without the corner stones). */
   soil: asset("photos/terre.webp") as string | null,
+  /** Behind the cuvées on the wines page, dimmed under the text. */
+  winesBackdrop: asset("photos/bouteilles-dans-les-vignes.webp") as string | null,
   /** Beside the estate's history. */
   family: asset("photos/famille.webp") as string | null,
   familyAlt: "La famille Dauny réunie au caveau, autour d'une table de bouteilles et de médailles",
@@ -51,12 +54,8 @@ export const images = {
       alt: "Le Vignoble Dauny à Champtin, entre ses vignes, le village et les coteaux",
       position: "72% 40%",
     },
-    vins: {
-      src: asset("photos/bouteilles-dans-les-vignes.webp"),
-      alt: "Des bouteilles du Vignoble Dauny posées dans le feuillage de la vigne",
-      position: "50% 45%",
-      tone: "surface",
-    },
+    // Its photo sits behind the cuvées instead (`winesBackdrop`), so the page opens on the wines.
+    vins: null,
     "ou-trouver": {
       src: asset("photos/bouteilles-caveau.webp"),
       alt: "Trois cuvées du Vignoble Dauny sur leur présentoir",

@@ -47,7 +47,7 @@ export function Hero() {
             "radial-gradient(ellipse 55% 60% at 68% 52%, rgba(201,165,90,0.18), transparent 70%), linear-gradient(to bottom, #13181f, #171c24 60%, #13181f)",
         }}
       />
-      {/* On large screens the bottles stand on the vineyard soil of a photo filling the section. */}
+      {/* On large screens the bottles stand on the stone ledge of a picture filling the section. */}
       {backdrop && (
         <>
           <img
@@ -56,15 +56,15 @@ export function Hero() {
             aria-hidden
             fetchPriority="high"
             decoding="async"
-            className="absolute inset-0 hidden h-full w-full object-cover object-bottom lg:block"
+            className="absolute inset-0 hidden h-full w-full object-cover object-left-bottom lg:block"
           />
-          {/* Dark behind the text, clear over the soil the bottles stand on. */}
+          {/* Dark behind the text, clear over the ledge the bottles stand on. */}
           <div
             aria-hidden
             className="absolute inset-0 hidden lg:block"
             style={{
               background:
-                "linear-gradient(to right, rgba(19,24,31,0.9), rgba(19,24,31,0.72) 32%, rgba(19,24,31,0.12) 58%, rgba(19,24,31,0)), linear-gradient(to bottom, rgba(19,24,31,0.6), transparent 22%, transparent 90%, #13181f)",
+                "linear-gradient(to right, rgba(19,24,31,0.86), rgba(19,24,31,0.62) 34%, rgba(19,24,31,0.08) 58%, rgba(19,24,31,0)), linear-gradient(to bottom, rgba(19,24,31,0.55), transparent 16%, transparent 94%, #13181f)",
             }}
           />
         </>
@@ -141,7 +141,7 @@ export function Hero() {
                 alt=""
                 aria-hidden
                 decoding="async"
-                className="absolute inset-0 h-full w-full object-cover object-[50%_88%] [mask-image:linear-gradient(to_bottom,transparent,black_22%,black_80%,transparent),linear-gradient(to_right,transparent,black_12%,black_88%,transparent)] [mask-composite:intersect] [-webkit-mask-composite:source-in] lg:hidden"
+                className="absolute inset-0 h-full w-full object-cover object-[72%_100%] [mask-image:linear-gradient(to_bottom,transparent,black_22%,black_80%,transparent),linear-gradient(to_right,transparent,black_12%,black_88%,transparent)] [mask-composite:intersect] [-webkit-mask-composite:source-in] lg:hidden"
               />
             )}
             {images.basketPhoto ? (

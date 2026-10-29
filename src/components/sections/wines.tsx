@@ -6,6 +6,7 @@ import { PhotoLightbox } from "@/components/photo-lightbox"
 import { SectionHeading } from "@/components/section-heading"
 import { awardsContest, estate, packagingNote, wineGroups, wines, wineSlug, type WineStyle } from "@/data/content"
 import { ease, fadeUp, inView } from "@/lib/motion"
+import { images } from "@/data/images"
 import { cn } from "@/lib/utils"
 import { href, useRoute } from "@/lib/router"
 
@@ -48,8 +49,25 @@ export function Wines() {
   const go = (delta: number) => setSelected((i) => (i + delta + list.length) % list.length)
 
   return (
-    <section id="vins" className="bg-surface py-24 md:py-36" aria-labelledby="vins-title">
-      <div className="container">
+    <section id="vins" className="relative overflow-hidden bg-surface py-24 md:py-36" aria-labelledby="vins-title">
+      {images.winesBackdrop && (
+        <>
+          <img
+            src={images.winesBackdrop}
+            alt=""
+            aria-hidden
+            fetchPriority="high"
+            decoding="async"
+            className="absolute inset-x-0 top-0 h-[115vh] max-h-[1100px] w-full object-cover object-[50%_40%]"
+          />
+          {/* Dimmed under the text, then sinking into the section's own colour. */}
+          <div
+            aria-hidden
+            className="absolute inset-x-0 top-0 h-[115vh] max-h-[1100px] bg-[linear-gradient(to_bottom,hsl(var(--surface)/0.78),hsl(var(--surface)/0.86)_45%,hsl(var(--surface)))]"
+          />
+        </>
+      )}
+      <div className="container relative">
         <SectionHeading id="vins-title" eyebrow="Nos Vins" title="Les cuvées" />
 
         <div role="tablist" aria-label="Couleur" className="mt-12 flex flex-wrap gap-2 md:mt-16">
