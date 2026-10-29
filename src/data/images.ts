@@ -23,6 +23,11 @@ export const images = {
    * with the bottle it was taken with removed). Null puts them on a plain background.
    */
   heroBackdrop: asset("photos/accueil-vignes.webp") as string | null,
+  /**
+   * The seven cuvées in a wicker basket, cut out, set on that soil in place of the 3D bottles (an
+   * illustration carrying the estate's real labels). Null shows the 3D bottles instead.
+   */
+  basketPhoto: asset("photos/panier-bouteilles.webp") as string | null,
   /** The same soil, faint behind the home page's cards under the hero (a strip without the corner stones). */
   soil: asset("photos/terre.webp") as string | null,
   /** Beside the estate's history. */

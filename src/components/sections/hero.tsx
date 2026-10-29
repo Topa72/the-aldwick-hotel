@@ -1,36 +1,38 @@
-import { lazy, Suspense, useState } from "react"
-import { motion } from "motion/react"
-import { ArrowRight } from "lucide-react"
+import { lazy, Suspense, useState } from "react";
+import { motion } from "motion/react";
+import { ArrowRight } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { estate, heroChips, wines, wineSlug } from "@/data/content"
-import { images } from "@/data/images"
-import { ease } from "@/lib/motion"
-import { cn } from "@/lib/utils"
-import { href } from "@/lib/router"
+import { BasketPhoto } from "@/components/basket-photo";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { estate, heroChips, wines, wineSlug } from "@/data/content";
+import { images } from "@/data/images";
+import { ease } from "@/lib/motion";
+import { cn } from "@/lib/utils";
+import { href } from "@/lib/router";
 
-const BottleLineup = lazy(() => import("@/components/bottle-lineup"))
+const BottleLineup = lazy(() => import("@/components/bottle-lineup"));
 
-const backdrop = images.heroBackdrop
+const backdrop = images.heroBackdrop;
 
 /**
  * Film grain laid over both the photo and the 3D bottles, so they share the same texture, as if they
  * came out of the same camera.
  */
 const GRAIN =
-  "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>\")"
+  "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>\")";
 
 const rise = (delay: number) => ({
   initial: { opacity: 0, y: 32 },
   animate: { opacity: 1, y: 0 },
   transition: { duration: 0.9, delay, ease },
-})
+});
 
 export function Hero() {
-  const [hovered, setHovered] = useState<number | null>(null)
-  const open = (i: number) => window.location.assign(href("vins", wineSlug(wines[i])))
-  const named = hovered === null ? null : wines[hovered]
+  const [hovered, setHovered] = useState<number | null>(null);
+  const open = (i: number) =>
+    window.location.assign(href("vins", wineSlug(wines[i])));
+  const named = hovered === null ? null : wines[hovered];
 
   return (
     <section
@@ -88,11 +90,14 @@ export function Hero() {
             {...rise(0.3)}
             className="mt-8 max-w-[480px] text-base font-light leading-relaxed text-foreground/75 md:text-[17px]"
           >
-            Treize générations de la famille Dauny sur les coteaux de Champtin, et un vignoble conduit en agriculture
-            biologique depuis 1964
+            Treize générations de la famille Dauny sur les coteaux de Champtin,
+            et un vignoble conduit en agriculture biologique depuis 1964
           </motion.p>
 
-          <motion.div {...rise(0.45)} className="mt-10 flex flex-col gap-3 sm:flex-row sm:gap-4">
+          <motion.div
+            {...rise(0.45)}
+            className="mt-10 flex flex-col gap-3 sm:flex-row sm:gap-4"
+          >
             <Button asChild variant="gold" size="lg">
               <a href={href("vins")}>
                 Découvrir nos vins <ArrowRight />
@@ -103,7 +108,10 @@ export function Hero() {
             </Button>
           </motion.div>
 
-          <ul className="mt-10 flex flex-wrap justify-center gap-2 lg:justify-start" aria-label="En bref">
+          <ul
+            className="mt-10 flex flex-wrap justify-center gap-2 lg:justify-start"
+            aria-label="En bref"
+          >
             {heroChips.map((chip, i) => (
               <motion.li
                 key={chip}
@@ -143,37 +151,62 @@ export function Hero() {
                 className="absolute inset-0 h-full w-full object-cover object-[50%_88%] [mask-image:linear-gradient(to_bottom,transparent,black_22%,black_80%,transparent),linear-gradient(to_right,transparent,black_12%,black_88%,transparent)] [mask-composite:intersect] [-webkit-mask-composite:source-in] lg:hidden"
               />
             )}
-            <Suspense fallback={null}>
-              <BottleLineup
-                bottles={wines}
-                estateName={estate.name}
+            {images.basketPhoto ? (
+              <BasketPhoto
+                src={images.basketPhoto}
+                names={wines.map((w) => `${w.name}, ${w.appellation}`)}
+                hrefs={wines.map((w) => href("vins", wineSlug(w)))}
                 hovered={hovered}
                 onHover={setHovered}
-                onPick={open}
-                outdoor={!!backdrop}
-                basket
               />
-            </Suspense>
+            ) : (
+              <Suspense fallback={null}>
+                <BottleLineup
+                  bottles={wines}
+                  estateName={estate.name}
+                  hovered={hovered}
+                  onHover={setHovered}
+                  onPick={open}
+                  outdoor={!!backdrop}
+                  basket
+                />
+              </Suspense>
+            )}
           </div>
-          <p className="label mt-2 min-h-5 text-center [text-shadow:0_1px_10px_rgba(0,0,0,0.9)]" aria-live="polite">
+          <p
+            className="label mt-2 min-h-5 text-center [text-shadow:0_1px_10px_rgba(0,0,0,0.9)]"
+            aria-live="polite"
+          >
             {named ? (
               <span className="text-accent">
                 {named.name} · {named.appellation}
               </span>
             ) : (
-              <span className={backdrop ? "text-foreground/85" : "text-muted-foreground"}>Choisissez une bouteille</span>
+              <span
+                className={
+                  backdrop ? "text-foreground/85" : "text-muted-foreground"
+                }
+              >
+                Choisissez une bouteille
+              </span>
             )}
           </p>
-          {/* The same choice for keyboards and screen readers. */}
-          <ul className="sr-only" aria-label="Nos cuvées">
-            {wines.map((w, i) => (
-              <li key={wineSlug(w)}>
-                <a href={href("vins", wineSlug(w))} onFocus={() => setHovered(i)} onBlur={() => setHovered(null)}>
-                  {w.name}, {w.appellation}
-                </a>
-              </li>
-            ))}
-          </ul>
+          {/* The same choice for keyboards and screen readers (the photo's bottles are links already). */}
+          {!images.basketPhoto && (
+            <ul className="sr-only" aria-label="Nos cuvées">
+              {wines.map((w, i) => (
+                <li key={wineSlug(w)}>
+                  <a
+                    href={href("vins", wineSlug(w))}
+                    onFocus={() => setHovered(i)}
+                    onBlur={() => setHovered(null)}
+                  >
+                    {w.name}, {w.appellation}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
         </motion.div>
       </div>
       {backdrop && (
@@ -184,5 +217,5 @@ export function Hero() {
         />
       )}
     </section>
-  )
+  );
 }
