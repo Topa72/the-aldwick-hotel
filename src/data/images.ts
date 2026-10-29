@@ -35,6 +35,12 @@ export const images = {
   basketShadow: asset("photos/panier-ombre.webp"),
   /** The same soil, faint behind the home page's cards under the hero (a strip without the corner stones). */
   soil: asset("photos/terre.webp") as string | null,
+  /** The press drawn on the estate's labels, in gold, heading the tasting invitation. */
+  pressoir: asset("logos/pressoir.png") as string | null,
+  /** Beside the introduction of the stockists page. */
+  stockistsPhoto: asset("photos/mise-en-bouteille.webp") as string | null,
+  /** Behind the export countries, dimmed. */
+  exportPhoto: asset("photos/coteaux.webp") as string | null,
   /** Beside the estate's history. */
   family: asset("photos/famille.webp") as string | null,
   familyAlt: "La famille Dauny réunie au caveau, autour d'une table de bouteilles et de médailles",
