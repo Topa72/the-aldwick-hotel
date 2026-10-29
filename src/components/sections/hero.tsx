@@ -56,7 +56,7 @@ export function Hero() {
             className="absolute inset-0 hidden lg:block"
             style={{
               background:
-                "linear-gradient(to right, rgba(19,24,31,0.9), rgba(19,24,31,0.72) 32%, rgba(19,24,31,0.12) 58%, rgba(19,24,31,0)), linear-gradient(to bottom, rgba(19,24,31,0.6), transparent 22%, transparent 93%, #13181f)",
+                "linear-gradient(to right, rgba(19,24,31,0.9), rgba(19,24,31,0.72) 32%, rgba(19,24,31,0.12) 58%, rgba(19,24,31,0)), linear-gradient(to bottom, rgba(19,24,31,0.6), transparent 22%, transparent 90%, #13181f)",
             }}
           />
         </>

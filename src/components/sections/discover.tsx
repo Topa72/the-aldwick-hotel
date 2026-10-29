@@ -2,21 +2,55 @@ import { motion } from "motion/react"
 import { ArrowRight } from "lucide-react"
 
 import { discover } from "@/data/content"
+import { images } from "@/data/images"
 import { fadeUp, inView, stagger } from "@/lib/motion"
 import { href } from "@/lib/router"
+import { cn } from "@/lib/utils"
 
-/** Home page: one card per page of the site. */
+const backdrop = images.soil
+
+/**
+ * Home page: one card per page of the site. Under the hero's vineyard photo, its soil shows again,
+ * faintly, behind the frosted cards: it rises from the dark the hero fades into, then sinks back.
+ */
 export function Discover() {
   return (
-    <section className="border-t border-border py-24 md:py-32" aria-label="Découvrir le domaine">
-      <div className="container">
+    <section
+      className={cn("relative overflow-hidden py-24 md:py-32", !backdrop && "border-t border-border")}
+      aria-label="Découvrir le domaine"
+    >
+      {backdrop && (
+        <>
+          <img
+            src={backdrop}
+            alt=""
+            aria-hidden
+            loading="lazy"
+            decoding="async"
+            className="absolute inset-0 h-full w-full object-cover opacity-35 [mask-image:linear-gradient(to_bottom,transparent,black_35%,black_65%,transparent)]"
+          />
+        </>
+      )}
+      <div className="container relative">
         <motion.ul
-          className="grid gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-4"
+          className={cn(
+            "grid sm:grid-cols-2 lg:grid-cols-4",
+            // Frosted cards let the soil show through; their borders are drawn cell by cell.
+            backdrop ? "border-l border-t border-border/70" : "gap-px border border-border bg-border",
+          )}
           variants={stagger(0.1)}
           {...inView}
         >
           {discover.map((item, i) => (
-            <motion.li key={item.page} variants={fadeUp} className="bg-background">
+            <motion.li
+              key={item.page}
+              variants={fadeUp}
+              className={
+                backdrop
+                  ? "border-b border-r border-border/70 bg-background/70 backdrop-blur-md"
+                  : "bg-background"
+              }
+            >
               <a
                 href={href(item.page)}
                 className="group flex h-full flex-col p-8 transition-colors duration-200 hover:bg-surface-raised md:p-10"

@@ -23,6 +23,8 @@ export const images = {
    * with the bottle it was taken with removed). Null puts them on a plain background.
    */
   heroBackdrop: asset("photos/accueil-vignes.webp") as string | null,
+  /** The same soil, faint behind the home page's cards under the hero (a strip without the corner stones). */
+  soil: asset("photos/terre.webp") as string | null,
   /** Beside the estate's history. */
   family: asset("photos/famille.webp") as string | null,
   familyAlt: "La famille Dauny réunie au caveau, autour d'une table de bouteilles et de médailles",
