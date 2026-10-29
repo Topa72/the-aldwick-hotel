@@ -47,7 +47,8 @@ export function Awards() {
                 )}
               >
                 <Medal award={m} className="h-11 w-11" />
-                {m.medal}
+                {/* Same width for Or and Argent, so the medals line up. */}
+                <span className="w-20">{m.medal}</span>
               </span>
             </motion.li>
           ))}
