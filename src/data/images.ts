@@ -24,10 +24,10 @@ export const images = {
    */
   heroBackdrop: asset("photos/accueil-vignes.webp") as string | null,
   /**
-   * The seven cuvées in a wicker basket, cut out, set on that soil in place of the 3D bottles (an
-   * illustration carrying the estate's real labels). Null shows the 3D bottles instead.
+   * The front of a wicker basket (photo, cut out, straw and leaves included) the 3D bottles stand in,
+   * on that soil. Null shows the bottles in a basket drawn in 3D instead.
    */
-  basketPhoto: asset("photos/panier-bouteilles.webp") as string | null,
+  basketPhoto: asset("photos/panier-devant.webp") as string | null,
   /** The same soil, faint behind the home page's cards under the hero (a strip without the corner stones). */
   soil: asset("photos/terre.webp") as string | null,
   /** Beside the estate's history. */

@@ -16,6 +16,11 @@ type Props = {
   outdoor?: boolean
   /** Side by side in a long wicker basket (in its sunlight when `outdoor`). */
   basket?: boolean
+  /**
+   * Set the bottles into a picture: a straight row seen straight on (no perspective), the canvas
+   * showing exactly `width` units across, from height `top` down `height` units. Pointing lifts a bottle.
+   */
+  frame?: { width: number; top: number; height: number }
 }
 
 // Bottles stand 3 units tall, side by side on a shallow arc that curves away from the viewer.
@@ -31,6 +36,7 @@ export default function BottleLineup({
   onPick,
   outdoor = false,
   basket = false,
+  frame,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
   const hoveredRef = useRef(hovered)
@@ -77,7 +83,7 @@ export default function BottleLineup({
     }
 
     // In a basket the bottles stand in a straight row on its floor.
-    const curve = basket ? 0 : CURVE
+    const curve = basket || frame ? 0 : CURVE
     let floor = 0
     if (basket) {
       // Deep enough to read as a basket; the bottles stand on straw high enough inside for the rim to
@@ -106,18 +112,28 @@ export default function BottleLineup({
       b.position.set(t * SPACING, floor, -curve * t * t)
       b.userData.baseZ = b.position.z
       // Each bottle turns slightly towards the middle, as if set out for a photograph.
-      b.userData.baseRotation = -t * 0.08
+      b.userData.baseRotation = frame ? 0 : -t * 0.08
       b.rotation.y = b.userData.baseRotation
       scene.add(b)
       return b
     })
 
-    const camera = new THREE.PerspectiveCamera(24, 1, 0.1, 80)
+    const perspective = new THREE.PerspectiveCamera(24, 1, 0.1, 80)
+    const flat = frame
+      ? new THREE.OrthographicCamera(-frame.width / 2, frame.width / 2, frame.top, frame.top - frame.height, 0.1, 80)
+      : null
+    const camera: THREE.Camera = flat ?? perspective
     const lookAt = new THREE.Vector3(0, basket ? 1.85 : 1.45, -curve * ((n - 1) / 2) ** 2 * 0.4)
     const resize = () => {
       const { clientWidth: w, clientHeight: h } = container
       if (!w || !h) return
       renderer.setSize(w, h)
+      if (flat) {
+        flat.position.set(0, 0, 20)
+        flat.updateProjectionMatrix()
+        return
+      }
+      const camera = perspective
       camera.aspect = w / h
       // Pull back until the whole row (and the bottles' height) fits.
       // Outdoors, room on the right for the last bottle's shadow, which would otherwise end on the edge;
@@ -177,8 +193,9 @@ export default function BottleLineup({
         // The bottle under the pointer comes forward: lifted out of the basket, or stepping forward on
         // the ground (lifted, it would float off the soil).
         const picked = i === hoveredRef.current
-        const y = floor + (basket && picked ? 0.4 : 0)
-        const z = b.userData.baseZ + (!basket && picked ? 0.45 : 0)
+        const lifts = basket || !!frame
+        const y = floor + (lifts && picked ? 0.4 : 0)
+        const z = b.userData.baseZ + (!lifts && picked ? 0.45 : 0)
         b.position.y += (y - b.position.y) * Math.min(1, dt * 6)
         b.position.z += (z - b.position.z) * Math.min(1, dt * 6)
         // A slow, gentle turn so the labels catch the light.
@@ -212,7 +229,7 @@ export default function BottleLineup({
       renderer.forceContextLoss()
       container.removeChild(el)
     }
-  }, [bottles, estateName, outdoor, basket])
+  }, [bottles, estateName, outdoor, basket, frame])
 
   return <div ref={containerRef} className="absolute inset-0" />
 }
