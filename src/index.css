@@ -11,7 +11,7 @@
     /* The estate's burgundy (Pantone Red Riding Hood #551C25) for fills and frames; text in it would not
        read on the dark ground, so text and outlines take a lighter tint of the same hue. */
     --accent: 350 50% 22%; /* #551c25 */
-    --accent-ink: 350 42% 60%;
+    --accent-ink: 353 52% 40%;
     --accent-foreground: 38 30% 96%;
     --surface: 215 14% 13%;
     --surface-raised: 215 12% 17%;
