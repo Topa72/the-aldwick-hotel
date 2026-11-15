@@ -4,6 +4,7 @@ import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment
 
 import { BOTTLE_CAPSULE_Y, BOTTLE_PROFILE } from "@/components/bottle-profile"
 import bottleShapes from "@/data/bottle-shapes.json"
+import { IDLE_REDRAW_MS, lowPower, pixelRatio } from "@/lib/graphics"
 import type { BottleLook, WineStyle } from "@/data/content"
 
 export type BottleSpec = {
@@ -600,8 +601,10 @@ export default function Bottles3D({ bottles, estateName, selected, onSelect }: P
     // Space at least 4 slots around the ring so a small set never hides a bottle behind another.
     const step = TAU / Math.max(n, 4)
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    const renderer = new THREE.WebGLRenderer({ antialias: !lowPower, alpha: true })
+    renderer.setPixelRatio(pixelRatio())
+    // When the scene was last drawn (0: draw on the next frame).
+    let lastDraw = 0
     renderer.toneMapping = THREE.ACESFilmicToneMapping
     renderer.toneMappingExposure = 1.05
     renderer.outputColorSpace = THREE.SRGBColorSpace
@@ -673,6 +676,7 @@ export default function Bottles3D({ bottles, estateName, selected, onSelect }: P
       const { clientWidth: w, clientHeight: h } = container
       if (!w || !h) return
       renderer.setSize(w, h)
+      lastDraw = 0
       camera.aspect = w / h
       // Pull back on narrow screens so the front bottle always fits.
       const dist = camera.aspect < 0.8 ? 7.9 : 6.9
@@ -749,11 +753,13 @@ export default function Bottles3D({ bottles, estateName, selected, onSelect }: P
 
     const clock = new THREE.Clock()
     let raf = 0
+    // Modest devices skip the front bottle's sway and draw only while something moves.
     const tick = () => {
       raf = requestAnimationFrame(tick)
       if (!visible) return
       const dt = Math.min(clock.getDelta(), 0.05)
       const t = clock.elapsedTime
+      let moving = dragging || Math.abs(target - current) > 1e-4
       current += (target - current) * Math.min(1, dt * (dragging ? 14 : 4.5))
       ring.rotation.y = current
 
@@ -761,13 +767,18 @@ export default function Bottles3D({ bottles, estateName, selected, onSelect }: P
       items.forEach((b, i) => {
         const isFront = i === front
         const lift = isFront ? 0.1 : 0
+        if (Math.abs(lift - b.position.y) > 1e-4) moving = true
         b.position.y += (lift - b.position.y) * Math.min(1, dt * 5)
         // The reflection stays on the table while the bottle lifts.
         b.userData.mirror.position.y = -2 * b.position.y
-        const sway = isFront && !reduceMotion && !dragging ? Math.sin(t * 0.7) * 0.28 : 0
+        const sway = isFront && !reduceMotion && !lowPower && !dragging ? Math.sin(t * 0.7) * 0.28 : 0
         const baseRot = i * step
+        if (Math.abs(baseRot + sway - b.rotation.y) > 1e-4) moving = true
         b.rotation.y += (baseRot + sway - b.rotation.y) * Math.min(1, dt * 3)
       })
+      const now = performance.now()
+      if (!moving && now - lastDraw < IDLE_REDRAW_MS) return
+      lastDraw = now
       renderer.render(scene, camera)
     }
     tick()

@@ -4,6 +4,7 @@ import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment
 
 import { buildBottle, shadowMaterial, sunShadow, type BottleSpec } from "@/components/bottles-3d"
 import { buildBasket } from "@/components/wicker-basket"
+import { IDLE_REDRAW_MS, lowPower, pixelRatio } from "@/lib/graphics"
 
 type Props = {
   bottles: BottleSpec[]
@@ -51,8 +52,10 @@ export default function BottleLineup({
     const n = bottles.length
 
     // The stencil lets each sun shadow darken the ground once where its triangles overlap.
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, stencil: true })
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    const renderer = new THREE.WebGLRenderer({ antialias: !lowPower, alpha: true, stencil: true })
+    renderer.setPixelRatio(pixelRatio())
+    // When the scene was last drawn (0: draw on the next frame).
+    let lastDraw = 0
     renderer.toneMapping = THREE.ACESFilmicToneMapping
     renderer.toneMappingExposure = 1.05
     renderer.outputColorSpace = THREE.SRGBColorSpace
@@ -127,6 +130,7 @@ export default function BottleLineup({
       const { clientWidth: w, clientHeight: h } = container
       if (!w || !h) return
       renderer.setSize(w, h)
+      lastDraw = 0
       if (flat) {
         flat.position.set(0, 0, 20)
         flat.updateProjectionMatrix()
@@ -183,10 +187,12 @@ export default function BottleLineup({
 
     const clock = new THREE.Clock()
     let raf = 0
+    // The bottles stand still: draw only while one moves, and now and then for textures still loading.
     const tick = () => {
       raf = requestAnimationFrame(tick)
       if (!visible) return
       const dt = Math.min(clock.getDelta(), 0.05)
+      let moving = false
       items.forEach((b, i) => {
         // The bottle under the pointer comes forward: lifted out of the basket, or stepping forward on
         // the ground (lifted, it would float off the soil).
@@ -194,12 +200,16 @@ export default function BottleLineup({
         const lifts = basket || !!frame
         const y = floor + (lifts && picked ? 0.4 : 0)
         const z = b.userData.baseZ + (!lifts && picked ? 0.45 : 0)
+        if (Math.abs(y - b.position.y) > 1e-4 || Math.abs(z - b.position.z) > 1e-4) moving = true
         b.position.y += (y - b.position.y) * Math.min(1, dt * 6)
         b.position.z += (z - b.position.z) * Math.min(1, dt * 6)
         // Standing still, labels to the front.
         b.rotation.y = b.userData.baseRotation
         b.userData.alignShadow?.()
       })
+      const now = performance.now()
+      if (!moving && now - lastDraw < IDLE_REDRAW_MS) return
+      lastDraw = now
       renderer.render(scene, camera)
     }
     tick()
