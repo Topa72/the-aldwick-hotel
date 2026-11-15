@@ -7,8 +7,8 @@ import { images } from "@/data/images"
 import { ease, fadeUp, inView, stagger } from "@/lib/motion"
 import { cn } from "@/lib/utils"
 
-// The three shares of the sales bar, from deep to light gold, with their icons.
-const shareTones = ["#c9a55a", "#8f733c", "#e3cc95"]
+// The three shares of the sales bar, in shades of the estate's burgundy, with their icons.
+const shareTones = ["#c04662", "#7a2236", "#e0909f"]
 const shareIcons = [Store, Plane, ShoppingBag]
 
 export function WhereToBuy() {

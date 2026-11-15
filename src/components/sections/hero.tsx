@@ -44,7 +44,7 @@ export function Hero() {
         className="absolute inset-0"
         style={{
           background:
-            "radial-gradient(ellipse 55% 60% at 68% 52%, rgba(201,165,90,0.18), transparent 70%), linear-gradient(to bottom, #13181f, #171c24 60%, #13181f)",
+            "radial-gradient(ellipse 55% 60% at 68% 52%, rgba(192,70,98,0.16), transparent 70%), linear-gradient(to bottom, #13181f, #171c24 60%, #13181f)",
         }}
       />
       {/* On large screens the bottles stand on the stone ledge of a picture filling the section. */}

@@ -35,7 +35,7 @@ export const images = {
   basketShadow: asset("photos/panier-ombre.webp"),
   /** The same soil, faint behind the home page's cards under the hero (a strip without the corner stones). */
   soil: asset("photos/terre.webp") as string | null,
-  /** The press drawn on the estate's labels, in gold, heading the tasting invitation. */
+  /** The press drawn on the estate's labels, in the façade's burgundy, heading the tasting invitation. */
   pressoir: asset("logos/pressoir.png") as string | null,
   /** Beside the introduction of the stockists page. */
   stockistsPhoto: asset("photos/mise-en-bouteille.webp") as string | null,

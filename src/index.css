@@ -8,8 +8,9 @@
     --foreground: 38 20% 88%; /* warm pearl */
     --primary: 38 20% 88%;
     --primary-foreground: 215 16% 9%;
-    --accent: 38 46% 56%; /* warm gold #c9a55a */
-    --accent-foreground: 215 16% 9%;
+    /* The burgundy of the estate's façade (railings, lettering), lifted to read on the dark ground. */
+    --accent: 346 52% 45%; /* #ae375a */
+    --accent-foreground: 38 30% 96%;
     --surface: 215 14% 13%;
     --surface-raised: 215 12% 17%;
     --muted-foreground: 38 8% 56%;

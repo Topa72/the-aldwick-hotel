@@ -20,9 +20,9 @@ export function BookCta() {
           className="relative mx-auto max-w-3xl px-6 py-12 text-center text-[#2a241c] shadow-[0_30px_60px_-20px_rgba(0,0,0,0.7)] sm:px-14 sm:py-16"
           style={{ background: PAPER }}
         >
-          {/* A double gold frame, as printed on the labels. */}
-          <span aria-hidden className="pointer-events-none absolute inset-3 border border-[#a8843f]/80 sm:inset-4" />
-          <span aria-hidden className="pointer-events-none absolute inset-[18px] border border-[#a8843f]/40 sm:inset-[23px]" />
+          {/* A double burgundy frame, the colour of the estate's façade. */}
+          <span aria-hidden className="pointer-events-none absolute inset-3 border border-[#7a2236]/80 sm:inset-4" />
+          <span aria-hidden className="pointer-events-none absolute inset-[18px] border border-[#7a2236]/40 sm:inset-[23px]" />
 
           {images.pressoir && (
             <img src={images.pressoir} alt="" aria-hidden className="mx-auto h-16 w-auto sm:h-20" />
@@ -31,11 +31,11 @@ export function BookCta() {
             <EstateLogo className="h-12 text-4xl sm:h-14" />
           </div>
 
-          <p className="mt-6 text-[11px] font-medium tracking-[0.42em] text-[#8a6a2e] sm:text-xs">VENEZ DÉGUSTER</p>
+          <p className="mt-6 text-[11px] font-medium tracking-[0.42em] text-[#7a2236] sm:text-xs">VENEZ DÉGUSTER</p>
           <h2 id="cta-title" className="mt-3 font-serif text-[clamp(40px,6vw,72px)] font-semibold italic leading-none">
             à Champtin
           </h2>
-          <div aria-hidden className="mx-auto mt-6 h-px w-16 bg-[#a8843f]" />
+          <div aria-hidden className="mx-auto mt-6 h-px w-16 bg-[#7a2236]" />
           <p className="mx-auto mt-6 max-w-md text-[15px] leading-relaxed text-[#2a241c]/80">
             Dégustation gratuite du lundi au samedi. Pour une visite guidée ou un groupe, appelez-nous pour réserver.
           </p>
@@ -48,7 +48,7 @@ export function BookCta() {
             {estate.phone}
           </a>
 
-          <p className="mt-10 text-[10px] tracking-[0.32em] text-[#8a6a2e] sm:text-[11px]">
+          <p className="mt-10 text-[10px] tracking-[0.32em] text-[#7a2236] sm:text-[11px]">
             SANCERRE AOC · BIO DEPUIS 1964 · VENTE DIRECTE AU DOMAINE
           </p>
         </motion.div>
