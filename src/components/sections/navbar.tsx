@@ -58,8 +58,8 @@ function WinesMenu({ label, current }: { label: string; current: boolean }) {
           else setOpen((o) => !o)
         }}
         className={cn(
-          "label inline-flex items-center gap-1.5 transition-colors duration-200 hover:text-accent",
-          open || current ? "text-accent" : "text-foreground/80",
+          "label inline-flex items-center gap-1.5 transition-colors duration-200 hover:text-accent-ink",
+          open || current ? "text-accent-ink" : "text-foreground/80",
         )}
       >
         {label}
@@ -67,7 +67,7 @@ function WinesMenu({ label, current }: { label: string; current: boolean }) {
       </button>
       {/* The top padding bridges the gap to the panel so it stays open while the pointer moves down. */}
       <div id="menu-vins" hidden={!open} className="absolute left-1/2 top-full -translate-x-1/2 pt-5">
-        <div className="grid w-[760px] grid-cols-3 gap-10 border border-border border-t-accent/70 bg-background px-9 pb-8 pt-7 shadow-2xl">
+        <div className="grid w-[760px] grid-cols-3 gap-10 border border-border border-t-accent-ink/70 bg-background px-9 pb-8 pt-7 shadow-2xl">
           {winesByGroup.map((g) => (
             <div key={g.style}>
               <a
@@ -81,7 +81,7 @@ function WinesMenu({ label, current }: { label: string; current: boolean }) {
                   style={{ background: winePigment[g.style] }}
                 />
                 <span className="flex flex-col">
-                  <span className="display text-3xl leading-none text-foreground transition-colors group-hover:text-accent">
+                  <span className="display text-3xl leading-none text-foreground transition-colors group-hover:text-accent-ink">
                     {g.label}
                   </span>
                   <span className="label mt-2 text-[10px] text-muted-foreground">
@@ -107,12 +107,12 @@ function WinesMenu({ label, current }: { label: string; current: boolean }) {
                         />
                       )}
                       <span className="min-w-0 flex-1">
-                        <span className="block font-serif text-lg font-semibold italic leading-tight text-foreground/85 transition-colors group-hover:text-accent">
+                        <span className="block font-serif text-lg font-semibold italic leading-tight text-foreground/85 transition-colors group-hover:text-accent-ink">
                           {w.name}
                         </span>
                         <span className="label block text-[10px] text-muted-foreground">{w.appellation}</span>
                       </span>
-                      <ArrowRight className="h-3.5 w-3.5 -translate-x-1 text-accent opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100" />
+                      <ArrowRight className="h-3.5 w-3.5 -translate-x-1 text-accent-ink opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100" />
                     </a>
                   </li>
                 ))}
@@ -144,7 +144,7 @@ export function Navbar() {
       )}
     >
       <nav className="container flex h-[72px] items-center justify-between" aria-label="Navigation principale">
-        <a href={href("accueil")} className="text-accent transition-opacity hover:opacity-80">
+        <a href={href("accueil")} className="text-accent-ink transition-opacity hover:opacity-80">
           <EstateLogo className="h-10 text-[28px]" />
         </a>
 
@@ -159,8 +159,8 @@ export function Navbar() {
                     href={href(link.page)}
                     aria-current={page === link.page ? "page" : undefined}
                     className={cn(
-                      "label transition-colors duration-200 hover:text-accent",
-                      page === link.page ? "text-accent" : "text-foreground/80",
+                      "label transition-colors duration-200 hover:text-accent-ink",
+                      page === link.page ? "text-accent-ink" : "text-foreground/80",
                     )}
                   >
                     {link.label}
@@ -179,14 +179,14 @@ export function Navbar() {
         <Sheet>
           <SheetTrigger asChild>
             <button
-              className="flex h-10 w-10 items-center justify-center text-foreground transition-colors hover:text-accent lg:hidden"
+              className="flex h-10 w-10 items-center justify-center text-foreground transition-colors hover:text-accent-ink lg:hidden"
               aria-label="Ouvrir le menu"
             >
               <Menu className="h-6 w-6" strokeWidth={1.25} />
             </button>
           </SheetTrigger>
           <SheetContent className="overflow-y-auto">
-            <SheetTitle className="text-accent">
+            <SheetTitle className="text-accent-ink">
               <EstateLogo className="h-12 text-3xl" />
             </SheetTitle>
             <SheetDescription className="label mt-2 text-muted-foreground">Sancerre · Bio depuis 1964</SheetDescription>
@@ -198,8 +198,8 @@ export function Navbar() {
                       href={href(link.page)}
                       aria-current={page === link.page ? "page" : undefined}
                       className={cn(
-                        "display block py-5 text-4xl transition-colors hover:text-accent",
-                        page === link.page ? "text-accent" : "text-foreground",
+                        "display block py-5 text-4xl transition-colors hover:text-accent-ink",
+                        page === link.page ? "text-accent-ink" : "text-foreground",
                       )}
                     >
                       {link.label}
@@ -223,7 +223,7 @@ export function Navbar() {
                                 <SheetClose asChild>
                                   <a
                                     href={href("vins", wineSlug(w))}
-                                    className="font-serif text-lg font-semibold italic leading-tight text-foreground/80 transition-colors hover:text-accent"
+                                    className="font-serif text-lg font-semibold italic leading-tight text-foreground/80 transition-colors hover:text-accent-ink"
                                   >
                                     {w.name}
                                   </a>

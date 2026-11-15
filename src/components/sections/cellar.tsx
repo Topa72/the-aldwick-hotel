@@ -18,7 +18,7 @@ export function Cellar() {
           <motion.div className="mt-12" variants={stagger(0.14)} {...inView}>
             <motion.p
               variants={fadeUp}
-              className="border-l border-accent/60 pl-6 font-serif text-[clamp(26px,2.6vw,36px)] font-normal italic leading-snug text-foreground"
+              className="border-l border-accent-ink/60 pl-6 font-serif text-[clamp(26px,2.6vw,36px)] font-normal italic leading-snug text-foreground"
             >
               Ni engrais chimiques, ni désherbants, ni insecticides, ni pesticides, ni fongicides de synthèse.
             </motion.p>

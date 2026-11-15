@@ -55,12 +55,12 @@ export function Discover() {
                 href={href(item.page)}
                 className="group flex h-full flex-col p-8 transition-colors duration-200 hover:bg-surface-raised md:p-10"
               >
-                <span className="label tabular-nums text-accent">0{i + 1}</span>
-                <h2 className="display mt-6 text-4xl text-foreground transition-colors group-hover:text-accent">
+                <span className="label tabular-nums text-accent-ink">0{i + 1}</span>
+                <h2 className="display mt-6 text-4xl text-foreground transition-colors group-hover:text-accent-ink">
                   {item.title}
                 </h2>
                 <p className="mt-4 flex-1 text-[15px] font-light leading-relaxed text-muted-foreground">{item.text}</p>
-                <span className="label mt-8 inline-flex items-center gap-2 text-accent">
+                <span className="label mt-8 inline-flex items-center gap-2 text-accent-ink">
                   Découvrir
                   <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" />
                 </span>

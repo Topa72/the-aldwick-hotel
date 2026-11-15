@@ -86,7 +86,7 @@ export function Wines() {
                   <span
                     className={cn(
                       "display text-[26px] leading-none transition-colors duration-200 md:text-[40px]",
-                      active ? "text-accent" : "text-foreground/60 group-hover:text-foreground",
+                      active ? "text-accent-ink" : "text-foreground/60 group-hover:text-foreground",
                     )}
                   >
                     {g.label}
@@ -105,7 +105,7 @@ export function Wines() {
                 )}
                 <span
                   aria-hidden
-                  className="absolute inset-0 -m-1 rounded-sm ring-accent group-focus-visible:ring-2"
+                  className="absolute inset-0 -m-1 rounded-sm ring-accent-ink group-focus-visible:ring-2"
                 />
               </button>
             )
@@ -135,7 +135,7 @@ export function Wines() {
                 <button
                   type="button"
                   onClick={() => go(-1)}
-                  className="flex h-11 w-11 items-center justify-center border border-border text-foreground transition-colors hover:border-accent hover:text-accent"
+                  className="flex h-11 w-11 items-center justify-center border border-border text-foreground transition-colors hover:border-accent-ink hover:text-accent-ink"
                   aria-label="Cuvée précédente"
                 >
                   <ArrowLeft className="h-4 w-4" strokeWidth={1.5} />
@@ -144,7 +144,7 @@ export function Wines() {
                 <button
                   type="button"
                   onClick={() => go(1)}
-                  className="flex h-11 w-11 items-center justify-center border border-border text-foreground transition-colors hover:border-accent hover:text-accent"
+                  className="flex h-11 w-11 items-center justify-center border border-border text-foreground transition-colors hover:border-accent-ink hover:text-accent-ink"
                   aria-label="Cuvée suivante"
                 >
                   <ArrowRight className="h-4 w-4" strokeWidth={1.5} />
@@ -168,7 +168,7 @@ export function Wines() {
                   transition={{ duration: 0.35, ease }}
                 >
                   <div className="flex items-center justify-between gap-4">
-                    <p className="label text-accent">{wine.appellation}</p>
+                    <p className="label text-accent-ink">{wine.appellation}</p>
                     {images.organicLogo && (
                       <span className="inline-flex items-center gap-2.5">
                         <span className="label hidden text-right text-[10px] leading-tight text-[#7fd17f] sm:block">
@@ -222,7 +222,7 @@ export function Wines() {
 
                   <a
                     href={href("ou-trouver")}
-                    className="label mt-8 inline-flex items-center gap-2 text-accent transition-colors hover:text-foreground"
+                    className="label mt-8 inline-flex items-center gap-2 text-accent-ink transition-colors hover:text-foreground"
                   >
                     Où trouver ce vin <ArrowRight className="h-3.5 w-3.5" />
                   </a>
@@ -239,14 +239,14 @@ export function Wines() {
                     aria-pressed={i === selected}
                     className={cn(
                       "group flex w-full items-baseline justify-between gap-4 py-4 text-left transition-colors duration-200",
-                      i === selected ? "text-accent" : "text-foreground/80 hover:text-accent",
+                      i === selected ? "text-accent-ink" : "text-foreground/80 hover:text-accent-ink",
                     )}
                   >
                     <span className="font-serif text-2xl font-semibold italic">{w.name}</span>
                     <span
                       className={cn(
                         "label transition-colors",
-                        i === selected ? "text-accent" : "text-muted-foreground group-hover:text-accent/80",
+                        i === selected ? "text-accent-ink" : "text-muted-foreground group-hover:text-accent-ink/80",
                       )}
                     >
                       {w.appellation}

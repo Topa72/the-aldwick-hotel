@@ -31,14 +31,14 @@ export function Visit() {
           </motion.p>
 
           <motion.div variants={fadeUp} {...inView} className="mt-10 flex gap-4">
-            <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-accent" strokeWidth={1.25} aria-hidden />
+            <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-accent-ink" strokeWidth={1.25} aria-hidden />
             <address className="label not-italic leading-loose text-foreground/85">
               {estate.address.map((line) => (
                 <span key={line} className="block">
                   {line}
                 </span>
               ))}
-              <a href={estate.phoneHref} className="mt-2 block text-accent hover:underline">
+              <a href={estate.phoneHref} className="mt-2 block text-accent-ink hover:underline">
                 {estate.phone}
               </a>
             </address>
@@ -48,7 +48,7 @@ export function Visit() {
         <div className="flex flex-col gap-14 lg:col-span-7">
           <motion.div variants={fadeUp} {...inView}>
             <div className="flex items-center gap-3">
-              <Clock className="h-5 w-5 text-accent" strokeWidth={1.25} aria-hidden />
+              <Clock className="h-5 w-5 text-accent-ink" strokeWidth={1.25} aria-hidden />
               <h3 className="display text-4xl text-foreground">Horaires</h3>
             </div>
             <GoldRule className="mt-4 w-12" delay={0.2} />
@@ -58,7 +58,7 @@ export function Visit() {
                   key={row.period}
                   className="grid gap-1 border-b border-border py-5 sm:grid-cols-[1.2fr_1fr_1.2fr] sm:items-baseline sm:gap-6"
                 >
-                  <dt className="label text-accent">{row.period}</dt>
+                  <dt className="label text-accent-ink">{row.period}</dt>
                   <dd className="text-[15px] font-light text-muted-foreground">{row.days}</dd>
                   <dd className="text-[15px] font-normal tabular-nums text-foreground sm:text-right">{row.hours}</dd>
                 </div>
@@ -117,7 +117,7 @@ export function Visit() {
         <div id="contact" className={mapQuery ? "lg:col-span-7" : "lg:col-span-8 lg:col-start-3"}>
           <motion.div variants={fadeUp} {...inView}>
             <div className="flex items-center gap-3">
-              <Mail className="h-5 w-5 text-accent" strokeWidth={1.25} aria-hidden />
+              <Mail className="h-5 w-5 text-accent-ink" strokeWidth={1.25} aria-hidden />
               <h3 className="display text-4xl text-foreground">Contactez-nous</h3>
             </div>
             <GoldRule className="mt-4 w-12" delay={0.2} />

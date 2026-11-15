@@ -41,7 +41,7 @@ const SheetContent = React.forwardRef<
       {...props}
     >
       {children}
-      <SheetPrimitive.Close className="absolute right-6 top-6 text-muted-foreground transition-colors hover:text-accent">
+      <SheetPrimitive.Close className="absolute right-6 top-6 text-muted-foreground transition-colors hover:text-accent-ink">
         <X className="h-5 w-5" strokeWidth={1.25} />
         <span className="sr-only">Close menu</span>
       </SheetPrimitive.Close>

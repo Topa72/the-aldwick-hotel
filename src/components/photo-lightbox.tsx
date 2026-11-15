@@ -23,7 +23,7 @@ export function PhotoLightbox({
     <DialogPrimitive.Root>
       <DialogPrimitive.Trigger
         className={cn(
-          "group relative block overflow-hidden outline-none ring-accent focus-visible:ring-2",
+          "group relative block overflow-hidden outline-none ring-accent-ink focus-visible:ring-2",
           !children && "shrink-0 self-start bg-white",
           className,
         )}
@@ -56,7 +56,7 @@ export function PhotoLightbox({
             <figcaption className="label mt-4 text-center text-muted-foreground">{alt}</figcaption>
           </figure>
           <DialogPrimitive.Close
-            className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center border border-border bg-background/80 text-foreground transition-colors hover:border-accent hover:text-accent"
+            className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center border border-border bg-background/80 text-foreground transition-colors hover:border-accent-ink hover:text-accent-ink"
             aria-label="Fermer"
           >
             <X className="h-5 w-5" strokeWidth={1.5} />

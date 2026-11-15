@@ -51,10 +51,10 @@ export function History() {
               variants={fadeUp}
               className="group grid grid-cols-1 gap-4 border-b border-border px-1 py-10 transition-colors duration-200 hover:bg-surface-raised md:grid-cols-12 md:items-baseline md:gap-8 md:px-8 md:py-12"
             >
-              <p className="font-serif text-[clamp(44px,5vw,72px)] font-semibold italic leading-none text-accent md:col-span-4">
+              <p className="font-serif text-[clamp(44px,5vw,72px)] font-semibold italic leading-none text-accent-ink md:col-span-4">
                 {step.year}
               </p>
-              <h3 className="font-serif text-3xl font-semibold italic leading-tight text-foreground transition-colors duration-200 group-hover:text-accent md:col-span-3">
+              <h3 className="font-serif text-3xl font-semibold italic leading-tight text-foreground transition-colors duration-200 group-hover:text-accent-ink md:col-span-3">
                 {step.title}
               </h3>
               <p className="max-w-md text-[15px] font-light leading-relaxed text-muted-foreground transition-colors duration-200 group-hover:text-foreground/85 md:col-span-5">

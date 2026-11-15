@@ -7,13 +7,13 @@ export function Footer() {
   return (
     <footer className="bg-background py-16">
       <div className="container flex flex-col items-center gap-8 text-center">
-        <a href={href("accueil")} className="text-accent transition-opacity hover:opacity-80">
+        <a href={href("accueil")} className="text-accent-ink transition-opacity hover:opacity-80">
           <EstateLogo className="h-16 text-4xl" />
         </a>
         <p className="label leading-loose text-foreground/80">
           {estate.address.join(" · ")}
           <br />
-          <a href={estate.phoneHref} className="transition-colors hover:text-accent">
+          <a href={estate.phoneHref} className="transition-colors hover:text-accent-ink">
             {estate.phone}
           </a>
         </p>
@@ -34,7 +34,7 @@ export function Footer() {
           L'abus d'alcool est dangereux pour la santé. À consommer avec modération.
         </p>
         <details className="group max-w-2xl text-left text-xs font-light leading-relaxed text-muted-foreground">
-          <summary className="label cursor-pointer list-none text-center text-foreground/70 transition-colors hover:text-accent">
+          <summary className="label cursor-pointer list-none text-center text-foreground/70 transition-colors hover:text-accent-ink">
             Mentions légales
           </summary>
           <dl className="mt-5 grid gap-x-6 gap-y-2 sm:grid-cols-[auto_1fr]">

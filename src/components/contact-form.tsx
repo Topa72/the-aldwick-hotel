@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils"
 type Status = "idle" | "sending" | "sent" | "error"
 
 const fieldClass =
-  "mt-2 block w-full border border-border bg-transparent px-4 py-3 text-[15px] font-light text-foreground placeholder:text-muted-foreground/60 transition-colors focus:border-accent focus:outline-none"
+  "mt-2 block w-full border border-border bg-transparent px-4 py-3 text-[15px] font-light text-foreground placeholder:text-muted-foreground/60 transition-colors focus:border-accent-ink focus:outline-none"
 
 function Field({
   id,
@@ -73,8 +73,8 @@ export function ContactForm() {
 
   if (status === "sent") {
     return (
-      <div role="status" className="flex h-full flex-col items-start justify-center border border-accent/50 p-8">
-        <CheckCircle2 className="h-8 w-8 text-accent" strokeWidth={1.25} aria-hidden />
+      <div role="status" className="flex h-full flex-col items-start justify-center border border-accent-ink/50 p-8">
+        <CheckCircle2 className="h-8 w-8 text-accent-ink" strokeWidth={1.25} aria-hidden />
         <p className="display mt-6 text-3xl text-foreground">Merci, votre message est envoyé.</p>
         <p className="mt-3 max-w-md text-[15px] font-light leading-relaxed text-muted-foreground">
           Nous vous répondrons dès que possible, par e-mail ou par téléphone.
@@ -82,7 +82,7 @@ export function ContactForm() {
         <button
           type="button"
           onClick={() => setStatus("idle")}
-          className="label mt-8 text-accent transition-colors hover:text-foreground"
+          className="label mt-8 text-accent-ink transition-colors hover:text-foreground"
         >
           Écrire un autre message
         </button>
@@ -124,7 +124,7 @@ export function ContactForm() {
       {status === "error" && (
         <p role="alert" className="text-sm font-light text-red-300 sm:col-span-2">
           Le message n'a pas pu être envoyé. Réessayez, ou appelez-nous au{" "}
-          <a href={estate.phoneHref} className="text-accent underline">
+          <a href={estate.phoneHref} className="text-accent-ink underline">
             {estate.phone}
           </a>
           .

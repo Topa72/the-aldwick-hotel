@@ -22,7 +22,7 @@ export function SectionHeading({ eyebrow, title, id, className, align = "left" }
       viewport={{ once: true, margin: "-80px" }}
       variants={fadeUp}
     >
-      {eyebrow && <p className="label text-accent">{eyebrow}</p>}
+      {eyebrow && <p className="label text-accent-ink">{eyebrow}</p>}
       <h2 id={id} className="section-title">
         {title}
       </h2>

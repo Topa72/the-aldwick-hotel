@@ -43,7 +43,7 @@ export function Awards() {
               <span
                 className={cn(
                   "label inline-flex items-center gap-3",
-                  m.medal === "Or" ? "text-accent" : "text-foreground/80",
+                  m.medal === "Or" ? "text-accent-ink" : "text-foreground/80",
                 )}
               >
                 <Medal award={m} className="h-11 w-11" />

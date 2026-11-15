@@ -44,7 +44,7 @@ export function Hero() {
         className="absolute inset-0"
         style={{
           background:
-            "radial-gradient(ellipse 55% 60% at 68% 52%, rgba(192,70,98,0.16), transparent 70%), linear-gradient(to bottom, #13181f, #171c24 60%, #13181f)",
+            "radial-gradient(ellipse 55% 60% at 68% 52%, rgba(140,46,62,0.22), transparent 70%), linear-gradient(to bottom, #13181f, #171c24 60%, #13181f)",
         }}
       />
       {/* On large screens the bottles stand on the stone ledge of a picture filling the section. */}
@@ -72,7 +72,7 @@ export function Hero() {
 
       <div className="container relative z-10 grid items-center gap-6 lg:grid-cols-12 lg:gap-10">
         <div className="order-2 flex flex-col items-center text-center lg:order-1 lg:col-span-5 lg:items-start lg:self-center lg:text-left">
-          <motion.p {...rise(0)} className="label text-accent">
+          <motion.p {...rise(0)} className="label text-accent-ink">
             Sancerre · Crézancy-en-Sancerre
           </motion.p>
 
@@ -82,7 +82,7 @@ export function Hero() {
           >
             Vignerons
             <br />
-            <span className="text-accent">depuis 1683.</span>
+            <span className="text-accent-ink">depuis 1683.</span>
           </motion.h1>
 
           <motion.p
@@ -187,7 +187,7 @@ export function Hero() {
             aria-live="polite"
           >
             {named ? (
-              <span className={cn("text-accent", backdrop && "bg-background/90 px-4 py-2")}>
+              <span className={cn("text-accent-ink", backdrop && "bg-background/90 px-4 py-2")}>
                 {named.name} · {named.appellation}
               </span>
             ) : (

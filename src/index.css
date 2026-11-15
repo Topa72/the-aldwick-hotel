@@ -8,8 +8,10 @@
     --foreground: 38 20% 88%; /* warm pearl */
     --primary: 38 20% 88%;
     --primary-foreground: 215 16% 9%;
-    /* The burgundy of the estate's façade (railings, lettering), lifted to read on the dark ground. */
-    --accent: 346 52% 45%; /* #ae375a */
+    /* The estate's burgundy (Pantone Red Riding Hood #551C25) for fills and frames; text in it would not
+       read on the dark ground, so text and outlines take a lighter tint of the same hue. */
+    --accent: 350 50% 22%; /* #551c25 */
+    --accent-ink: 350 42% 60%;
     --accent-foreground: 38 30% 96%;
     --surface: 215 14% 13%;
     --surface-raised: 215 12% 17%;

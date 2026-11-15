@@ -8,7 +8,7 @@ import { ease, fadeUp, inView, stagger } from "@/lib/motion"
 import { cn } from "@/lib/utils"
 
 // The three shares of the sales bar, in shades of the estate's burgundy, with their icons.
-const shareTones = ["#c04662", "#7a2236", "#e0909f"]
+const shareTones = ["#551c25", "#9b4152", "#c97d8b"]
 const shareIcons = [Store, Plane, ShoppingBag]
 
 export function WhereToBuy() {
@@ -30,12 +30,12 @@ export function WhereToBuy() {
             <motion.div variants={fadeUp} {...inView} className="mt-8 flex flex-wrap gap-3">
               <a
                 href={estate.phoneHref}
-                className="label inline-flex items-center gap-2.5 border border-accent bg-accent px-5 py-3 text-accent-foreground transition-colors hover:bg-transparent hover:text-accent"
+                className="label inline-flex items-center gap-2.5 border border-accent-ink bg-accent px-5 py-3 text-accent-foreground transition-colors hover:bg-transparent hover:text-accent-ink"
               >
                 <Phone className="h-4 w-4" strokeWidth={1.5} /> {estate.phone}
               </a>
               <span className="label inline-flex items-center gap-2.5 border border-border px-5 py-3 text-foreground/80">
-                <MapPin className="h-4 w-4 text-accent" strokeWidth={1.5} /> Vente directe à Champtin
+                <MapPin className="h-4 w-4 text-accent-ink" strokeWidth={1.5} /> Vente directe à Champtin
               </span>
             </motion.div>
           </div>
@@ -58,8 +58,8 @@ export function WhereToBuy() {
                 <div aria-hidden className="absolute inset-0 ring-1 ring-inset ring-foreground/10" />
               </div>
               {/* A gold corner, offset behind the photo. */}
-              <span aria-hidden className="absolute -bottom-3 -right-3 -z-0 h-24 w-24 border-b border-r border-accent/70" />
-              <span aria-hidden className="absolute -left-3 -top-3 h-24 w-24 border-l border-t border-accent/70" />
+              <span aria-hidden className="absolute -bottom-3 -right-3 -z-0 h-24 w-24 border-b border-r border-accent-ink/70" />
+              <span aria-hidden className="absolute -left-3 -top-3 h-24 w-24 border-l border-t border-accent-ink/70" />
             </motion.figure>
           )}
         </div>
@@ -72,7 +72,7 @@ export function WhereToBuy() {
           >
             <span aria-hidden className="absolute inset-x-0 top-0 h-0.5 bg-accent" />
             <div className="flex items-center gap-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-full border border-accent/50 text-accent">
+              <span className="flex h-10 w-10 items-center justify-center rounded-full border border-accent-ink/50 text-accent-ink">
                 <Store className="h-[18px] w-[18px]" strokeWidth={1.5} />
               </span>
               <h3 className="display text-4xl text-foreground">{home.region}</h3>
@@ -85,12 +85,12 @@ export function WhereToBuy() {
               <motion.div
                 key={group.region}
                 variants={fadeUp}
-                className="group/card relative border border-border bg-background p-7 transition-colors duration-300 hover:border-accent/50"
+                className="group/card relative border border-border bg-background p-7 transition-colors duration-300 hover:border-accent-ink/50"
               >
                 <div className="flex items-center justify-between">
                   <h3 className="display text-3xl text-foreground">{group.region}</h3>
                   <Globe2
-                    className="h-5 w-5 text-accent/60 transition-colors group-hover/card:text-accent"
+                    className="h-5 w-5 text-accent-ink/60 transition-colors group-hover/card:text-accent-ink"
                     strokeWidth={1.25}
                     aria-hidden
                   />
@@ -161,7 +161,7 @@ export function WhereToBuy() {
           className="absolute inset-0 bg-[linear-gradient(to_bottom,hsl(var(--surface)),hsl(var(--surface)/0.78)_25%,hsl(var(--surface)/0.78)_75%,hsl(var(--surface)))]"
         />
         <div className="container relative text-center">
-          <Plane className="mx-auto h-6 w-6 text-accent" strokeWidth={1.25} aria-hidden />
+          <Plane className="mx-auto h-6 w-6 text-accent-ink" strokeWidth={1.25} aria-hidden />
           <h3 id="export-title" className="display mt-4 text-[clamp(36px,4.5vw,60px)] text-foreground">
             Nos vins voyagent
           </h3>
@@ -170,7 +170,7 @@ export function WhereToBuy() {
             {exportCountries.map((country) => (
               <li
                 key={country}
-                className="border border-foreground/20 bg-background/60 px-5 py-2.5 font-serif text-xl italic text-foreground/90 backdrop-blur-sm transition-colors hover:border-accent hover:text-accent"
+                className="border border-foreground/20 bg-background/60 px-5 py-2.5 font-serif text-xl italic text-foreground/90 backdrop-blur-sm transition-colors hover:border-accent-ink hover:text-accent-ink"
               >
                 {country}
               </li>
@@ -193,13 +193,13 @@ function StockistList({ group, compact = false }: { group: (typeof stockists)[nu
               target="_blank"
               rel="noreferrer noopener"
               className={cn(
-                "group inline-flex items-baseline gap-1.5 font-serif font-semibold italic leading-tight text-foreground transition-colors duration-200 hover:text-accent",
+                "group inline-flex items-baseline gap-1.5 font-serif font-semibold italic leading-tight text-foreground transition-colors duration-200 hover:text-accent-ink",
                 compact ? "text-[22px]" : "text-[26px]",
               )}
             >
               {s.name}
               <ArrowUpRight
-                className="h-4 w-4 self-center text-accent opacity-60 transition-opacity group-hover:opacity-100"
+                className="h-4 w-4 self-center text-accent-ink opacity-60 transition-opacity group-hover:opacity-100"
                 strokeWidth={1.5}
                 aria-hidden
               />
